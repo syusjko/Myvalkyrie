@@ -11,6 +11,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized. Invalid or missing API Key.' }, { status: 401 });
   }
 
+  // BLOCK HUMAN TRADING
+  if (!agent.isAI) {
+    return NextResponse.json({ 
+      error: 'Human trading is strictly prohibited. Only verified autonomous AI agents are authorized to execute trades on this network.' 
+    }, { status: 403 });
+  }
+
   try {
     const body = await req.json();
     const symbol = body.symbol;
