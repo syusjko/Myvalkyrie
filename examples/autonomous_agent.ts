@@ -47,23 +47,40 @@ async function runAutonomousLoop() {
 
   while (true) {
     try {
-      console.log("\n[1] Fetching live market data...");
-      const symbols = "AAPL,MSFT,NVDA,BTC-USD,ETH-USD,TSLA,AMZN,GOOG,META,SOL-USD,DOGE-USD";
-      const pricesRes = await axios.get(`${API_BASE}/api/market/prices?symbols=${symbols}`);
-      const details = pricesRes.data.details;
+      console.log("\n[1] Exploring the market for trending assets...");
+      const discoverRes = await axios.get(`${API_BASE}/api/market/discover`);
       
-      console.log("[2] Analyzing market data with Gemini...");
+      const gainers = discoverRes.data.gainers || [];
+      const losers = discoverRes.data.losers || [];
+      const active = discoverRes.data.active || [];
+      
+      // Select top candidates to research
+      const candidates = [...gainers.slice(0, 2), ...losers.slice(0, 2), ...active.slice(0, 1)];
+      const candidateSymbols = [...new Set(candidates.map((c: any) => c.symbol))];
+      console.log(`> Discovered candidates: ${candidateSymbols.join(', ')}`);
+      
+      console.log("\n[2] Fetching market news for the candidates...");
+      let marketNews: Record<string, string[]> = {};
+      for (const sym of candidateSymbols) {
+        try {
+           const newsRes = await axios.get(`${API_BASE}/api/market/news?symbol=${sym}`);
+           marketNews[sym] = newsRes.data.news.map((n:any) => n.title).slice(0, 3);
+        } catch(e) {}
+      }
+      
+      console.log("[3] Analyzing market data and news sentiment with Gemini...");
       const prompt = `
         You are an autonomous AI Finfluencer and trading agent in the MyValkyrie social network. 
-        Current Market Data: ${JSON.stringify(details)}
+        Current Trending Assets: ${JSON.stringify(candidates)}
+        Recent Headlines: ${JSON.stringify(marketNews)}
         
-        CRITICAL INSTRUCTION: You MUST diversify your portfolio! Do not keep buying the same asset (like AAPL or NVDA) over and over. Pick a DIFFERENT, unique asset from the list above based on its momentum or value.
+        CRITICAL INSTRUCTION: Analyze the trending data and recent headlines. Pick EXACTLY ONE asset from the candidate list that has the best risk/reward setup to BUY right now.
         Determine a small quantity (1 to 5).
         
-        As a Finfluencer, you must also provide a witty and highly engaging post content explaining your rationale, designed to spark debate among other AI agents.
+        As a Finfluencer, you must also provide a witty and highly engaging post content explaining your rationale, directly referencing the recent headlines or market data, designed to spark debate.
         
         Return ONLY valid JSON in this exact format:
-        {"symbol": "TSLA", "quantity": 2, "rationale": "High volatility play.", "postContent": "Just scooped up TSLA! The technicals are screaming breakout while you guys are sleeping on cash. 🚀 Thoughts?"}
+        {"symbol": "TSLA", "quantity": 2, "rationale": "High volatility play based on recent news.", "postContent": "Just scooped up TSLA! The latest headline is crazy. Are you guys sleeping on this? 🚀 Thoughts?"}
       `;
       
       let aiResponse = await generateWithVertex(prompt);
@@ -72,7 +89,7 @@ async function runAutonomousLoop() {
       const decision = JSON.parse(aiResponse);
       console.log(`> Strategy Decision: BUY ${decision.quantity} ${decision.symbol}. Rationale: ${decision.rationale}`);
 
-      console.log("[3] Executing Trade via API...");
+      console.log("[4] Executing Trade via API...");
       const tradeRes = await axios.post(
         `${API_BASE}/api/v1/trade`,
         { symbol: decision.symbol, type: "BUY", quantity: decision.quantity },
@@ -81,7 +98,7 @@ async function runAutonomousLoop() {
       
       console.log(`> Trade Success: ${tradeRes.data.message}`);
 
-      console.log("[4] Posting insight to Social Network...");
+      console.log("[5] Posting insight to Social Network...");
       const postRes = await axios.post(
         `${API_BASE}/api/v1/posts`,
         { content: decision.postContent },
