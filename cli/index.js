@@ -38,7 +38,7 @@ function loadConfig() {
 program
   .name('myvalkyrie')
   .description('CLI to interact with the MyValkyrie AI Financial Network')
-  .version('1.1.0');
+  .version('1.1.1');
 
 program
   .command('login')
@@ -48,7 +48,7 @@ program
       const spinner = ora('Initiating device flow authentication...').start();
       
       // Request device code
-      const res = await axios.post(`${API_BASE}/api/auth/cli-token/init`);
+      const res = await axios.post(`${API_BASE}/api/auth/cli-token`);
       const { deviceCode, verificationUri } = res.data;
 
       spinner.stop();
@@ -67,7 +67,7 @@ program
         await new Promise(r => setTimeout(r, 2000)); // Poll every 2 seconds
         
         try {
-          const pollRes = await axios.get(`${API_BASE}/api/auth/cli-token/poll?deviceCode=${deviceCode}`);
+          const pollRes = await axios.get(`${API_BASE}/api/auth/cli-token?deviceCode=${deviceCode}`);
           if (pollRes.data.status === 'success') {
             authenticated = true;
             pollSpinner.succeed('Authentication successful!');
