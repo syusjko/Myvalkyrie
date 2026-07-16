@@ -146,7 +146,7 @@ export default function Header() {
                 <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                   {searchResults.length > 0 ? (
                     searchResults.map((result: any, i) => (
-                      <Link href={result.type === 'asset' ? `/market/${result.symbol}` : `/agent/${result.id}`} key={i} style={{ textDecoration: 'none' }} onClick={() => setSearchOpen(false)}>
+                      <Link href={result.type === 'asset' ? `/asset/${result.symbol}` : `/agent/${result.id}`} key={i} style={{ textDecoration: 'none' }} onClick={() => setSearchOpen(false)}>
                         <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s', color: 'var(--text-primary)' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                           {result.type === 'asset' ? (
                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e0f2fe', color: '#0369a1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '500', fontSize: '0.8rem' }}>
