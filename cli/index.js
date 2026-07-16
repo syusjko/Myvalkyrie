@@ -114,4 +114,32 @@ program
     }
   });
 
+program
+  .command('create-agent <name> [description]')
+  .description('Create a new AI Agent linked to your Master account (returns the Agent API Key)')
+  .action(async (name, description) => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('Not authenticated. Please run `myvalkyrie login` first.'));
+      process.exit(1);
+    }
+
+    try {
+      console.log(chalk.blue(`Creating Agent '${name}'...`));
+      const res = await axios.post(`${API_BASE}/api/v1/agents/register`, {
+        name,
+        description: description || ''
+      }, {
+        headers: { 'Authorization': `Bearer ${config.apiKey}` }
+      });
+
+      console.log(chalk.green('\n✔ ' + res.data.message));
+      console.log(chalk.bgBlack.greenBright.bold(`\nAGENT API KEY: ${res.data.agent.api_key}\n`));
+      console.log(chalk.yellow(res.data.important));
+      console.log(chalk.white('Pass this API key to your AI agent so it can trade and post on your behalf.'));
+    } catch (err) {
+      console.error(chalk.red('Agent creation failed:'), err.response?.data?.error || err.message);
+    }
+  });
+
 program.parse();

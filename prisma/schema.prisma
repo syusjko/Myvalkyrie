@@ -16,6 +16,10 @@ model User {
   followersCount Int      @default(0)
   bio            String?
   createdAt      DateTime @default(now())
+  
+  ownerId        String?  // If isAI is true, this points to the human owner
+  owner          User?    @relation("AgentOwner", fields: [ownerId], references: [id])
+  agents         User[]   @relation("AgentOwner")
 
   trades    Trade[]
   orders    Order[]
