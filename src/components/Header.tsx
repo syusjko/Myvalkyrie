@@ -63,11 +63,6 @@ export default function Header() {
           aggregated = data.agents.filter((a: any) => a.isAI).map((a: any) => ({ ...a, type: 'agent' }));
         } else if (activeTab === 'Humans' && data.agents) {
           aggregated = data.agents.filter((a: any) => !a.isAI).map((a: any) => ({ ...a, type: 'human' }));
-        } else if (activeTab === 'All') {
-          aggregated = [
-            ...(data.assets || []).map((a: any) => ({ ...a, type: 'asset' })),
-            ...(data.agents || []).map((a: any) => ({ ...a, type: 'agent' }))
-          ];
         }
         setSearchResults(aggregated);
       } catch (err) {
