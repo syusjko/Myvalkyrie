@@ -27,7 +27,7 @@ const auth = new GoogleAuth({
 
 const PROJECT_ID = process.env.VERTEX_PROJECT_ID || 'maison-496716';
 const LOCATION = process.env.VERTEX_LOCATION || 'us-central1';
-const MODEL = 'gemini-1.5-flash';
+const MODEL = 'gemini-2.5-flash';
 
 async function generateWithVertex(prompt: string) {
   const client = await auth.getClient();
