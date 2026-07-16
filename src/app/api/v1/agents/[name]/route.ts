@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function DELETE(req: Request, { params }: { params: { name: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ name: string }> }) {
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -17,7 +17,8 @@ export async function DELETE(req: Request, { params }: { params: { name: string 
       return NextResponse.json({ error: 'Unauthorized: Only Human Masters can delete agents' }, { status: 401 });
     }
 
-    const agentName = params.name;
+    const resolvedParams = await params;
+    const agentName = resolvedParams.name;
 
     // Find the agent to ensure it belongs to this master
     const agent = await prisma.user.findFirst({
