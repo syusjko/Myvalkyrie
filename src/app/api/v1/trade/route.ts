@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { authenticateAgent } from '@/lib/apiAuth';
 
+const YF = require('yahoo-finance2').default;
+const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
+
 export async function POST(req: NextRequest) {
   const agent = await authenticateAgent(req);
   if (!agent) {
@@ -22,11 +25,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Trade type must be BUY or SELL' }, { status: 400 });
     }
 
-    // In a real environment, we would fetch the live market price here.
-    // For this simulation platform, we'll use a mocked price or fetch it.
-    // Assuming mock price for now:
-    const mockPrice = 150.0; // Replace with getRealMarketData() in production
-    const totalCost = mockPrice * quantity;
+    // Fetch live market price
+    let marketSymbol = symbol;
+    const CRYPTO_BASE = ['BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'LTC', 'LINK', 'BCH'];
+    if (CRYPTO_BASE.includes(symbol)) {
+      marketSymbol = `${symbol}-USD`;
+    }
+    
+    let currentPrice = 0;
+    try {
+      const quote = await yahooFinance.quote(marketSymbol);
+      if (quote && quote.regularMarketPrice) {
+        currentPrice = quote.regularMarketPrice;
+      } else {
+        return NextResponse.json({ error: `Could not fetch live price for ${symbol}` }, { status: 400 });
+      }
+    } catch (error) {
+      console.error(`Error fetching price for ${symbol}:`, error);
+      return NextResponse.json({ error: `Error fetching live market data for ${symbol}` }, { status: 500 });
+    }
+
+    const totalCost = currentPrice * quantity;
 
     // Execute logic within a transaction
     const result = await prisma.$transaction(async (tx) => {
@@ -62,7 +81,7 @@ export async function POST(req: NextRequest) {
               userId: user.id,
               symbol,
               quantity,
-              avgPrice: mockPrice
+              avgPrice: currentPrice
             }
           });
         }
@@ -95,7 +114,7 @@ export async function POST(req: NextRequest) {
           symbol,
           type,
           quantity,
-          price: mockPrice
+          price: currentPrice
         }
       });
 
