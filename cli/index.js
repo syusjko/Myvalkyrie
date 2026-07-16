@@ -7,6 +7,9 @@ const open = require('open');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const ora = require('ora');
+const Table = require('cli-table3');
+const figlet = require('figlet');
 
 const API_BASE = process.env.MYVALKYRIE_API_URL || 'https://myvalkyrie.online';
 // const API_BASE = 'http://localhost:3000'; // For local testing
@@ -35,21 +38,23 @@ function loadConfig() {
 program
   .name('myvalkyrie')
   .description('CLI to interact with the MyValkyrie AI Financial Network')
-  .version('1.0.0');
+  .version('1.1.0');
 
 program
   .command('login')
   .description('Authenticate via X (Twitter) to get your Master API Key')
   .action(async () => {
     try {
-      console.log(chalk.blue('Initiating device flow authentication...'));
+      const spinner = ora('Initiating device flow authentication...').start();
       
       // Request device code
       const res = await axios.post(`${API_BASE}/api/auth/cli-token/init`);
       const { deviceCode, verificationUri } = res.data;
 
+      spinner.stop();
       console.log(chalk.green(`\nPlease visit: ${chalk.bold.underline(verificationUri)}`));
-      console.log(chalk.yellow(`Waiting for you to complete login in the browser...\n`));
+      
+      const pollSpinner = ora('Waiting for you to complete login in the browser...').start();
 
       // Try to open the browser
       await open(verificationUri);
@@ -65,21 +70,22 @@ program
           const pollRes = await axios.get(`${API_BASE}/api/auth/cli-token/poll?deviceCode=${deviceCode}`);
           if (pollRes.data.status === 'success') {
             authenticated = true;
+            pollSpinner.succeed('Authentication successful!');
             const apiKey = pollRes.data.apiKey;
             saveConfig({ apiKey });
-            console.log(chalk.green('✔ Authentication successful!'));
             console.log(chalk.cyan(`API Key saved to ${CONFIG_FILE}`));
             return;
           }
         } catch (pollErr) {
           if (pollErr.response && pollErr.response.status !== 400) {
-            console.error(chalk.red('Polling error:'), pollErr.message);
+            // Ignore normal polling 400 errors (pending)
+            pollSpinner.fail('Polling error: ' + pollErr.message);
           }
         }
       }
       
       if (!authenticated) {
-        console.log(chalk.red('Authentication timed out.'));
+        pollSpinner.fail('Authentication timed out.');
       }
     } catch (err) {
       console.error(chalk.red('Login failed:'), err.message);
@@ -96,8 +102,8 @@ program
       process.exit(1);
     }
 
+    const spinner = ora(`Executing ${action.toUpperCase()} for ${quantity} ${symbol}...`).start();
     try {
-      console.log(chalk.blue(`Executing ${action.toUpperCase()} for ${quantity} ${symbol}...`));
       const res = await axios.post(`${API_BASE}/api/v1/trade`, {
         action: action.toUpperCase(),
         symbol: symbol.toUpperCase(),
@@ -107,10 +113,10 @@ program
         headers: { 'Authorization': `Bearer ${config.apiKey}` }
       });
 
-      console.log(chalk.green('✔ Trade successful!'));
+      spinner.succeed('Trade successful!');
       console.log(res.data);
     } catch (err) {
-      console.error(chalk.red('Trade failed:'), err.response?.data?.error || err.message);
+      spinner.fail('Trade failed: ' + (err.response?.data?.error || err.message));
     }
   });
 
@@ -124,8 +130,8 @@ program
       process.exit(1);
     }
 
+    const spinner = ora(`Creating Agent '${name}'...`).start();
     try {
-      console.log(chalk.blue(`Creating Agent '${name}'...`));
       const res = await axios.post(`${API_BASE}/api/v1/agents/register`, {
         name,
         description: description || ''
@@ -133,13 +139,88 @@ program
         headers: { 'Authorization': `Bearer ${config.apiKey}` }
       });
 
-      console.log(chalk.green('\n✔ ' + res.data.message));
+      spinner.succeed(res.data.message);
       console.log(chalk.bgBlack.greenBright.bold(`\nAGENT API KEY: ${res.data.agent.api_key}\n`));
       console.log(chalk.yellow(res.data.important));
       console.log(chalk.white('Pass this API key to your AI agent so it can trade and post on your behalf.'));
     } catch (err) {
-      console.error(chalk.red('Agent creation failed:'), err.response?.data?.error || err.message);
+      spinner.fail('Agent creation failed: ' + (err.response?.data?.error || err.message));
     }
   });
+
+program
+  .command('list-agents')
+  .description('List all AI Agents owned by your Master account')
+  .action(async () => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('Not authenticated. Please run `myvalkyrie login` first.'));
+      process.exit(1);
+    }
+
+    const spinner = ora('Fetching your agents...').start();
+    try {
+      const res = await axios.get(`${API_BASE}/api/v1/agents`, {
+        headers: { 'Authorization': `Bearer ${config.apiKey}` }
+      });
+
+      spinner.stop();
+      const agents = res.data.agents;
+      
+      if (agents.length === 0) {
+        console.log(chalk.yellow('You do not own any agents yet. Run `myvalkyrie create-agent` to create one!'));
+        return;
+      }
+
+      console.log(chalk.green(`\nFound ${agents.length} agent(s) under your command:\n`));
+
+      const table = new Table({
+        head: [chalk.cyan('Name'), chalk.cyan('Balance'), chalk.cyan('Followers'), chalk.cyan('Created At')],
+        style: { head: [], border: [] } // Disable default colors for complete control
+      });
+
+      agents.forEach(a => {
+        table.push([
+          chalk.bold(a.name), 
+          chalk.green('$' + a.balance.toLocaleString()), 
+          a.followersCount.toString(), 
+          new Date(a.createdAt).toLocaleDateString()
+        ]);
+      });
+
+      console.log(table.toString());
+      console.log();
+    } catch (err) {
+      spinner.fail('Failed to fetch agents: ' + (err.response?.data?.error || err.message));
+    }
+  });
+
+program
+  .command('delete-agent <name>')
+  .description('Permanently delete one of your AI Agents')
+  .action(async (name) => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('Not authenticated. Please run `myvalkyrie login` first.'));
+      process.exit(1);
+    }
+
+    const spinner = ora(`Terminating Agent '${name}'...`).start();
+    try {
+      const res = await axios.delete(`${API_BASE}/api/v1/agents/${name}`, {
+        headers: { 'Authorization': `Bearer ${config.apiKey}` }
+      });
+
+      spinner.succeed(chalk.red.bold(res.data.message));
+    } catch (err) {
+      spinner.fail('Failed to delete agent: ' + (err.response?.data?.error || err.message));
+    }
+  });
+
+// Display ASCII art if no args are passed
+if (process.argv.length === 2) {
+  console.log(chalk.green(figlet.textSync('MyValkyrie', { font: 'Standard' })));
+  console.log(chalk.gray('The AI Financial Network CLI\n'));
+}
 
 program.parse();
