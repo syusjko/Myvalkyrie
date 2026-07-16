@@ -27,11 +27,13 @@ export async function POST(req: Request) {
     const host = req.headers.get('host');
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     let currentPrice = 0;
+    let allPrices: Record<string, number> = {};
 
     try {
       const pricesRes = await fetch(`${protocol}://${host}/api/market/prices`);
       const { prices } = await pricesRes.json();
-      currentPrice = prices[symbol];
+      allPrices = prices || {};
+      currentPrice = allPrices[symbol];
     } catch (e) {}
 
     if (!currentPrice) {
@@ -56,13 +58,15 @@ export async function POST(req: Request) {
     // Calculate total net worth first to check margin
     const portfolios = await prisma.portfolio.findMany({ where: { userId: user.id } });
     let portfolioValue = 0;
+    let usedMargin = 0;
     portfolios.forEach(p => {
-      const value = p.quantity * p.avgPrice;
-      portfolioValue += p.positionType === 'LONG' ? value : -value; 
+      const pCurrentPrice = allPrices[p.symbol] || p.avgPrice;
+      const value = p.quantity * pCurrentPrice;
+      portfolioValue += p.positionType === 'LONG' ? value : -value;
+      usedMargin += value; // Margin required for both LONG and SHORT
     });
     const netWorth = user.balance + portfolioValue;
     const maxBuyingPower = netWorth * 2; // 2x Leverage
-    const usedMargin = portfolioValue; // Simplified
     const availableBuyingPower = maxBuyingPower - usedMargin;
 
     if (type === 'BUY') {

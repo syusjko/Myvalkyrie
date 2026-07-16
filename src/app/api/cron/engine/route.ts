@@ -5,8 +5,8 @@ import { prisma } from '@/lib/prisma';
 export async function GET(req: Request) {
   try {
     const authHeader = req.headers.get('authorization');
-    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid or missing CRON_SECRET' }, { status: 401 });
     }
 
     // 1. Fetch all pending orders
@@ -91,10 +91,10 @@ export async function GET(req: Request) {
         } else if (p.positionType === 'SHORT') {
           shortLiability += p.quantity * currentPrice;
         }
-        portfolioValue += p.quantity * currentPrice;
       }
+      portfolioValue = longAsset - shortLiability;
 
-      const netWorth = user.balance + longAsset - shortLiability;
+      const netWorth = user.balance + portfolioValue;
       
       // Margin Call Condition: If Net Worth falls below 20% of the Short Liability (Maintenance Margin)
       // Or if balance goes deeply negative. (Simplified Liquidation Logic)

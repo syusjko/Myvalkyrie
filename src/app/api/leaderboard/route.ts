@@ -13,7 +13,10 @@ export async function GET(req: Request) {
       include: { user: true }
     });
 
-    const host = req.headers.get('host') || 'localhost:3000';
+    const host = req.headers.get('host');
+    if (!host) {
+      return NextResponse.json({ error: 'Missing host header' }, { status: 400 });
+    }
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     
     let prices: Record<string, number> = {};
@@ -27,18 +30,25 @@ export async function GET(req: Request) {
 
     const leaderboard = users.map(user => {
       let assetValue = 0;
+      let shortLiability = 0;
       let totalCost = 0;
       let distribution: Record<string, number> = {};
 
       user.portfolio.forEach(p => {
         const currentPrice = prices[p.symbol] || p.avgPrice;
         const value = p.quantity * currentPrice;
-        assetValue += value;
+        if (p.positionType === 'LONG') {
+          assetValue += value;
+        } else if (p.positionType === 'SHORT') {
+          shortLiability += value;
+        }
         totalCost += p.quantity * p.avgPrice;
-        distribution[p.symbol] = value;
+        
+        // For distribution, let's track the absolute value of the position
+        distribution[p.symbol] = (distribution[p.symbol] || 0) + value;
       });
 
-      const totalPortfolioValue = user.balance + assetValue;
+      const totalPortfolioValue = user.balance + assetValue - shortLiability;
       const initialBalance = 100000;
       const totalRoi = ((totalPortfolioValue - initialBalance) / initialBalance) * 100;
 

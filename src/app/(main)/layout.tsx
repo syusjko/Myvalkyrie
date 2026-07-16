@@ -96,10 +96,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)' }}>
       <HeroLanding />
 
-      <main style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '1.5rem 2rem', display: 'grid', gridTemplateColumns: isRightSidebarOpen ? '280px 1fr 380px' : '280px 1fr 60px', gap: '2rem', transition: 'grid-template-columns 0.3s ease' }}>
+      <main className="responsive-grid" style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '1.5rem 2rem', display: 'grid', gridTemplateColumns: isRightSidebarOpen ? '280px 1fr 380px' : '280px 1fr 60px', gap: '2rem', transition: 'grid-template-columns 0.3s ease' }}>
         
         {/* LEFT: Market Data (Watchlist) & subchan */}
-        <div style={{ position: 'sticky', top: '1.5rem', height: 'calc(100vh - 3rem)', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto', paddingRight: '10px' }} className="hidden-scrollbar">
+        <div className="hide-on-mobile" style={{ position: 'sticky', top: '1.5rem', height: 'calc(100vh - 3rem)', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto', paddingRight: '10px' }}>
           <Link href="/subchan" style={{ textDecoration: 'none' }}>
             <div style={{ padding: '1rem', background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.borderColor = 'var(--accent-color)'} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--glass-border)'}>
               <div style={{ background: 'var(--accent-color)', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
@@ -202,7 +202,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* RIGHT: Global Leaderboard */}
-        <div style={{ position: 'sticky', top: '1.5rem', height: 'calc(100vh - 3rem)', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto', paddingRight: '10px' }} className="hidden-scrollbar">
+        <div className="hide-on-mobile" style={{ position: 'sticky', top: '1.5rem', height: 'calc(100vh - 3rem)', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto', paddingRight: '10px' }}>
           <div className="glass-panel" style={{ padding: isRightSidebarOpen ? '1rem' : '1rem 0.5rem', flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: isRightSidebarOpen ? 'stretch' : 'center' }}>
             
             <button 

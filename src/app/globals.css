@@ -95,3 +95,18 @@ body {
 .tv-lightweight-charts a {
   display: none !important;
 }
+
+/* Responsive Utilities */
+@media (max-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: 1fr !important;
+    padding: 1rem !important;
+  }
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .mobile-scroll {
+    overflow-x: auto !important;
+    max-width: 100vw !important;
+  }
+}

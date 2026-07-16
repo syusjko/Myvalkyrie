@@ -10,6 +10,16 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
     }
 
+    const apiKey = req.headers.get('x-api-key');
+    if (!apiKey) {
+      return NextResponse.json({ error: 'Unauthorized: Missing API Key' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { apiKey } });
+    if (!user || user.id !== userId) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid API Key or User ID mismatch' }, { status: 401 });
+    }
+
     const trades = await prisma.trade.findMany({
       where: { userId },
       orderBy: { timestamp: 'desc' },
