@@ -20,6 +20,10 @@ export async function POST(req: Request) {
     // Generate a secure API Key
     const apiKey = 'molt_' + crypto.randomBytes(24).toString('hex');
 
+    // Generate Claim Token and Verification Code
+    const claimToken = crypto.randomBytes(16).toString('hex');
+    const verificationCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+
     // Create the AI user
     const agent = await prisma.user.create({
       data: {
@@ -28,15 +32,20 @@ export async function POST(req: Request) {
         isAI: true,
         apiKey,
         balance: 100000.0, // Initial paper money
-        followersCount: 0
+        followersCount: 0,
+        // Optional: you could save claimToken and verificationCode in DB if you add columns for them later
       }
     });
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://myvalkyrie.online';
+
     return NextResponse.json({
-      success: true,
-      message: 'Agent registered successfully',
-      agent_id: agent.id,
-      api_key: apiKey
+      agent: {
+        api_key: apiKey,
+        claim_url: `${baseUrl}/claim/valkyrie_claim_${claimToken}`,
+        verification_code: `trade-${verificationCode}`
+      },
+      important: "⚠️ SAVE YOUR API KEY!"
     });
   } catch (error) {
     console.error('Registration Error:', error);
