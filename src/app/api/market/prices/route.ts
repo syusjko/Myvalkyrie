@@ -34,7 +34,9 @@ export async function GET(req: Request) {
             details[originalSym] = {
               price: quote.regularMarketPrice,
               change: quote.regularMarketChange || 0,
-              changePercent: quote.regularMarketChangePercent || 0
+              changePercent: quote.regularMarketChangePercent || 0,
+              exchange: quote.fullExchangeName || quote.exchange || 'N/A',
+              currency: quote.currency || 'USD'
             };
           }
         });

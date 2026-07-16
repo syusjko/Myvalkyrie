@@ -16,6 +16,7 @@ export default function AgentClient({ user }: { user: any }) {
   const [timeRange, setTimeRange] = useState<'1 day' | '5 days' | '1 month' | '6 months' | '1 year' | 'All time'>('1 month');
   const [mounted, setMounted] = useState(false);
   const [livePrices, setLivePrices] = useState<Record<string, number>>({});
+  const [marketDetails, setMarketDetails] = useState<Record<string, any>>({});
 
   useEffect(() => setMounted(true), []);
 
@@ -149,6 +150,7 @@ export default function AgentClient({ user }: { user: any }) {
       .then(res => res.json())
       .then(data => {
         if (data.prices) setLivePrices(data.prices);
+        if (data.details) setMarketDetails(data.details);
       })
       .catch(console.error);
   }, [user.portfolio]);
@@ -457,24 +459,78 @@ export default function AgentClient({ user }: { user: any }) {
                   {user.portfolio.length === 0 ? (
                     <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '3rem' }}>No assets in portfolio.</div>
                   ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                      <thead>
-                        <tr style={{ background: 'rgba(0,0,0,0.2)' }}>
-                          <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Asset</th>
-                          <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Quantity</th>
-                          <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Avg Price</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {user.portfolio.map((asset: any) => (
-                          <tr key={asset.id}>
-                            <td style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)', fontWeight: 'bold' }}>{asset.symbol}</td>
-                            <td style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>{asset.quantity.toLocaleString()}</td>
-                            <td style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>${asset.avgPrice.toLocaleString()}</td>
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px', fontSize: '0.9rem' }}>
+                        <thead>
+                          <tr style={{ background: 'rgba(0,0,0,0.2)', whiteSpace: 'nowrap' }}>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>티커 (수량)</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>현재가 / 평단가</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>손익 (수익률%)</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>평가금액 / 매입금액</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>전일대비 (등락율%)</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>거래소 / 통화</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>보유비중</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {user.portfolio.map((asset: any) => {
+                            if (asset.quantity <= 0) return null;
+                            const details = marketDetails[asset.symbol] || {};
+                            const currentPrice = details.price || asset.avgPrice;
+                            const purchaseValue = asset.quantity * asset.avgPrice;
+                            const currentValue = asset.quantity * currentPrice;
+                            const pnL = currentValue - purchaseValue;
+                            const pnLPercent = purchaseValue > 0 ? (pnL / purchaseValue) * 100 : 0;
+                            const dayChange = details.change || 0;
+                            const dayChangePercent = details.changePercent || 0;
+                            const exchange = details.exchange || 'N/A';
+                            const currency = details.currency || 'USD';
+                            
+                            // Calculate total portfolio value for weight
+                            const totalPortfolioValue = user.balance + user.portfolio.reduce((sum: number, p: any) => {
+                              const pPrice = marketDetails[p.symbol]?.price || p.avgPrice;
+                              return sum + p.quantity * pPrice;
+                            }, 0);
+                            const weight = totalPortfolioValue > 0 ? (currentValue / totalPortfolioValue) * 100 : 0;
+
+                            const pnlColor = pnL > 0 ? '#10b981' : pnL < 0 ? '#ef4444' : 'var(--text-secondary)';
+                            const dayChangeColor = dayChange > 0 ? '#10b981' : dayChange < 0 ? '#ef4444' : 'var(--text-secondary)';
+
+                            return (
+                              <tr key={asset.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                <td style={{ padding: '1rem 1.5rem' }}>
+                                  <div style={{ fontWeight: 'bold' }}>{asset.symbol}</div>
+                                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{asset.quantity.toLocaleString()}주</div>
+                                </td>
+                                <td style={{ padding: '1rem 1.5rem' }}>
+                                  <div>${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>${asset.avgPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                </td>
+                                <td style={{ padding: '1rem 1.5rem', color: pnlColor }}>
+                                  <div>{pnL > 0 ? '+' : ''}${pnL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                  <div style={{ fontSize: '0.8rem' }}>{pnLPercent > 0 ? '+' : ''}{pnLPercent.toFixed(2)}%</div>
+                                </td>
+                                <td style={{ padding: '1rem 1.5rem' }}>
+                                  <div>${currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>${purchaseValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                </td>
+                                <td style={{ padding: '1rem 1.5rem', color: dayChangeColor }}>
+                                  <div>{dayChange > 0 ? '+' : ''}${dayChange.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                  <div style={{ fontSize: '0.8rem' }}>{dayChangePercent > 0 ? '+' : ''}{dayChangePercent.toFixed(2)}%</div>
+                                </td>
+                                <td style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)' }}>
+                                  <div>{exchange}</div>
+                                  <div style={{ fontSize: '0.8rem' }}>{currency}</div>
+                                </td>
+                                <td style={{ padding: '1rem 1.5rem' }}>
+                                  {weight.toFixed(2)}%
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                 </div>
                 
