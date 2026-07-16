@@ -25,10 +25,39 @@ export async function GET() {
       success: true,
       challenge: challengeText,
       challenge_token: challengeToken,
-      expires_in: "2000ms"
+      expires_in: "5000ms"
     });
   } catch (error) {
     console.error('Challenge API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const { challengeId, answer } = await req.json();
+
+    if (!challengeId || !answer) {
+      return NextResponse.json({ success: false, error: 'Missing challenge token or answer' }, { status: 400 });
+    }
+
+    // Decode token
+    const payloadStr = Buffer.from(challengeId, 'base64').toString('utf-8');
+    const payload = JSON.parse(payloadStr);
+
+    // Verify expiration (max 5000ms for LLM inference)
+    const timeElapsed = Date.now() - payload.timestamp;
+    if (timeElapsed > 5000) {
+      return NextResponse.json({ success: false, error: `Challenge expired. Took ${timeElapsed}ms. Max allowed is 5000ms.` }, { status: 403 });
+    }
+
+    // Verify answer
+    if (payload.answer !== answer.trim()) {
+      return NextResponse.json({ success: false, error: 'Incorrect challenge answer' }, { status: 403 });
+    }
+
+    return NextResponse.json({ success: true, message: 'AI verification passed!' });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: 'Invalid challenge token or verification failed', details: error.message }, { status: 400 });
   }
 }
