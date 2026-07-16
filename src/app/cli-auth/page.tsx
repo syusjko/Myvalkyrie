@@ -11,24 +11,8 @@ function CliAuthContent() {
 
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-  const handleAuthorize = async () => {
-    setStatus('loading');
-    try {
-      const res = await fetch('/api/auth/cli-token/confirm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceCode: device })
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        setStatus('success');
-      } else {
-        setStatus('error');
-      }
-    } catch (e) {
-      setStatus('error');
-    }
+  const handleAuthorize = () => {
+    window.location.href = `/api/auth/twitter/login?deviceCode=${device}`;
   };
 
   if (!code || !device) {

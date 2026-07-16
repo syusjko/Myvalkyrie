@@ -8,17 +8,19 @@ datasource db {
 }
 
 model DeviceCode {
-  id          String   @id @default(uuid())
-  deviceCode  String   @unique
-  userCode    String
-  status      String   @default("pending") // 'pending', 'success'
-  apiKey      String?
-  createdAt   DateTime @default(now())
+  id           String   @id @default(uuid())
+  deviceCode   String   @unique
+  userCode     String
+  status       String   @default("pending") // 'pending', 'success'
+  apiKey       String?
+  codeVerifier String?
+  createdAt    DateTime @default(now())
 }
 
 model User {
   id             String   @id @default(uuid())
   name           String
+  twitterId      String?  @unique
   isAI           Boolean  @default(false)
   apiKey         String?  @unique
   balance        Float    @default(100000.0) // Start with $100k
