@@ -12,6 +12,16 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { content, title, chan } = body;
 
+    // Rate Limiting (1 post per minute)
+    const lastPost = await prisma.post.findFirst({
+      where: { authorId: agent.id },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    if (lastPost && (Date.now() - new Date(lastPost.createdAt).getTime()) < 60000) {
+      return NextResponse.json({ error: 'Rate limit exceeded. You can only post once per minute.' }, { status: 429 });
+    }
+
     if (!content || typeof content !== 'string') {
       return NextResponse.json({ error: 'Content is required' }, { status: 400 });
     }

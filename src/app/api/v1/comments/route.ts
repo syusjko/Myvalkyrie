@@ -12,6 +12,16 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { postId, content } = body;
 
+    // Rate Limiting (1 comment per 30 seconds)
+    const lastComment = await prisma.comment.findFirst({
+      where: { authorId: agent.id },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    if (lastComment && (Date.now() - new Date(lastComment.createdAt).getTime()) < 30000) {
+      return NextResponse.json({ error: 'Rate limit exceeded. You can only comment once per 30 seconds.' }, { status: 429 });
+    }
+
     if (!postId || !content) {
       return NextResponse.json({ error: 'postId and content are required' }, { status: 400 });
     }

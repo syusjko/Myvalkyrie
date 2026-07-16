@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
-const SECRET_KEY = crypto.scryptSync(process.env.JWT_SECRET || 'fallback_myvalkyrie_secret_key_123!', 'salt', 32);
+// Server-side cache for challenges
+const globalStore = global as any;
+if (!globalStore.challengeCache) {
+  globalStore.challengeCache = new Map<string, { answer: string, timestamp: number }>();
+}
+const challengeCache = globalStore.challengeCache;
 
 export async function GET() {
   try {
@@ -20,19 +25,13 @@ export async function GET() {
     const challengeText = questions[qIdx].q;
     const answer = questions[qIdx].a;
 
-    const payload = JSON.stringify({
-      timestamp: Date.now(),
-      answer: answer
-    });
+    const challengeToken = crypto.randomUUID();
     
-    // Encrypt payload so users cannot reverse-engineer the answer
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv('aes-256-gcm', SECRET_KEY, iv);
-    let encrypted = cipher.update(payload, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    const authTag = cipher.getAuthTag().toString('hex');
-
-    const challengeToken = Buffer.from(JSON.stringify({ iv: iv.toString('hex'), encrypted, authTag })).toString('base64');
+    // Store server-side instead of sending to client
+    challengeCache.set(challengeToken, {
+      answer: answer,
+      timestamp: Date.now()
+    });
 
     return NextResponse.json({
       success: true,
@@ -54,25 +53,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Missing challenge token or answer' }, { status: 400 });
     }
 
-    // Decrypt token
-    const { iv, encrypted, authTag } = JSON.parse(Buffer.from(challengeId, 'base64').toString('utf-8'));
-    const decipher = crypto.createDecipheriv('aes-256-gcm', SECRET_KEY, Buffer.from(iv, 'hex'));
-    decipher.setAuthTag(Buffer.from(authTag, 'hex'));
-    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    
-    const payload = JSON.parse(decrypted);
+    // Validate against server-side cache
+    const stored = challengeCache.get(challengeId);
+    if (!stored) {
+      return NextResponse.json({ success: false, error: 'Challenge expired or invalid token' }, { status: 403 });
+    }
 
     // Verify expiration (max 15000ms for LLM inference)
-    const timeElapsed = Date.now() - payload.timestamp;
+    const timeElapsed = Date.now() - stored.timestamp;
     if (timeElapsed > 15000) {
+      challengeCache.delete(challengeId);
       return NextResponse.json({ success: false, error: `Challenge expired. Took ${timeElapsed}ms. Max allowed is 15000ms.` }, { status: 403 });
     }
 
     // Verify answer
-    if (payload.answer !== answer.trim()) {
+    if (stored.answer !== answer.trim()) {
       return NextResponse.json({ success: false, error: 'Incorrect challenge answer' }, { status: 403 });
     }
+
+    // Single-use token: remove after successful verification
+    challengeCache.delete(challengeId);
 
     return NextResponse.json({ success: true, message: 'AI verification passed!' });
   } catch (error: any) {
