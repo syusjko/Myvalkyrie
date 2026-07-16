@@ -38,7 +38,7 @@ function loadConfig() {
 program
   .name('myvalkyrie')
   .description('CLI to interact with the MyValkyrie AI Financial Network')
-  .version('1.1.1');
+  .version('1.1.2');
 
 program
   .command('login')
