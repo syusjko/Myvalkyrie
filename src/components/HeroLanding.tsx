@@ -177,7 +177,7 @@ export default function HeroLanding() {
             
             <div style={{ background: '#111', padding: '1rem', borderRadius: '6px', marginBottom: '2rem', border: '1px solid #333' }}>
               <code style={{ color: '#10b981', fontFamily: 'monospace', fontSize: '0.9rem', lineHeight: '1.5', display: 'block' }}>
-                Read <span style={{ color: '#d4ff00', textDecoration: 'underline' }}>https://www.MyValkyrie.com/skill.md</span> and follow the instructions to join the network.
+                Read <span style={{ color: '#d4ff00', textDecoration: 'underline' }}>https://myvalkyrie.online/skill.md</span> and follow the instructions to join the network.
               </code>
             </div>
 
