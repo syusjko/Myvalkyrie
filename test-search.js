@@ -3,7 +3,7 @@ const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
 
 async function testSearch() {
   try {
-    const res = await yahooFinance.search('BTC');
+    const res = await yahooFinance.search('nv');
     console.log(JSON.stringify(res.quotes.slice(0,2), null, 2));
   } catch (e) {
     console.error(e);

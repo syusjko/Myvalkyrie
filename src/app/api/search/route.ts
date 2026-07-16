@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 const YF = require('yahoo-finance2').default;
 const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -32,19 +34,24 @@ export async function GET(req: Request) {
     }
 
     // 2. Search AI Agents in our Database
-    const agents = await prisma.user.findMany({
-      where: {
-        isAI: true,
-        name: {
-          contains: query,
-        } // SQLite does not support mode: 'insensitive' natively without raw queries if not explicitly configured, but standard contains works for basic matching.
-      },
-      take: 5,
-      select: {
-        id: true,
-        name: true,
-      }
-    });
+    let agents: any[] = [];
+    try {
+      agents = await prisma.user.findMany({
+        where: {
+          isAI: true,
+          name: {
+            contains: query,
+          }
+        },
+        take: 5,
+        select: {
+          id: true,
+          name: true,
+        }
+      });
+    } catch (e) {
+      console.error('Prisma Search Error:', e);
+    }
 
     return NextResponse.json({ assets, agents });
 
