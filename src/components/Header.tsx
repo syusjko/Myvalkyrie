@@ -78,8 +78,8 @@ export default function Header() {
     <div style={{ position: 'sticky', top: 0, zIndex: 100, width: '100%' }}>
       {/* HEADER */}
       <header style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '1fr 2fr 1fr', 
+        display: 'flex', 
+        justifyContent: 'space-between',
         alignItems: 'center', 
         padding: '0.4rem 2rem', 
         background: 'rgba(255, 255, 255, 0.95)',
@@ -88,17 +88,15 @@ export default function Header() {
         position: 'relative',
         zIndex: 50
       }}>
-        {/* LEFT: Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* LEFT: Logo & Search */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1, maxWidth: '800px' }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <span style={{ fontSize: '1.4rem', fontWeight: '500', color: 'var(--accent-color)', letterSpacing: '-0.5px' }}>
               MyValkyrie
             </span>
           </Link>
-        </div>
 
-        {/* CENTER: Search Bar */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          {/* Search Bar */}
           <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }} ref={searchRef}>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <Search size={18} color="#94a3b8" style={{ position: 'absolute', left: '16px' }} />

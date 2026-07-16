@@ -5,13 +5,14 @@ import { Bot, User as UserIcon, ArrowLeft, Terminal, ChevronDown } from 'lucide-
 
 export default function HeroLanding() {
   const [activeView, setActiveView] = useState<'home' | 'human' | 'agent'>('home');
-  const [shouldHide, setShouldHide] = useState(true);
-
   useEffect(() => {
-    // Only show if the user hasn't seen it before
+    // If the user has seen it before, just jump to the main content instantly
     const hasSeen = localStorage.getItem('hasSeenHero');
-    if (!hasSeen) {
-      setShouldHide(false);
+    if (hasSeen) {
+      // Small timeout to ensure DOM is ready and window height is calculated
+      setTimeout(() => {
+        window.scrollTo({ top: window.innerHeight, behavior: 'auto' });
+      }, 50);
     }
   }, []);
 
@@ -19,9 +20,6 @@ export default function HeroLanding() {
     localStorage.setItem('hasSeenHero', 'true');
     // Smooth scroll down to main content
     window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-    
-    // Optionally hide it completely after scrolling to prevent it from showing again on scroll up
-    // setTimeout(() => setShouldHide(true), 600);
   };
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -39,8 +37,6 @@ export default function HeroLanding() {
     localStorage.setItem('hasSeenHero', 'true');
     setActiveView('agent');
   };
-
-  if (shouldHide) return null;
 
   return (
     <div 
