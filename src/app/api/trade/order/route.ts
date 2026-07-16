@@ -1,0 +1,157 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+export async function POST(req: Request) {
+  try {
+    const apiKey = req.headers.get('x-api-key');
+    if (!apiKey) {
+      return NextResponse.json({ error: 'Unauthorized: Missing API Key' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { apiKey } });
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid API Key' }, { status: 401 });
+    }
+
+    const { symbol, type, orderType = 'MARKET', targetPrice, quantity, rationale } = await req.json();
+    // orderType: 'MARKET', 'LIMIT', 'STOP'
+    
+    // Save pending orders directly
+    if (orderType === 'LIMIT' || orderType === 'STOP') {
+      if (!targetPrice) return NextResponse.json({ error: 'Target price required for limit/stop orders' }, { status: 400 });
+      const order = await prisma.order.create({
+        data: { userId: user.id, symbol, type: orderType, side: type, quantity, targetPrice, status: 'PENDING' }
+      });
+      return NextResponse.json({ message: `${orderType} order placed`, order });
+    }
+    const host = req.headers.get('host');
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    let currentPrice = 0;
+
+    try {
+      const pricesRes = await fetch(`${protocol}://${host}/api/market/prices`);
+      const { prices } = await pricesRes.json();
+      currentPrice = prices[symbol];
+    } catch (e) {}
+
+    if (!currentPrice) {
+      return NextResponse.json({ error: 'Invalid symbol or market unavailable' }, { status: 400 });
+    }
+
+    // --- SLIPPAGE SIMULATION ---
+    // Add a baseline spread of 0.05%
+    const baseSpread = 0.0005; 
+    // Quantity penalty: 0.01% per 100 units
+    const quantityPenalty = (quantity / 100) * 0.0001; 
+    const totalSlippage = baseSpread + quantityPenalty;
+    
+    const executedPrice = type === 'BUY' 
+      ? currentPrice * (1 + totalSlippage) 
+      : currentPrice * (1 - totalSlippage);
+
+    const totalCost = executedPrice * quantity;
+    let trade;
+
+    // --- MARGIN CHECK (2x Leverage Allowed) ---
+    // Calculate total net worth first to check margin
+    const portfolios = await prisma.portfolio.findMany({ where: { userId: user.id } });
+    let portfolioValue = 0;
+    portfolios.forEach(p => {
+      const value = p.quantity * p.avgPrice;
+      portfolioValue += p.positionType === 'LONG' ? value : -value; 
+    });
+    const netWorth = user.balance + portfolioValue;
+    const maxBuyingPower = netWorth * 2; // 2x Leverage
+    const usedMargin = portfolioValue; // Simplified
+    const availableBuyingPower = maxBuyingPower - usedMargin;
+
+    if (type === 'BUY') {
+      if (availableBuyingPower < totalCost) return NextResponse.json({ error: 'Insufficient buying power (Margin Exceeded)' }, { status: 400 });
+
+      trade = await prisma.$transaction(async (tx) => {
+        await tx.user.update({ where: { id: user.id }, data: { balance: { decrement: totalCost } } });
+        
+        const existingPortfolio = await tx.portfolio.findUnique({
+          where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'LONG' } }
+        });
+        
+        const newQuantity = (existingPortfolio?.quantity || 0) + quantity;
+        const newAvgPrice = existingPortfolio 
+          ? ((existingPortfolio.quantity * existingPortfolio.avgPrice) + (quantity * executedPrice)) / newQuantity 
+          : executedPrice;
+
+        await tx.portfolio.upsert({
+          where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'LONG' } },
+          update: { quantity: { increment: quantity }, avgPrice: newAvgPrice },
+          create: { userId: user.id, symbol, positionType: 'LONG', quantity, avgPrice: executedPrice },
+        });
+        return await tx.trade.create({ data: { userId: user.id, symbol, type, quantity, price: executedPrice } });
+      });
+    } else if (type === 'SELL') {
+      const portfolio = await prisma.portfolio.findUnique({ where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'LONG' } } });
+      
+      // If we don't have enough LONG quantity, it means we are shorting!
+      const currentQty = portfolio?.quantity || 0;
+      const shortQuantity = quantity - currentQty;
+
+      if (shortQuantity > 0) {
+        // Shorting requires margin check
+        if (availableBuyingPower < executedPrice * shortQuantity) {
+          return NextResponse.json({ error: 'Insufficient margin for shorting' }, { status: 400 });
+        }
+      }
+
+      trade = await prisma.$transaction(async (tx) => {
+        let cashToReceive = 0;
+        // 1. Sell existing LONG positions if any
+        if (currentQty > 0) {
+          const sellQty = Math.min(currentQty, quantity);
+          cashToReceive += sellQty * executedPrice;
+          await tx.portfolio.update({ 
+            where: { id: portfolio!.id }, 
+            data: { quantity: { decrement: sellQty } } 
+          });
+        }
+        
+        // 2. Open SHORT positions for the remainder
+        if (shortQuantity > 0) {
+          cashToReceive += shortQuantity * executedPrice; // We receive cash for shorting
+          const existingShort = await tx.portfolio.findUnique({
+            where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'SHORT' } }
+          });
+          
+          const newShortQty = (existingShort?.quantity || 0) + shortQuantity;
+          const newShortAvgPrice = existingShort
+            ? ((existingShort.quantity * existingShort.avgPrice) + (shortQuantity * executedPrice)) / newShortQty
+            : executedPrice;
+
+          await tx.portfolio.upsert({
+            where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'SHORT' } },
+            update: { quantity: { increment: shortQuantity }, avgPrice: newShortAvgPrice },
+            create: { userId: user.id, symbol, positionType: 'SHORT', quantity: shortQuantity, avgPrice: executedPrice },
+          });
+        }
+
+        if (cashToReceive > 0) {
+          await tx.user.update({ where: { id: user.id }, data: { balance: { increment: cashToReceive } } });
+        }
+        return await tx.trade.create({ data: { userId: user.id, symbol, type, quantity, price: executedPrice } });
+      });
+    }
+
+    // AI Auto-Posting Feature
+    if (user.isAI && rationale) {
+      await prisma.post.create({
+        data: {
+          authorId: user.id,
+          content: rationale,
+        }
+      });
+    }
+
+    return NextResponse.json({ message: `${type} order executed`, trade });
+  } catch (error) {
+    console.error('Trade Error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

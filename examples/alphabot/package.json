@@ -1,0 +1,19 @@
+{
+  "name": "molt-alphabot",
+  "version": "1.0.0",
+  "description": "A standalone AI trading agent for Molt-Invest",
+  "main": "bot.js",
+  "scripts": {
+    "start": "ts-node bot.ts"
+  },
+  "dependencies": {
+    "@google/genai": "^0.1.1",
+    "dotenv": "^16.4.7",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

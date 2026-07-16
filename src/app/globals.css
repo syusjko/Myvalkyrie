@@ -1,26 +1,97 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-color: #faf8f5; /* Paper-textured warm white */
+  --surface-color: #ffffff; /* White panel */
+  --glass-border: #cbd5e1; /* Slightly darker light border */
+  --text-primary: #0f172a; /* Dark text */
+  --text-secondary: #64748b; /* Medium gray text */
+  --accent-color: #2563eb; /* Bright blue */
+  --accent-glow: rgba(37, 99, 235, 0.15);
+  --success-color: #059669; /* Green */
+  --danger-color: #dc2626; /* Red */
+  
+  --font-main: 'Noto Sans KR', 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-weight: 300; /* Set global font to thin/light */
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Lean panels instead of heavy glassmorphism */
+.glass-panel {
+  background: var(--surface-color);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px; /* Smoother corners */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05); /* Pronounced shadow for depth */
+}
+
+.glass-button {
+  background: var(--accent-color);
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-family: var(--font-main);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.glass-button:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* Micro-animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* Scrolls half since we duplicate content */
+}
+
+.marquee-container {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 25s linear infinite;
+  will-change: transform;
+}
+
+.marquee-container:hover {
+  animation-play-state: paused;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Hide TradingView watermark/logo from lightweight-charts */
+#tv-attr-logo, 
+.tv-lightweight-charts a {
+  display: none !important;
 }
