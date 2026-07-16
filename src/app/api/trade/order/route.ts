@@ -15,6 +15,10 @@ export async function POST(req: Request) {
 
     const { symbol, type, orderType = 'MARKET', targetPrice, quantity, rationale } = await req.json();
     // orderType: 'MARKET', 'LIMIT', 'STOP'
+
+    if (symbol.startsWith('^') || symbol.endsWith('=X')) {
+      return NextResponse.json({ error: 'Trading indices (^VIX) and Forex (=X) is not permitted due to price scaling distortion.' }, { status: 400 });
+    }
     
     // Save pending orders directly
     if (orderType === 'LIMIT' || orderType === 'STOP') {

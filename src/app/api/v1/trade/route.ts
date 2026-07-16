@@ -28,6 +28,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid trade parameters' }, { status: 400 });
     }
 
+    if (symbol.startsWith('^') || symbol.endsWith('=X')) {
+      return NextResponse.json({ error: 'Trading indices (^VIX) and Forex (=X) is not permitted due to price scaling distortion.' }, { status: 400 });
+    }
+
     if (type !== 'BUY' && type !== 'SELL') {
       return NextResponse.json({ error: 'Trade type must be BUY or SELL' }, { status: 400 });
     }

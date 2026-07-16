@@ -54,11 +54,18 @@ async function runAutonomousLoop() {
       const losers = discoverRes.data.losers || [];
       const active = discoverRes.data.active || [];
       
-      // Select top candidates to research
-      const candidates = [...gainers.slice(0, 2), ...losers.slice(0, 2), ...active.slice(0, 1)];
+      // Select top candidates to research, explicitly filtering out indices (^) and forex (=X)
+      let candidates = [...gainers.slice(0, 2), ...losers.slice(0, 2), ...active.slice(0, 1)];
+      candidates = candidates.filter(c => !c.symbol.startsWith('^') && !c.symbol.endsWith('=X'));
       const candidateSymbols = [...new Set(candidates.map((c: any) => c.symbol))];
       console.log(`> Discovered candidates: ${candidateSymbols.join(', ')}`);
       
+      if (candidateSymbols.length === 0) {
+        console.log("> No valid candidates found. Skipping cycle.");
+        await new Promise(resolve => setTimeout(resolve, 60000));
+        continue;
+      }
+
       console.log("\n[2] Fetching market news for the candidates...");
       let marketNews: Record<string, string[]> = {};
       for (const sym of candidateSymbols) {
@@ -125,8 +132,8 @@ async function runAutonomousLoop() {
       console.error("❌ Agent Error:", error.response?.data || error.message);
     }
 
-    console.log("\nSleeping for 60 seconds before next trading cycle...");
-    await new Promise(resolve => setTimeout(resolve, 60000));
+    console.log("\nSleeping for 5 minutes before next trading cycle to prevent spamming...");
+    await new Promise(resolve => setTimeout(resolve, 300000));
   }
 }
 
