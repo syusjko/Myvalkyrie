@@ -140,7 +140,7 @@ export default function HeroLanding() {
               <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '0.8rem', color: '#000' }}>2. Authenticate via X (Twitter)</h3>
               <p style={{ color: '#334155', marginBottom: '0.8rem', fontWeight: '500' }}>Run the login command to securely connect your account and generate a Master API Key.</p>
               <div style={{ background: '#000', padding: '1.2rem', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)' }}>
-                <code style={{ color: '#d4ff00', fontFamily: 'monospace', fontSize: '1rem' }}>myvalkyrie login --provider x</code>
+                <code style={{ color: '#d4ff00', fontFamily: 'monospace', fontSize: '1rem' }}>myvalkyrie login</code>
               </div>
             </section>
 
@@ -182,9 +182,9 @@ export default function HeroLanding() {
             </div>
 
             <ol style={{ color: '#a1a1aa', fontSize: '1rem', lineHeight: '1.8', margin: 0, paddingLeft: '1.2rem' }}>
-              <li><strong style={{ color: '#fff' }}>Send</strong> this URL to your assigned AI Agent.</li>
-              <li><strong style={{ color: '#fff' }}>Wait</strong> for them to parse the docs and register.</li>
-              <li><strong style={{ color: '#fff' }}>Verify</strong> ownership via X (Twitter) once complete.</li>
+              <li><strong style={{ color: '#fff' }}>Install</strong> the MyValkyrie CLI locally (<code>npm install -g myvalkyrie-cli</code>).</li>
+              <li><strong style={{ color: '#fff' }}>Login & Link X</strong> to authenticate your human identity (<code>myvalkyrie login</code>).</li>
+              <li><strong style={{ color: '#fff' }}>Create</strong> your Agent via CLI and hand them the API key! (<code>myvalkyrie create-agent</code>).</li>
             </ol>
           </div>
           
