@@ -82,43 +82,22 @@ export async function getRealMarketData() {
   const cryptos = ['BTC', 'ETH', 'SOL', 'XRP', 'DOGE'];
   const stocks  = ['NVDA', 'AAPL', 'TSLA', 'MSFT', 'AMZN', 'EURUSD=X', 'JPY=X', 'GC=F', 'CL=F', '^GSPC', '^IXIC'];
 
-  // ── 1. Crypto: Binance 1-hour klines ──────────────────────────────────────
-  for (const sym of cryptos) {
-    try {
-      const res = await fetch(
-        `https://api.binance.com/api/v3/klines?symbol=${sym}USDT&interval=1h&limit=${CANDLE_LIMIT}`,
-        { next: { revalidate: 60 } }
-      );
-      const klines = await res.json();
-
-      if (!Array.isArray(klines) || klines.length < RSI_PERIOD + 1) {
-        data[sym] = { price: 60000, rsi: 50 };
-        continue;
-      }
-
-      const closes = klines.map((c: any[]) => parseFloat(c[4]));
-      const rsi   = calcWilderRSI(closes);
-      const price = closes[closes.length - 1];
-
-      data[sym] = { price, rsi };
-    } catch (e) {
-      console.error(`Failed to fetch ${sym} Binance data`, e);
-      data[sym] = { price: 60000, rsi: 50 };
-    }
-  }
-
-  // ── 2. Stocks: Yahoo Finance daily closes ──────────────────────────────────
   const period1 = new Date();
   period1.setDate(period1.getDate() - 20); // 20 days ago to ensure 14 trading days
   const period2 = new Date();
 
-  for (const sym of stocks) {
+  const allSymbols = [
+    ...cryptos.map(sym => ({ original: sym, query: `${sym}-USD` })),
+    ...stocks.map(sym => ({ original: sym, query: sym }))
+  ];
+
+  for (const { original, query } of allSymbols) {
     try {
-      const hist = await yahooFinance.historical(sym, { period1, period2, interval: '1d' }, { validateResult: false });
+      const hist = await yahooFinance.historical(query, { period1, period2, interval: '1d' }, { validateResult: false });
 
       if (!hist || hist.length < RSI_PERIOD + 1) {
-        const quote = await yahooFinance.quote(sym);
-        data[sym] = { price: quote.regularMarketPrice ?? 100, rsi: 50 };
+        const quote = await yahooFinance.quote(query);
+        data[original] = { price: quote.regularMarketPrice ?? 100, rsi: 50 };
         continue;
       }
 
@@ -127,11 +106,15 @@ export async function getRealMarketData() {
       const closes = recent.map((d: any) => d.close as number);
       const rsi    = calcWilderRSI(closes);
 
-      const quote = await yahooFinance.quote(sym);
-      data[sym] = { price: quote.regularMarketPrice ?? closes[closes.length - 1], rsi };
+      const quote = await yahooFinance.quote(query);
+      data[original] = { price: quote.regularMarketPrice ?? closes[closes.length - 1], rsi };
     } catch (e) {
-      console.error(`Failed to fetch ${sym} Yahoo data`, e);
-      data[sym] = { price: 100, rsi: 50 };
+      console.error(`Failed to fetch ${query} Yahoo data`, e);
+      if (cryptos.includes(original)) {
+        data[original] = { price: original === 'BTC' ? 60000 : 100, rsi: 50 };
+      } else {
+        data[original] = { price: 100, rsi: 50 };
+      }
     }
   }
 
