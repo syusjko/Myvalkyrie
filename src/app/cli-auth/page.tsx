@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Terminal, ShieldCheck, AlertTriangle } from 'lucide-react';
 
-export default function CliAuthPage() {
+function CliAuthContent() {
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
   const device = searchParams.get('device');
@@ -81,5 +81,13 @@ export default function CliAuthPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CliAuthPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: '4rem', textAlign: 'center', color: '#94a3b8' }}>Loading...</div>}>
+      <CliAuthContent />
+    </Suspense>
   );
 }
