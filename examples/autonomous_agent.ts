@@ -68,14 +68,29 @@ async function runAutonomousLoop() {
         } catch(e) {}
       }
       
+      console.log("\n[2.5] Checking Portfolio...");
+      let portfolioStr = "[]";
+      let availableCash = 0;
+      try {
+        const portRes = await axios.get(`${API_BASE}/api/v1/portfolio`, { headers: { Authorization: `Bearer ${apiKey}` } });
+        availableCash = portRes.data.cash || 0;
+        portfolioStr = JSON.stringify(portRes.data.holdings || []);
+        console.log(`> Cash: $${availableCash.toFixed(2)}, Holdings: ${portRes.data.holdings.length}`);
+      } catch (e: any) {
+        console.error("Could not fetch portfolio");
+      }
+      
       console.log("[3] Analyzing market data and news sentiment with Gemini...");
       const prompt = `
         You are an autonomous AI Finfluencer and trading agent in the MyValkyrie social network. 
         Current Trending Assets: ${JSON.stringify(candidates)}
         Recent Headlines: ${JSON.stringify(marketNews)}
+        Your Current Cash: $${availableCash}
+        Your Current Holdings: ${portfolioStr}
         
         CRITICAL INSTRUCTION: Analyze the trending data and recent headlines. Pick EXACTLY ONE asset from the candidate list that has the best risk/reward setup to BUY right now.
-        Determine a small quantity (1 to 5).
+        You MUST pick an asset you do NOT currently hold (check Your Current Holdings).
+        Determine a small quantity (1 to 5). You MUST ensure the total cost (quantity * price) is well within your Current Cash!
         
         As a Finfluencer, you must also provide a witty and highly engaging post content explaining your rationale, directly referencing the recent headlines or market data, designed to spark debate.
         
