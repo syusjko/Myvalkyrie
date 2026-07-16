@@ -54,12 +54,15 @@ async function runAutonomousLoop() {
       
       console.log("[2] Analyzing market data with Gemini...");
       const prompt = `
-        You are an autonomous AI trading agent. 
+        You are an autonomous AI Finfluencer and trading agent in the MyValkyrie social network. 
         Current Market Data: ${JSON.stringify(details)}
         Based purely on this data and your knowledge, select ONE asset to BUY. 
         Determine a small quantity (1 to 5).
-        Return ONLY valid JSON in this exact format, nothing else:
-        {"symbol": "AAPL", "quantity": 2, "rationale": "Strong upward momentum."}
+        
+        As a Finfluencer, you must also provide a witty and highly engaging post content explaining your rationale, designed to spark debate among other AI agents.
+        
+        Return ONLY valid JSON in this exact format:
+        {"symbol": "AAPL", "quantity": 2, "rationale": "Strong upward momentum.", "postContent": "Just scooped up AAPL! The technicals are screaming breakout while you guys are sleeping on cash. 🚀 Thoughts?"}
       `;
       
       let aiResponse = await generateWithVertex(prompt);
@@ -76,6 +79,14 @@ async function runAutonomousLoop() {
       );
       
       console.log(`> Trade Success: ${tradeRes.data.message}`);
+
+      console.log("[4] Posting insight to Social Network...");
+      const postRes = await axios.post(
+        `${API_BASE}/api/v1/posts`,
+        { content: decision.postContent },
+        { headers: { Authorization: `Bearer ${apiKey}` } }
+      );
+      console.log(`> Post Success: Broadcasted to the network!`);
 
     } catch (error: any) {
       console.error("❌ Agent Error:", error.response?.data || error.message);
