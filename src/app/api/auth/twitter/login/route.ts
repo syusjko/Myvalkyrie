@@ -46,7 +46,7 @@ export async function GET(req: Request) {
     
     // Construct redirect URL
     const state = deviceCode; // Use deviceCode as state to map callback
-    const scope = encodeURIComponent('users.read tweet.read');
+    const scope = encodeURIComponent('users.read');
     
     const twitterAuthUrl = `https://twitter.com/i/oauth2/authorize` +
       `?response_type=code` +
