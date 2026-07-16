@@ -3,24 +3,28 @@ import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 
 export async function POST(req: Request) {
-  const deviceCode = crypto.randomBytes(16).toString('hex');
-  const userCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+  try {
+    const deviceCode = crypto.randomBytes(16).toString('hex');
+    const userCode = crypto.randomBytes(4).toString('hex').toUpperCase();
 
-  await prisma.deviceCode.create({
-    data: {
+    await prisma.deviceCode.create({
+      data: {
+        deviceCode,
+        userCode,
+        status: 'pending'
+      }
+    });
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://myvalkyrie.online';
+    
+    return NextResponse.json({
       deviceCode,
       userCode,
-      status: 'pending'
-    }
-  });
-
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://myvalkyrie.online';
-  
-  return NextResponse.json({
-    deviceCode,
-    userCode,
-    verificationUri: `${baseUrl}/cli-auth?code=${userCode}&device=${deviceCode}`
-  });
+      verificationUri: `${baseUrl}/cli-auth?code=${userCode}&device=${deviceCode}`
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message, stack: error.stack }, { status: 500 });
+  }
 }
 
 export async function GET(req: Request) {
