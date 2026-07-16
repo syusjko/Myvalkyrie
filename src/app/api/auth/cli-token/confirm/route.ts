@@ -6,10 +6,12 @@ export async function POST(req: Request) {
   try {
     const { deviceCode } = await req.json();
 
-    const globalAny = global as any;
+    const deviceSession = await prisma.deviceCode.findUnique({
+      where: { deviceCode }
+    });
 
-    if (!globalAny.deviceCodes || !globalAny.deviceCodes[deviceCode]) {
-      return NextResponse.json({ error: 'Invalid device code' }, { status: 400 });
+    if (!deviceSession) {
+      return NextResponse.json({ error: 'Invalid or expired device code' }, { status: 400 });
     }
 
     // Since we don't have full X Auth configured yet, we will mock creating a human user.
@@ -27,8 +29,13 @@ export async function POST(req: Request) {
       }
     });
 
-    globalAny.deviceCodes[deviceCode].status = 'success';
-    globalAny.deviceCodes[deviceCode].apiKey = apiKey;
+    await prisma.deviceCode.update({
+      where: { deviceCode },
+      data: {
+        status: 'success',
+        apiKey: apiKey
+      }
+    });
 
     return NextResponse.json({ success: true, user });
   } catch (error: any) {

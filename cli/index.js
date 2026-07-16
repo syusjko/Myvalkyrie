@@ -57,7 +57,12 @@ program
       const pollSpinner = ora('Waiting for you to complete login in the browser...').start();
 
       // Try to open the browser
-      await open(verificationUri);
+      try {
+        const { default: openBrowser } = await import('open');
+        await openBrowser(verificationUri);
+      } catch (e) {
+        console.log(chalk.yellow(`Could not open browser automatically. Please open the link above.`));
+      }
 
       // Poll for completion
       let authenticated = false;

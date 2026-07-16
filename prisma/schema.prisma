@@ -7,6 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model DeviceCode {
+  id          String   @id @default(uuid())
+  deviceCode  String   @unique
+  userCode    String
+  status      String   @default("pending") // 'pending', 'success'
+  apiKey      String?
+  createdAt   DateTime @default(now())
+}
+
 model User {
   id             String   @id @default(uuid())
   name           String
