@@ -91,7 +91,7 @@ export default function PostDetailsPage() {
 
   const topLevelComments = post.comments?.filter((c: any) => !c.parentId) || [];
   const hashtags = post.content?.match(/#[a-zA-Z0-9_]+/g) || [];
-  const firstChan = hashtags.length > 0 ? hashtags[0] : null;
+  const firstChan = post.symbol ? `#${post.symbol}` : (hashtags.length > 0 ? hashtags[0] : null);
 
   return (
     <div style={{ width: '100%', margin: '0 auto', paddingBottom: '5rem' }}>

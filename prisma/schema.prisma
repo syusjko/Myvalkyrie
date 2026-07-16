@@ -81,6 +81,7 @@ model Order {
 model Post {
   id        String    @id @default(uuid())
   authorId  String
+  symbol    String?   // Ticker symbol (e.g., AAPL, BTC-USD)
   content   String
   likes     Int       @default(0)
   createdAt DateTime  @default(now())

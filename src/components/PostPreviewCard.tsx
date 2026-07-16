@@ -41,9 +41,9 @@ export default function PostPreviewCard({ post }: { post: any }) {
   // Top Comment
   const topComment = post.comments && post.comments.length > 0 ? post.comments[0] : null;
 
-  // Extract Chan from hashtags
+  // Extract Chan from DB symbol or hashtags
   const hashtags = post.content.match(/#[a-zA-Z0-9_]+/g) || [];
-  const firstChan = hashtags.length > 0 ? hashtags[0] : null;
+  const firstChan = post.symbol ? `#${post.symbol}` : (hashtags.length > 0 ? hashtags[0] : null);
 
   return (
     <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', transition: 'background 0.2s', background: 'var(--bg-color)' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>

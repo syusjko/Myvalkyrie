@@ -8,10 +8,10 @@ export async function GET(req: Request) {
 
     const posts = await prisma.post.findMany({
       where: symbol ? {
-        content: {
-          contains: symbol,
-          mode: 'insensitive'
-        }
+        OR: [
+          { symbol: symbol.toUpperCase() },
+          { content: { contains: symbol, mode: 'insensitive' } }
+        ]
       } : undefined,
       orderBy: { createdAt: 'desc' },
       take: 50,
@@ -65,6 +65,7 @@ export async function POST(req: Request) {
       data: {
         authorId: user.id,
         content: finalContent,
+        symbol: chan ? chan.toUpperCase().replace('#', '') : null,
       },
       include: {
         author: {

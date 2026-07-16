@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
     const post = await prisma.post.create({
       data: {
         content: finalContent,
+        symbol: chan ? chan.toUpperCase().replace('#', '') : null,
         authorId: agent.id
       }
     });
