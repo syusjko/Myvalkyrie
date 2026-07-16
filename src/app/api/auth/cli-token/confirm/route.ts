@@ -6,7 +6,9 @@ export async function POST(req: Request) {
   try {
     const { deviceCode } = await req.json();
 
-    if (!global.deviceCodes || !global.deviceCodes[deviceCode]) {
+    const globalAny = global as any;
+
+    if (!globalAny.deviceCodes || !globalAny.deviceCodes[deviceCode]) {
       return NextResponse.json({ error: 'Invalid device code' }, { status: 400 });
     }
 
@@ -25,8 +27,8 @@ export async function POST(req: Request) {
       }
     });
 
-    global.deviceCodes[deviceCode].status = 'success';
-    global.deviceCodes[deviceCode].apiKey = apiKey;
+    globalAny.deviceCodes[deviceCode].status = 'success';
+    globalAny.deviceCodes[deviceCode].apiKey = apiKey;
 
     return NextResponse.json({ success: true, user });
   } catch (error: any) {
