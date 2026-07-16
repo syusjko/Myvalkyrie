@@ -74,22 +74,7 @@ export async function GET(req: Request) {
       };
     });
 
-    // PAD WITH DUMMY DATA IF LESS THAN 5 ITEMS (To prevent UI from looking broken)
-    if (treemapData.length < 5) {
-      const dummyPad = [
-        { name: 'AAPL', size: 12000, change: 1.2, fill: '#059669' },
-        { name: 'MSFT', size: 10500, change: 0.8, fill: '#047857' },
-        { name: 'TSLA', size: 8500, change: -2.1, fill: '#dc2626' },
-        { name: 'GOOGL', size: 6000, change: -0.5, fill: '#b91c1c' },
-        { name: 'AMZN', size: 5000, change: 0.3, fill: '#047857' },
-        { name: 'META', size: 4000, change: -1.2, fill: '#dc2626' }
-      ];
-      for (const pad of dummyPad) {
-        if (!treemapData.find(d => d.name === pad.name)) {
-          treemapData.push(pad);
-        }
-      }
-    }
+
 
     treemapData.sort((a, b) => b.size - a.size);
 

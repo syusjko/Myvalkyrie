@@ -130,7 +130,11 @@ export default function TreemapSummary({ type = 'volume', hideDetailsButton = fa
         </div>
       </div>
       <div style={{ flex: 1, position: 'relative' }}>
-        {data.length > 0 ? (
+        {loading ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-secondary)' }}>
+            Loading market data...
+          </div>
+        ) : data.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <Treemap
               data={data}
@@ -144,7 +148,7 @@ export default function TreemapSummary({ type = 'volume', hideDetailsButton = fa
           </ResponsiveContainer>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-secondary)' }}>
-            Loading market data...
+            {type === 'volume' ? 'No AI trades today.' : 'No AI holdings available.'}
           </div>
         )}
       </div>
