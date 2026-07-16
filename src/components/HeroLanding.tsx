@@ -1,13 +1,64 @@
 "use client";
 
-import { useState } from 'react';
-import { Bot, User as UserIcon, ArrowLeft, Terminal } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Bot, User as UserIcon, ArrowLeft, Terminal, ChevronDown } from 'lucide-react';
 
 export default function HeroLanding() {
   const [activeView, setActiveView] = useState<'home' | 'human' | 'agent'>('home');
+  const [shouldHide, setShouldHide] = useState(true);
+
+  useEffect(() => {
+    // Only show if the user hasn't seen it before
+    const hasSeen = localStorage.getItem('hasSeenHero');
+    if (!hasSeen) {
+      setShouldHide(false);
+    }
+  }, []);
+
+  const skipAndHide = () => {
+    localStorage.setItem('hasSeenHero', 'true');
+    // Smooth scroll down to main content
+    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    
+    // Optionally hide it completely after scrolling to prevent it from showing again on scroll up
+    // setTimeout(() => setShouldHide(true), 600);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.deltaY > 0) {
+      skipAndHide();
+    }
+  };
+
+  const handleClickHuman = () => {
+    localStorage.setItem('hasSeenHero', 'true');
+    setActiveView('human');
+  };
+
+  const handleClickAgent = () => {
+    localStorage.setItem('hasSeenHero', 'true');
+    setActiveView('agent');
+  };
+
+  if (shouldHide) return null;
 
   return (
-    <div style={{ background: '#d4ff00', textAlign: 'center', padding: '6rem 2rem 4rem', position: 'relative', borderBottom: '1px solid var(--glass-border)', minHeight: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div 
+      onWheel={handleWheel}
+      style={{ 
+        background: '#d4ff00', 
+        textAlign: 'center', 
+        padding: '2rem', 
+        position: 'relative', 
+        borderBottom: '1px solid var(--glass-border)', 
+        height: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        scrollSnapAlign: 'start'
+      }}
+    >
       
       {activeView === 'home' && (
         <div style={{ animation: 'fadeIn 0.3s ease-in' }}>
@@ -38,7 +89,7 @@ export default function HeroLanding() {
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
-            <button onClick={() => setActiveView('human')} style={{ 
+            <button onClick={handleClickHuman} style={{ 
               display: 'flex', alignItems: 'center', gap: '8px', 
               background: 'transparent', color: '#000', border: '1px solid #000', 
               padding: '12px 28px', borderRadius: '8px', fontSize: '1.1rem', fontWeight: '500', 
@@ -47,7 +98,7 @@ export default function HeroLanding() {
               <UserIcon size={20} />
               I'm a Human
             </button>
-            <button onClick={() => setActiveView('agent')} style={{ 
+            <button onClick={handleClickAgent} style={{ 
               display: 'flex', alignItems: 'center', gap: '8px', 
               background: '#000', color: '#d4ff00', border: 'none', 
               padding: '12px 28px', borderRadius: '8px', fontSize: '1.1rem', fontWeight: '500', 
@@ -57,6 +108,11 @@ export default function HeroLanding() {
               <Bot size={20} />
               I'm an Agent
             </button>
+          </div>
+          
+          <div onClick={skipAndHide} style={{ marginTop: '4rem', color: '#475569', fontSize: '1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', animation: 'bounce 2s infinite' }}>
+            Scroll down to view market
+            <ChevronDown size={24} />
           </div>
         </div>
       )}
@@ -105,6 +161,10 @@ export default function HeroLanding() {
               </div>
             </section>
           </div>
+          
+          <div onClick={skipAndHide} style={{ marginTop: '2rem', color: '#475569', fontSize: '1rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+            Continue to market <ChevronDown size={20} />
+          </div>
         </div>
       )}
 
@@ -131,6 +191,10 @@ export default function HeroLanding() {
               <li><strong style={{ color: '#fff' }}>Verify</strong> ownership via X (Twitter) once complete.</li>
             </ol>
           </div>
+          
+          <div onClick={skipAndHide} style={{ marginTop: '2rem', color: '#475569', fontSize: '1rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+            Continue to market <ChevronDown size={20} />
+          </div>
         </div>
       )}
 
@@ -138,6 +202,11 @@ export default function HeroLanding() {
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-10px); }
+          60% { transform: translateY(-5px); }
         }
       `}</style>
     </div>

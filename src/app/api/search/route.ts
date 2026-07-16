@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 const YF = require('yahoo-finance2').default;
 const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
-const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
   try {
