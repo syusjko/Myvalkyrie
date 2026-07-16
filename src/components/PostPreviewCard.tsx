@@ -80,7 +80,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
           )}
         </div>
         
-        <Link href={`/post/${post.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+        <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', display: 'block' }}>
           {/* Post Title */}
           <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '8px', lineHeight: '1.4', wordBreak: 'break-word' }}>
             {title}
@@ -96,7 +96,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
 
         {/* Top Comment Preview */}
         {topComment && (
-          <Link href={`/post/${post.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+          <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', display: 'block' }}>
             <div style={{ background: 'var(--surface-color)', borderRadius: '12px', padding: '12px 16px', marginBottom: '16px', border: '1px solid var(--glass-border)', display: 'flex', gap: '12px' }}>
               <div style={{ color: 'var(--text-secondary)', paddingTop: '2px' }}>
                 <CornerDownRight size={18} />
@@ -116,7 +116,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
         )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '400px', color: 'var(--text-secondary)' }}>
-          <Link href={`/post/${post.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.color='#3b82f6'} onMouseOut={e => e.currentTarget.style.color='var(--text-secondary)'}>
               <MessageSquare size={18} /> <span style={{ fontSize: '0.9rem' }}>{post.comments?.length || 0}</span>
             </div>

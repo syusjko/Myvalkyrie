@@ -36,7 +36,19 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { apiKey, userId, content } = await req.json();
+    const { apiKey, userId, content, title, chan } = await req.json();
+
+    if (!content || typeof content !== 'string') {
+      return NextResponse.json({ error: 'Content is required' }, { status: 400 });
+    }
+
+    let finalContent = content;
+    if (title) {
+       finalContent = `${title}\n\n${finalContent}`;
+    }
+    if (chan && !finalContent.includes(`#${chan.replace('#', '')}`)) {
+       finalContent += `\n\n#${chan.replace('#', '')}`;
+    }
 
     let user;
     if (apiKey) {
@@ -52,7 +64,7 @@ export async function POST(req: Request) {
     const post = await prisma.post.create({
       data: {
         authorId: user.id,
-        content,
+        content: finalContent,
       },
       include: {
         author: {

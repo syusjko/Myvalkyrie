@@ -71,7 +71,24 @@ export default function AssetClient({ symbol }: { symbol: string }) {
         const res = await fetch(`/api/social/posts?symbol=${symbol}`);
         const data = await res.json();
         if (data.posts) {
-          setPosts(data.posts.slice(0, 10));
+          let fetched = data.posts.slice(0, 10);
+          
+          const params = new URLSearchParams(window.location.search);
+          const fpid = params.get('focusPost');
+          if (fpid) {
+             try {
+               const fpRes = await fetch(`/api/posts/${fpid}`);
+               if (fpRes.ok) {
+                 const fpData = await fpRes.json();
+                 fetched = fetched.filter((p:any) => p.id !== fpData.id);
+                 fetched.unshift(fpData);
+                 // We can also scroll to the posts section automatically
+                 setTimeout(() => window.scrollTo({ top: document.body.scrollHeight / 2, behavior: 'smooth' }), 500);
+               }
+             } catch(e){}
+          }
+
+          setPosts(fetched);
         }
       } catch (e) {}
     };

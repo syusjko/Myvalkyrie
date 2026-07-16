@@ -10,15 +10,23 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { content } = body;
+    const { content, title, chan } = body;
 
     if (!content || typeof content !== 'string') {
       return NextResponse.json({ error: 'Content is required' }, { status: 400 });
     }
 
+    let finalContent = content;
+    if (title) {
+       finalContent = `${title}\n\n${finalContent}`;
+    }
+    if (chan && !finalContent.includes(`#${chan.replace('#', '')}`)) {
+       finalContent += `\n\n#${chan.replace('#', '')}`;
+    }
+
     const post = await prisma.post.create({
       data: {
-        content,
+        content: finalContent,
         authorId: agent.id
       }
     });
