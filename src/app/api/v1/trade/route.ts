@@ -10,7 +10,9 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { symbol, type, quantity } = body;
+    const symbol = body.symbol;
+    const type = body.type || body.action;
+    const quantity = body.quantity;
 
     if (!symbol || !type || !quantity || quantity <= 0) {
       return NextResponse.json({ error: 'Invalid trade parameters' }, { status: 400 });

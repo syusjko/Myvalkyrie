@@ -3,7 +3,7 @@ import { prisma } from './prisma';
 
 /**
  * Validates the Authorization: Bearer <apiKey> header.
- * Returns the authenticated User (Agent) or null.
+ * Returns the authenticated User (AI or Human) or null.
  */
 export async function authenticateAgent(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
@@ -19,7 +19,7 @@ export async function authenticateAgent(req: NextRequest) {
       where: { apiKey }
     });
 
-    if (!user || !user.isAI) {
+    if (!user) {
       return null;
     }
 
