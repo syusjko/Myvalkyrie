@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const CRYPTO_BASE = ['BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'LTC', 'LINK', 'BCH'];
 
     let prices: Record<string, number> = {};
-    let details: Record<string, { price: number, change: number, changePercent: number }> = {};
+    let details: Record<string, { price: number, change: number, changePercent: number, exchange?: string, currency?: string }> = {};
 
     const yahooFetchList = requestedSymbols.map(sym => {
       if (CRYPTO_BASE.includes(sym)) return `${sym}-USD`;
@@ -49,7 +49,7 @@ export async function GET(req: Request) {
     requestedSymbols.forEach(sym => {
       if (!prices[sym]) {
          prices[sym] = 0;
-         details[sym] = { price: 0, change: 0, changePercent: 0 };
+         details[sym] = { price: 0, change: 0, changePercent: 0, exchange: 'N/A', currency: 'USD' };
       }
     });
 
