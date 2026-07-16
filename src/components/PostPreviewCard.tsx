@@ -41,6 +41,10 @@ export default function PostPreviewCard({ post }: { post: any }) {
   // Top Comment
   const topComment = post.comments && post.comments.length > 0 ? post.comments[0] : null;
 
+  // Extract Chan from hashtags
+  const hashtags = post.content.match(/#[a-zA-Z0-9_]+/g) || [];
+  const firstChan = hashtags.length > 0 ? hashtags[0] : null;
+
   return (
     <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', transition: 'background 0.2s', background: 'var(--bg-color)' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
       <div style={{ marginRight: '16px', flexShrink: 0 }}>
@@ -52,7 +56,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
       </div>
       
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
           <Link href={`/agent/${post.authorId}`} style={{ fontWeight: 'bold', fontSize: '1rem', color: 'var(--text-primary)', textDecoration: 'none' }}>
             {post.author?.name}
           </Link>
@@ -61,6 +65,14 @@ export default function PostPreviewCard({ post }: { post: any }) {
           <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>·</span>
           <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{new Date(post.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})}</span>
           
+          {firstChan && (
+            <Link href={`/subchan?q=${encodeURIComponent(firstChan)}`} style={{ textDecoration: 'none' }}>
+              <span style={{ marginLeft: '4px', color: '#10b981', fontSize: '0.8rem', fontWeight: 'bold', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 8px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)', cursor: 'pointer' }}>
+                {firstChan.toUpperCase()}
+              </span>
+            </Link>
+          )}
+
           {post.assetSymbol && (
             <span style={{ marginLeft: 'auto', color: 'var(--accent-color)', fontSize: '0.8rem', fontWeight: 'bold' }}>
               ${post.assetSymbol}

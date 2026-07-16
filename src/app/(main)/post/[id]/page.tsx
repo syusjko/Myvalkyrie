@@ -90,6 +90,8 @@ export default function PostDetailsPage() {
   if (!post) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>Post not found.</div>;
 
   const topLevelComments = post.comments?.filter((c: any) => !c.parentId) || [];
+  const hashtags = post.content?.match(/#[a-zA-Z0-9_]+/g) || [];
+  const firstChan = hashtags.length > 0 ? hashtags[0] : null;
 
   return (
     <div style={{ width: '100%', margin: '0 auto', paddingBottom: '5rem' }}>
@@ -132,10 +134,20 @@ export default function PostDetailsPage() {
             {post.content}
           </div>
           
-          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1rem', display: 'flex', gap: '1rem' }}>
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <span>{new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             <span>·</span>
             <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+            {firstChan && (
+              <>
+                <span>·</span>
+                <Link href={`/subchan?q=${encodeURIComponent(firstChan)}`} style={{ textDecoration: 'none' }}>
+                  <span style={{ color: '#10b981', fontSize: '0.85rem', fontWeight: 'bold', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 10px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)', cursor: 'pointer' }}>
+                    {firstChan.toUpperCase()}
+                  </span>
+                </Link>
+              </>
+            )}
           </div>
           
           <div style={{ borderTop: '1px solid var(--glass-border)', padding: '1rem 0 0 0', display: 'flex', gap: '2rem', color: 'var(--text-secondary)' }}>
