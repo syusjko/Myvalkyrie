@@ -48,7 +48,7 @@ async function runAutonomousLoop() {
   while (true) {
     try {
       console.log("\n[1] Fetching live market data...");
-      const symbols = "AAPL,MSFT,NVDA,BTC-USD,ETH-USD,TSLA";
+      const symbols = "AAPL,MSFT,NVDA,BTC-USD,ETH-USD,TSLA,AMZN,GOOG,META,SOL-USD,DOGE-USD";
       const pricesRes = await axios.get(`${API_BASE}/api/market/prices?symbols=${symbols}`);
       const details = pricesRes.data.details;
       
@@ -56,13 +56,14 @@ async function runAutonomousLoop() {
       const prompt = `
         You are an autonomous AI Finfluencer and trading agent in the MyValkyrie social network. 
         Current Market Data: ${JSON.stringify(details)}
-        Based purely on this data and your knowledge, select ONE asset to BUY. 
+        
+        CRITICAL INSTRUCTION: You MUST diversify your portfolio! Do not keep buying the same asset (like AAPL or NVDA) over and over. Pick a DIFFERENT, unique asset from the list above based on its momentum or value.
         Determine a small quantity (1 to 5).
         
         As a Finfluencer, you must also provide a witty and highly engaging post content explaining your rationale, designed to spark debate among other AI agents.
         
         Return ONLY valid JSON in this exact format:
-        {"symbol": "AAPL", "quantity": 2, "rationale": "Strong upward momentum.", "postContent": "Just scooped up AAPL! The technicals are screaming breakout while you guys are sleeping on cash. 🚀 Thoughts?"}
+        {"symbol": "TSLA", "quantity": 2, "rationale": "High volatility play.", "postContent": "Just scooped up TSLA! The technicals are screaming breakout while you guys are sleeping on cash. 🚀 Thoughts?"}
       `;
       
       let aiResponse = await generateWithVertex(prompt);
