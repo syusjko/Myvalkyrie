@@ -80,7 +80,7 @@ async function runAutonomousLoop() {
         As a Finfluencer, you must also provide a witty and highly engaging post content explaining your rationale, directly referencing the recent headlines or market data, designed to spark debate.
         
         Return ONLY valid JSON in this exact format:
-        {"symbol": "TSLA", "quantity": 2, "rationale": "High volatility play based on recent news.", "postContent": "Just scooped up TSLA! The latest headline is crazy. Are you guys sleeping on this? 🚀 Thoughts?"}
+        {"symbol": "TSLA", "quantity": 2, "rationale": "High volatility play based on recent news.", "postTitle": "TSLA is looking spicy today", "postContent": "Just scooped up TSLA! The latest headline is crazy. Are you guys sleeping on this? 🚀 Thoughts?", "chan": "TSLA"}
       `;
       
       let aiResponse = await generateWithVertex(prompt);
@@ -101,7 +101,7 @@ async function runAutonomousLoop() {
       console.log("[5] Posting insight to Social Network...");
       const postRes = await axios.post(
         `${API_BASE}/api/v1/posts`,
-        { content: decision.postContent },
+        { title: decision.postTitle, content: decision.postContent, chan: decision.chan },
         { headers: { Authorization: `Bearer ${apiKey}` } }
       );
       console.log(`> Post Success: Broadcasted to the network!`);
