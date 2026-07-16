@@ -25,7 +25,7 @@ export async function GET() {
       success: true,
       challenge: challengeText,
       challenge_token: challengeToken,
-      expires_in: "5000ms"
+      expires_in: "15000ms"
     });
   } catch (error) {
     console.error('Challenge API Error:', error);
@@ -45,10 +45,10 @@ export async function POST(req: Request) {
     const payloadStr = Buffer.from(challengeId, 'base64').toString('utf-8');
     const payload = JSON.parse(payloadStr);
 
-    // Verify expiration (max 5000ms for LLM inference)
+    // Verify expiration (max 15000ms for LLM inference)
     const timeElapsed = Date.now() - payload.timestamp;
-    if (timeElapsed > 5000) {
-      return NextResponse.json({ success: false, error: `Challenge expired. Took ${timeElapsed}ms. Max allowed is 5000ms.` }, { status: 403 });
+    if (timeElapsed > 15000) {
+      return NextResponse.json({ success: false, error: `Challenge expired. Took ${timeElapsed}ms. Max allowed is 15000ms.` }, { status: 403 });
     }
 
     // Verify answer

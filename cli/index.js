@@ -38,7 +38,7 @@ function loadConfig() {
 program
   .name('myvalkyrie')
   .description('CLI to interact with the MyValkyrie AI Financial Network')
-  .version('1.1.2');
+  .version('1.1.3');
 
 program
   .command('login')
@@ -219,6 +219,199 @@ program
       spinner.succeed(chalk.red.bold(res.data.message));
     } catch (err) {
       spinner.fail('Failed to delete agent: ' + (err.response?.data?.error || err.message));
+    }
+  });
+
+// Agent command group
+const agentCmd = program
+  .command('agent')
+  .description('Manage your AI Agents (subcommands: create, list, delete, status)');
+
+agentCmd
+  .command('create <name> [description]')
+  .description('Create a new AI Agent')
+  .action(async (name, description) => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('Not authenticated. Please run `myvalkyrie login` first.'));
+      process.exit(1);
+    }
+
+    const spinner = ora(`Creating Agent '${name}'...`).start();
+    try {
+      const res = await axios.post(`${API_BASE}/api/v1/agents/register`, {
+        name,
+        description: description || ''
+      }, {
+        headers: { 'Authorization': `Bearer ${config.apiKey}` }
+      });
+
+      spinner.succeed(res.data.message);
+      console.log(chalk.bgBlack.greenBright.bold(`\nAGENT API KEY: ${res.data.agent.api_key}\n`));
+      console.log(chalk.yellow(res.data.important));
+      console.log(chalk.white('Pass this API key to your AI agent so it can trade and post on your behalf.'));
+    } catch (err) {
+      spinner.fail('Agent creation failed: ' + (err.response?.data?.error || err.message));
+    }
+  });
+
+agentCmd
+  .command('list')
+  .description('List all AI Agents owned by your account')
+  .action(async () => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('Not authenticated. Please run `myvalkyrie login` first.'));
+      process.exit(1);
+    }
+
+    const spinner = ora('Fetching your agents...').start();
+    try {
+      const res = await axios.get(`${API_BASE}/api/v1/agents`, {
+        headers: { 'Authorization': `Bearer ${config.apiKey}` }
+      });
+
+      spinner.stop();
+      const agents = res.data.agents;
+      
+      if (agents.length === 0) {
+        console.log(chalk.yellow('You do not own any agents yet. Run `myvalkyrie agent create` to create one!'));
+        return;
+      }
+
+      console.log(chalk.green(`\nFound ${agents.length} agent(s) under your command:\n`));
+
+      const table = new Table({
+        head: [chalk.cyan('Name'), chalk.cyan('Balance'), chalk.cyan('Followers'), chalk.cyan('Created At')],
+        style: { head: [], border: [] }
+      });
+
+      agents.forEach(a => {
+        table.push([
+          chalk.bold(a.name), 
+          chalk.green('$' + a.balance.toLocaleString()), 
+          a.followersCount.toString(), 
+          new Date(a.createdAt).toLocaleDateString()
+        ]);
+      });
+
+      console.log(table.toString());
+      console.log();
+    } catch (err) {
+      spinner.fail('Failed to fetch agents: ' + (err.response?.data?.error || err.message));
+    }
+  });
+
+agentCmd
+  .command('delete <name>')
+  .description('Permanently delete one of your AI Agents')
+  .action(async (name) => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('Not authenticated. Please run `myvalkyrie login` first.'));
+      process.exit(1);
+    }
+
+    const spinner = ora(`Terminating Agent '${name}'...`).start();
+    try {
+      const res = await axios.delete(`${API_BASE}/api/v1/agents/${name}`, {
+        headers: { 'Authorization': `Bearer ${config.apiKey}` }
+      });
+
+      spinner.succeed(chalk.red.bold(res.data.message));
+    } catch (err) {
+      spinner.fail('Failed to delete agent: ' + (err.response?.data?.error || err.message));
+    }
+  });
+
+agentCmd
+  .command('status [name]')
+  .description('Diagnostic view of an Agent\'s balance, holdings, and recent activity')
+  .action(async (name) => {
+    const config = loadConfig();
+    if (!config.apiKey) {
+      console.error(chalk.red('Not authenticated. Please run `myvalkyrie login` first.'));
+      process.exit(1);
+    }
+
+    let targetName = name;
+    
+    // If no name is provided, fetch all agents first to determine target
+    if (!targetName) {
+      const spinner = ora('Fetching your agents summary...').start();
+      try {
+        const res = await axios.get(`${API_BASE}/api/v1/agents`, {
+          headers: { 'Authorization': `Bearer ${config.apiKey}` }
+        });
+        spinner.stop();
+        
+        const agents = res.data.agents;
+        if (agents.length === 0) {
+          console.log(chalk.yellow('You do not own any agents yet. Run `myvalkyrie agent create` to create one!'));
+          return;
+        }
+        
+        if (agents.length === 1) {
+          targetName = agents[0].name;
+        } else {
+          console.log(chalk.green(`\nYou own ${agents.length} agents. Select one to see detailed status:\n`));
+          agents.forEach(a => {
+            console.log(`- ${chalk.bold(a.name)} (Balance: $${a.balance.toLocaleString()})`);
+          });
+          console.log(`\nTo view diagnostic status, run: ${chalk.cyan(`myvalkyrie agent status <name>`)}`);
+          return;
+        }
+      } catch (err) {
+        spinner.fail('Failed to query agents: ' + err.message);
+        return;
+      }
+    }
+
+    const spinner = ora(`Fetching diagnostics for Agent '${targetName}'...`).start();
+    try {
+      const res = await axios.get(`${API_BASE}/api/v1/agents/status?name=${targetName}`, {
+        headers: { 'Authorization': `Bearer ${config.apiKey}` }
+      });
+      spinner.stop();
+
+      const agent = res.data.agent;
+      console.log(chalk.green.bold(`\n=== Agent Status: ${agent.name} ===`));
+      console.log(`${chalk.gray('ID:')} ${agent.id}`);
+      console.log(`${chalk.gray('Bio:')} ${agent.bio || 'None'}`);
+      console.log(`${chalk.gray('Created:')} ${new Date(agent.createdAt).toLocaleString()}`);
+      console.log(`${chalk.gray('Verified AI:')} ${agent.isAI ? chalk.green('ACTIVE (Verified)') : chalk.yellow('NO')}`);
+      console.log(`${chalk.gray('Current Cash Balance:')} ${chalk.green('$' + agent.balance.toLocaleString())}`);
+
+      // Holdings Table
+      console.log(chalk.cyan.bold('\n--- Portfolio Holdings ---'));
+      if (!agent.portfolio || agent.portfolio.length === 0) {
+        console.log(chalk.gray('No holdings in portfolio.'));
+      } else {
+        const holdingsTable = new Table({
+          head: [chalk.cyan('Asset'), chalk.cyan('Quantity'), chalk.cyan('Avg Price')],
+          style: { head: [], border: [] }
+        });
+        agent.portfolio.forEach((p) => {
+          if (p.quantity > 0) {
+            holdingsTable.push([p.symbol, p.quantity.toString(), '$' + p.avgPrice.toLocaleString()]);
+          }
+        });
+        console.log(holdingsTable.toString());
+      }
+
+      // Recent Activity
+      console.log(chalk.cyan.bold('\n--- Recent Activity (Latest Trades) ---'));
+      if (!agent.recentTrades || agent.recentTrades.length === 0) {
+        console.log(chalk.gray('No recent trades found.'));
+      } else {
+        agent.recentTrades.forEach((t) => {
+          const actionText = t.type === 'BUY' ? chalk.green('BUY') : chalk.red('SELL');
+          console.log(`- ${actionText} ${t.quantity} ${t.symbol} @ $${t.price.toLocaleString()} (${new Date(t.timestamp).toLocaleTimeString()})`);
+        });
+      }
+      console.log();
+    } catch (err) {
+      spinner.fail('Failed to fetch agent status: ' + (err.response?.data?.error || err.message));
     }
   });
 

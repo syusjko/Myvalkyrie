@@ -15,14 +15,70 @@ export default function AgentClient({ user }: { user: any }) {
 
   const [timeRange, setTimeRange] = useState<'1 day' | '5 days' | '1 month' | '6 months' | '1 year' | 'All time'>('1 month');
   const [mounted, setMounted] = useState(false);
+  const [livePrices, setLivePrices] = useState<Record<string, number>>({});
 
   useEffect(() => setMounted(true), []);
 
   const performanceData = useMemo(() => {
-    const data = [];
-    const now = Date.now();
+    const dataPoints: { timestamp: number; value: number }[] = [];
     const joinedAt = new Date(user.createdAt).getTime();
+    const now = Date.now();
+
+    // 1. Sort all trades chronologically
+    const sortedTrades = [...(user.trades || [])].sort(
+      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    );
+
+    // Initial state
+    let currentCash = 100000;
+    const holdings: Record<string, { quantity: number; lastPrice: number }> = {};
+
+    // Initial point
+    dataPoints.push({ timestamp: joinedAt, value: 100000 });
+
+    // Reconstruct net worth at each trade point
+    sortedTrades.forEach((trade: any) => {
+      const tradeTime = new Date(trade.timestamp).getTime();
+      const tradePrice = trade.price;
+      const tradeQty = trade.quantity;
+      const tradeVal = tradeQty * tradePrice;
+
+      if (trade.type === 'BUY') {
+        currentCash -= tradeVal;
+        if (!holdings[trade.symbol]) {
+          holdings[trade.symbol] = { quantity: 0, lastPrice: 0 };
+        }
+        holdings[trade.symbol].quantity += tradeQty;
+        holdings[trade.symbol].lastPrice = tradePrice;
+      } else if (trade.type === 'SELL') {
+        currentCash += tradeVal;
+        if (holdings[trade.symbol]) {
+          holdings[trade.symbol].quantity -= tradeQty;
+          holdings[trade.symbol].lastPrice = tradePrice;
+        }
+      }
+
+      // Calculate portfolio value at this moment
+      let portfolioVal = 0;
+      Object.keys(holdings).forEach((sym) => {
+        portfolioVal += holdings[sym].quantity * holdings[sym].lastPrice;
+      });
+
+      dataPoints.push({
+        timestamp: tradeTime,
+        value: currentCash + portfolioVal
+      });
+    });
+
+    // Calculate current net worth based on live prices
+    const realNetWorth = user.balance + user.portfolio.reduce((sum: number, p: any) => {
+      const currentPrice = livePrices[p.symbol] || p.avgPrice;
+      return sum + p.quantity * currentPrice;
+    }, 0);
     
+    dataPoints.push({ timestamp: now, value: realNetWorth });
+
+    // Determine start time based on timeRange
     let startTime = joinedAt;
     if (timeRange === '1 day') startTime = now - 86400000;
     else if (timeRange === '5 days') startTime = now - 5 * 86400000;
@@ -30,39 +86,40 @@ export default function AgentClient({ user }: { user: any }) {
     else if (timeRange === '6 months') startTime = now - 180 * 86400000;
     else if (timeRange === '1 year') startTime = now - 365 * 86400000;
 
-    // Ensure start time is not before joined date, unless it's a very new account
     if (startTime < joinedAt && timeRange !== '1 day') startTime = joinedAt;
     if (now - startTime < 3600000) startTime = now - 86400000; // at least 24h span
 
     const timeSpan = now - startTime;
-    const steps = 100; // Increased from 30 to 100 for higher resolution
-    
-    const realNetWorth = user.balance + user.portfolio.reduce((sum: number, p: any) => sum + p.quantity * p.avgPrice, 0);
+    const steps = 100;
+    const result = [];
 
-    // Generate a semi-random walk that ends exactly at realNetWorth
-    let currentValue = 100000; // Assuming everyone starts at $100,000
-    if (timeRange !== 'All time') {
-       currentValue = realNetWorth * (1 - (Math.random() * 0.1 - 0.05)); 
-    }
-    
+    // Interpolate values across regular intervals for the chart
     for (let i = 0; i <= steps; i++) {
-      const timestamp = startTime + (timeSpan * (i / steps));
+      const stepTime = startTime + (timeSpan * (i / steps));
       
-      if (i === steps) {
-         currentValue = realNetWorth;
-      } else {
-         const variance = (Math.random() * 0.02 - 0.01) * currentValue;
-         currentValue += variance;
+      // Find the active net worth value at stepTime
+      let activeVal = 100000;
+      for (const dp of dataPoints) {
+        if (dp.timestamp <= stepTime) {
+          activeVal = dp.value;
+        } else {
+          break;
+        }
       }
-
-      data.push({
-        day: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(timestamp)),
-        value: currentValue
+      
+      result.push({
+        day: new Intl.DateTimeFormat('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }).format(new Date(stepTime)),
+        value: activeVal
       });
     }
 
-    return data;
-  }, [user.createdAt, user.balance, user.portfolio, timeRange]);
+    return result;
+  }, [user.createdAt, user.balance, user.portfolio, user.trades, timeRange, livePrices]);
 
   const totalRoi = useMemo(() => {
     if (performanceData.length === 0) return 0;
@@ -82,7 +139,7 @@ export default function AgentClient({ user }: { user: any }) {
     return data;
   }, [user]);
 
-  const [livePrices, setLivePrices] = useState<Record<string, number>>({});
+
 
   useEffect(() => {
     const symbols = user.portfolio.filter((p: any) => p.quantity > 0).map((p: any) => p.symbol).join(',');
