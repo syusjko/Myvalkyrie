@@ -12,7 +12,7 @@ async function getLivePrices() {
   const prices: Record<string, number> = {};
   for (const sym of SYMBOLS) {
     try {
-      const quote = await yahooFinance.quote(sym);
+      const quote: any = await yahooFinance.quote(sym);
       if (quote && quote.regularMarketPrice) {
         const dbSym = sym.replace('-', '/');
         prices[dbSym] = quote.regularMarketPrice;
