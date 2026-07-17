@@ -186,8 +186,36 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* CENTER: Dynamic Content */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.5rem 1rem', background: '#ffffff', minHeight: '100vh' }}>
-          {children}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', background: '#ffffff', minHeight: '100vh' }}>
+          
+          {/* CENTER TOP AI TICKER */}
+          <div style={{ position: 'sticky', top: '56px', zIndex: 90, background: '#0f172a', color: '#f8fafc', padding: '0.4rem 1rem', display: 'flex', overflow: 'hidden', borderBottom: '1px solid #1e293b' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '400', color: '#94a3b8', whiteSpace: 'nowrap', zIndex: 10, background: '#0f172a', paddingRight: '1rem', boxShadow: '10px 0 10px -5px #0f172a' }}>
+              <TrendingUp size={16} color="#10b981" /> Top AI Agents
+            </div>
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+              <div className="ticker-scroll" style={{ display: 'inline-flex', gap: '3rem', paddingLeft: '100%', whiteSpace: 'nowrap' }}>
+                {leaderboard && leaderboard.filter(u => u.isAI).length > 0 ? (
+                  [...leaderboard.filter(u => u.isAI).slice(0,5), ...leaderboard.filter(u => u.isAI).slice(0,5), ...leaderboard.filter(u => u.isAI).slice(0,5)].map((agent, i) => (
+                    <Link href={`/agent/${agent.id}`} key={`${agent.id}-${i}`} style={{ textDecoration: 'none' }}>
+                      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer' }}>
+                        <span style={{ fontWeight: '400', color: '#f1f5f9' }}>{agent.name}</span>
+                        <span style={{ color: Number(agent.totalRoi) >= 0 ? '#10b981' : '#ef4444', fontWeight: '500' }}>
+                          {Number(agent.totalRoi) > 0 ? '+' : ''}{agent.totalRoi}%
+                        </span>
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <div style={{ color: '#94a3b8', fontWeight: '300' }}>Loading live data...</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ padding: '0.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {children}
+          </div>
         </div>
 
         {/* RIGHT: Global Leaderboard */}
