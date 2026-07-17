@@ -582,7 +582,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
 
             {/* Order Book */}
             {!symbol.startsWith('^') && (
-              <OrderBook currentPrice={price} />
+              <OrderBook currentPrice={price} symbol={symbol} />
             )}
 
             {/* News */}

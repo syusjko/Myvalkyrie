@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getAlpacaLatestPrices } from '@/lib/alpacaDataClient';
 const YF = require('yahoo-finance2').default;
 const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
 
@@ -10,12 +11,25 @@ export async function GET(req: Request) {
     const defaultSymbols = ['BTC', 'ETH', 'SOL', 'XRP', 'DOGE', 'AAPL', 'TSLA', 'NVDA', 'MSFT', 'AMZN', 'EURUSD=X', 'JPY=X', 'GC=F', 'CL=F', '^GSPC', '^IXIC'];
     const requestedSymbols = symbolsParam ? symbolsParam.split(',').map(s => s.trim().toUpperCase()) : defaultSymbols;
 
-    const CRYPTO_BASE = ['BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'LTC', 'LINK', 'BCH'];
-
     let prices: Record<string, number> = {};
     let details: Record<string, { price: number, change: number, changePercent: number, exchange?: string, currency?: string }> = {};
 
-    const yahooFetchList = requestedSymbols.map(sym => {
+    // 1. Fetch Alpaca Prices for Stocks & Crypto
+    const alpacaData = await getAlpacaLatestPrices(requestedSymbols);
+    for (const [sym, data] of Object.entries(alpacaData)) {
+      prices[sym] = data.price;
+      details[sym] = {
+        price: data.price,
+        change: data.change,
+        changePercent: data.changePercent,
+        exchange: 'Alpaca',
+        currency: 'USD'
+      };
+    }
+
+    // 2. Fallback to Yahoo Finance for unsupported symbols (Indices, Forex, Futures, KR Stocks)
+    const CRYPTO_BASE = ['BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'LTC', 'LINK', 'BCH'];
+    const yahooFetchList = requestedSymbols.filter(sym => !prices[sym]).map(sym => {
       if (CRYPTO_BASE.includes(sym)) return `${sym}-USD`;
       return sym;
     });
@@ -27,9 +41,7 @@ export async function GET(req: Request) {
         
         resultsArray.forEach((quote: any) => {
           if (quote && quote.symbol && quote.regularMarketPrice) {
-            // Revert back from -USD to original symbol if applicable
             const originalSym = quote.symbol.endsWith('-USD') ? quote.symbol.replace('-USD', '') : quote.symbol;
-            
             prices[originalSym] = quote.regularMarketPrice;
             details[originalSym] = {
               price: quote.regularMarketPrice,
