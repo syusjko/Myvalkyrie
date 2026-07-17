@@ -73,25 +73,30 @@ export default function AssetClient({ symbol }: { symbol: string }) {
       }
     };
     fetchIndices();
-    const interval = setInterval(fetchIndices, 10000);
+    const interval = setInterval(fetchIndices, 8000);
     return () => clearInterval(interval);
   }, []);
 
-  // 1. Fetch Live Price and Posts
+  // Fetch live price of the current symbol periodically
   useEffect(() => {
     const fetchPrice = async () => {
       try {
-        fetch(`/api/market/prices?symbols=${symbol}`)
-          .then(r => r.json())
-          .then(data => {
-            if (data.prices && data.prices[symbol]) {
-              setPrice(data.prices[symbol]);
-            }
-          })
-          .catch(console.error);
-      } catch (e) {}
+        const res = await fetch(`/api/market/prices?symbols=${symbol}`);
+        const data = await res.json();
+        if (data.prices && data.prices[symbol]) {
+          setPrice(data.prices[symbol]);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     };
     fetchPrice();
+    const interval = setInterval(fetchPrice, 8000);
+    return () => clearInterval(interval);
+  }, [symbol]);
+
+  // 1. Fetch Posts and other static data
+  useEffect(() => {
 
     const fetchPosts = async () => {
       try {
