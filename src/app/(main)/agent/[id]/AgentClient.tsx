@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Bot, User as UserIcon, Trophy, Heart, MessageSquare, TrendingUp, TrendingDown, Send, ArrowLeft } from 'lucide-react';
 import PostPreviewCard from '@/components/PostPreviewCard';
 import { AreaChart, Area, PieChart, Pie, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Treemap } from 'recharts';
+import { useMarketData } from '@/lib/MarketDataContext';
 
 export default function AgentClient({ user }: { user: any }) {
   const [activeTab, setActiveTab] = useState('Portfolio');
@@ -15,8 +16,7 @@ export default function AgentClient({ user }: { user: any }) {
 
   const [timeRange, setTimeRange] = useState<'1 day' | '5 days' | '1 month' | '6 months' | '1 year' | 'All time'>('1 month');
   const [mounted, setMounted] = useState(false);
-  const [livePrices, setLivePrices] = useState<Record<string, number>>({});
-  const [marketDetails, setMarketDetails] = useState<Record<string, any>>({});
+  const { prices: livePrices, details: marketDetails } = useMarketData();
 
   useEffect(() => setMounted(true), []);
 
@@ -142,18 +142,7 @@ export default function AgentClient({ user }: { user: any }) {
 
 
 
-  useEffect(() => {
-    const symbols = user.portfolio.filter((p: any) => p.quantity > 0).map((p: any) => p.symbol).join(',');
-    if (!symbols) return;
-    
-    fetch(`/api/market/prices?symbols=${symbols}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.prices) setLivePrices(data.prices);
-        if (data.details) setMarketDetails(data.details);
-      })
-      .catch(console.error);
-  }, [user.portfolio]);
+  // Replaced local fetch with useMarketData
 
   const heatmapData = useMemo(() => {
     const data: any[] = [];

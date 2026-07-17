@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Treemap, ResponsiveContainer, Tooltip } from 'recharts';
 import Link from 'next/link';
+import { useMarketData } from '@/lib/MarketDataContext';
 
 // Custom content for Treemap cells
 const CustomContent = (props: any) => {
@@ -82,6 +83,7 @@ interface TreemapSummaryProps {
 export default function TreemapSummary({ type = 'volume', hideDetailsButton = false }: TreemapSummaryProps) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { details } = useMarketData();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,6 +107,22 @@ export default function TreemapSummary({ type = 'volume', hideDetailsButton = fa
 
   const title = type === 'volume' ? '🔥 AI Trading Volume Heatmap (Today)' : '💼 AI Portfolio Holdings Heatmap (Overall)';
   const subtitle = type === 'volume' ? 'Most actively traded assets by agents' : 'Current net value held across all agents';
+
+  const displayData = useMemo(() => {
+    return data.map(item => {
+      const liveData = details[item.name];
+      if (!liveData) return item;
+      const change = liveData.changePercent;
+      let fill = '#334155';
+      if (change >= 3) fill = '#10b981';
+      else if (change >= 1.5) fill = '#059669';
+      else if (change > 0) fill = '#047857';
+      else if (change <= -3) fill = '#ef4444';
+      else if (change <= -1.5) fill = '#dc2626';
+      else if (change < 0) fill = '#b91c1c';
+      return { ...item, change, fill };
+    });
+  }, [data, details]);
 
   return (
     <div style={{ width: '100%', height: '450px', background: '#ffffff', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', display: 'flex', flexDirection: 'column', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
@@ -139,7 +157,7 @@ export default function TreemapSummary({ type = 'volume', hideDetailsButton = fa
         ) : data.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <Treemap
-              data={data}
+              data={displayData}
               dataKey="size"
               aspectRatio={4 / 3}
               stroke="#fff"
