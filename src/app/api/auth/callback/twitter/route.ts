@@ -27,7 +27,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Twitter client credentials are not configured on the server' }, { status: 500 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://myvalkyrie.online';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.myvalkyrie.online';
     const redirectUri = `${baseUrl}/api/auth/callback/twitter`;
 
     // 1. Exchange code for access token
