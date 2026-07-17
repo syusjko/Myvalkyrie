@@ -265,13 +265,6 @@ export default function AssetClient({ symbol }: { symbol: string }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#ffffff', color: 'var(--text-primary)' }}>
-      {/* Navbar */}
-      <header style={{ padding: '0.8rem 1rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center' }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-          <ArrowLeft size={16} /> Back to Network
-        </Link>
-      </header>
-
       <main style={{ width: '100%', margin: '0 auto', padding: '1.5rem 1rem' }}>
         
         {/* "Markets, everywhere" Dropdown Header */}
