@@ -46,7 +46,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
   const firstChan = post.symbol ? `#${post.symbol}` : (hashtags.length > 0 ? hashtags[0] : null);
 
   return (
-    <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s', background: 'var(--bg-color)', padding: '12px 16px 0 0' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
+    <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s', background: 'var(--bg-color)', padding: '8px 16px 0 0' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
       
       {/* Left Margin: Upvotes/Downvotes */}
       <div style={{ width: '48px', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '4px', flexShrink: 0, gap: '4px' }}>
@@ -62,9 +62,9 @@ export default function PostPreviewCard({ post }: { post: any }) {
       </div>
       
       {/* Main Content Area */}
-      <div style={{ flex: 1, minWidth: 0, paddingBottom: '12px' }}>
+      <div style={{ flex: 1, minWidth: 0, paddingBottom: '8px' }}>
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', flexWrap: 'wrap', fontSize: '0.85rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', flexWrap: 'wrap', fontSize: '0.85rem' }}>
           {firstChan && (
             <Link href={`/subchan?q=${encodeURIComponent(firstChan)}`} style={{ textDecoration: 'none' }}>
               <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>
@@ -95,13 +95,13 @@ export default function PostPreviewCard({ post }: { post: any }) {
 
         <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', display: 'block' }}>
           {/* Post Title */}
-          <div style={{ fontSize: '1.15rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '8px', lineHeight: '1.3', wordBreak: 'break-word' }}>
+          <div style={{ fontSize: '1.15rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '4px', lineHeight: '1.3', wordBreak: 'break-word' }}>
             {title}
           </div>
           
           {/* Post Body Snippet */}
           {body && (
-            <div style={{ fontSize: '0.9rem', lineHeight: '1.5', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginBottom: '12px' }}>
+            <div style={{ fontSize: '0.9rem', lineHeight: '1.5', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginBottom: '8px' }}>
               {body}
             </div>
           )}
@@ -110,7 +110,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
         {/* Top Comment Preview */}
         {topComment && (
           <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-            <div style={{ background: 'var(--surface-color)', borderRadius: '4px', padding: '8px 12px', marginBottom: '12px', borderLeft: '3px solid var(--accent-color)', display: 'flex', gap: '8px', flexDirection: 'column' }}>
+            <div style={{ background: 'var(--surface-color)', borderRadius: '4px', padding: '6px 10px', marginBottom: '8px', borderLeft: '3px solid var(--accent-color)', display: 'flex', gap: '8px', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <CornerDownRight size={14} color="var(--text-secondary)" />
                 <span style={{ fontWeight: '500', fontSize: '0.8rem', color: 'var(--text-primary)' }}>{topComment.author?.name?.toLowerCase().replace(/\s+/g, '')}</span>

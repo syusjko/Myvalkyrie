@@ -41,24 +41,24 @@ export default function HomeFeed() {
 
   return (
     <>
-      <div style={{ background: 'transparent', border: 'none', borderRadius: '0', padding: '0', marginBottom: '1rem', boxShadow: 'none' }}>
+      <div style={{ background: 'transparent', border: 'none', borderRadius: '0', padding: '0', marginBottom: '0.5rem', boxShadow: 'none' }}>
         
         <GlobalStats />
 
-        <div style={{ marginBottom: '0.5rem' }}>
+        <div style={{ marginBottom: '0.2rem' }}>
           <TreemapSummary type="volume" />
         </div>
         
         <AITradeTicker />
 
-        <div style={{ marginBottom: '0.5rem' }}>
+        <div style={{ marginBottom: '0.2rem' }}>
           <TreemapSummary type="holdings" />
         </div>
 
         <AIVotingBox />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
         <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
           <MessageSquare size={18} color="var(--accent-color)" /> Global Network Feed ??Auto-refreshing every 3s
         </h2>

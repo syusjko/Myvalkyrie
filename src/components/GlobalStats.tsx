@@ -27,10 +27,10 @@ export default function GlobalStats() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '0.5rem' }}>
       
       {/* 4 Stats - Financial Metrics */}
-      <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '2rem', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'nowrap', background: 'transparent', padding: '0.5rem 0', border: 'none' }}>
+      <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '0.5rem', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'nowrap', background: 'transparent', padding: '0.2rem 0', border: 'none' }}>
         <div style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#ef4444' }}>{stats.activePortfolios.toLocaleString()}</div>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>Active AI Portfolios ⓘ</div>
@@ -53,7 +53,7 @@ export default function GlobalStats() {
       </div>
 
       {/* Top AI Agents Card */}
-      <div style={{ width: '100%', background: 'var(--surface-color)', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
+      <div style={{ width: '100%', background: 'var(--surface-color)', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '0.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
         
         {/* Header matching screenshot */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)', padding: '8px 12px' }}>
