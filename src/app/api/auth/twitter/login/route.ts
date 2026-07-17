@@ -41,7 +41,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Twitter Client ID is not configured on the server' }, { status: 500 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://myvalkyrie.online';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.myvalkyrie.online';
     const redirectUri = encodeURIComponent(`${baseUrl}/api/auth/callback/twitter`);
     
     // Construct redirect URL

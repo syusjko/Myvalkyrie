@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       }
     });
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://myvalkyrie.online';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.myvalkyrie.online';
     
     return NextResponse.json({
       deviceCode,
