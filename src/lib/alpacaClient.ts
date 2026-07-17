@@ -1,19 +1,46 @@
 // Alpaca Broker API Client
 const BASE_URL = 'https://broker-api.sandbox.alpaca.markets';
 
-function getAuthHeaders() {
+let cachedToken: string | null = null;
+let tokenExpiry: number = 0;
+
+async function getAuthHeaders() {
   const clientId = process.env.ALPACA_BROKER_CLIENT_ID;
   const secret = process.env.ALPACA_BROKER_SECRET;
   if (!clientId || !secret) return null;
-  const auth = Buffer.from(`${clientId}:${secret}`).toString('base64');
+
+  if (cachedToken && Date.now() < tokenExpiry) {
+    return {
+      'Authorization': `Bearer ${cachedToken}`,
+      'Content-Type': 'application/json'
+    };
+  }
+
+  // Fetch new token
+  const tokenRes = await fetch('https://authx.sandbox.alpaca.markets/v1/oauth2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=client_credentials&client_id=${clientId}&client_secret=${secret}`
+  });
+  
+  if (!tokenRes.ok) {
+    console.error('Failed to fetch Alpaca token');
+    return null;
+  }
+  
+  const tokenData = await tokenRes.json();
+  cachedToken = tokenData.access_token;
+  // Expire 1 minute before actual expiry to be safe
+  tokenExpiry = Date.now() + (tokenData.expires_in - 60) * 1000;
+
   return {
-    'Authorization': `Basic ${auth}`,
+    'Authorization': `Bearer ${cachedToken}`,
     'Content-Type': 'application/json'
   };
 }
 
 export async function createAlpacaAccount(agentId: string, agentName: string) {
-  const headers = getAuthHeaders();
+  const headers = await getAuthHeaders();
   if (!headers) return { success: false, error: 'Missing Broker API Credentials' };
 
   try {
@@ -34,7 +61,7 @@ export async function createAlpacaAccount(agentId: string, agentName: string) {
           given_name: agentName || "AI",
           family_name: "Agent",
           date_of_birth: "2000-01-01",
-          tax_id: "666-55-4321", // Sandbox dummy
+          tax_id: `${Math.floor(Math.random() * 800 + 100)}-55-${Math.floor(Math.random() * 9000 + 1000)}`, // Sandbox dummy
           tax_id_type: "USA_SSN",
           country_of_citizenship: "USA",
           country_of_birth: "USA",
@@ -75,7 +102,7 @@ export async function createAlpacaAccount(agentId: string, agentName: string) {
 }
 
 export async function fundAlpacaAccount(accountId: string) {
-  const headers = getAuthHeaders();
+  const headers = await getAuthHeaders();
   if (!headers) return { success: false };
 
   // For sandbox, we can simulate an inbound ACH transfer
@@ -102,7 +129,7 @@ export async function fundAlpacaAccount(accountId: string) {
       body: JSON.stringify({
         transfer_type: "ach",
         relationship_id: relData.id,
-        amount: "100000.00",
+        amount: "50000.00",
         direction: "INCOMING"
       })
     });
@@ -117,7 +144,7 @@ export async function fundAlpacaAccount(accountId: string) {
 }
 
 export async function executeAlpacaOrder(accountId: string | null, symbol: string, qty: number, side: 'BUY' | 'SELL', currentPrice: number) {
-  const headers = getAuthHeaders();
+  const headers = await getAuthHeaders();
   if (headers && accountId) {
     try {
       const response = await fetch(`${BASE_URL}/v1/trading/accounts/${accountId}/orders`, {
