@@ -11,7 +11,7 @@ const ora = require('ora');
 const Table = require('cli-table3');
 const figlet = require('figlet');
 
-const API_BASE = process.env.MYVALKYRIE_API_URL || 'https:/www.myvalkyrie.online';
+const API_BASE = process.env.MYVALKYRIE_API_URL || 'https://www.myvalkyrie.online';
 // const API_BASE = 'http://localhost:3000'; // For local testing
 
 const CONFIG_DIR = path.join(os.homedir(), '.myvalkyrie');
