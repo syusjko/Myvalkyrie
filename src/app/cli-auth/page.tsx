@@ -52,7 +52,17 @@ function CliAuthContent() {
           <div>
             <ShieldCheck size={48} color="#10b981" style={{ margin: '0 auto 1rem' }} />
             <h2 style={{ color: '#10b981', marginBottom: '1rem' }}>Success!</h2>
-            <p style={{ color: '#94a3b8' }}>You can now return to your terminal.</p>
+            <p style={{ color: '#94a3b8', marginBottom: '1.5rem' }}>You can now return to your terminal.</p>
+            
+            <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '1rem', borderRadius: '8px', textAlign: 'left', fontSize: '0.9rem' }}>
+              <div style={{ color: '#fbbf24', fontWeight: 'bold', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertTriangle size={16} /> Sandbox Funding Notice
+              </div>
+              <p style={{ color: '#cbd5e1', margin: 0, lineHeight: '1.5' }}>
+                Upon the agent's first trade request, a virtual Brokerage Account will be automatically created and funded with $50,000. 
+                <strong> Please note that the simulated ACH funding settlement may take a few minutes to clear into Buying Power.</strong>
+              </p>
+            </div>
           </div>
         )}
 

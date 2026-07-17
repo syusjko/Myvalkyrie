@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { User as UserIcon, Bot, Users, Activity, Briefcase } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import PostPreviewCard from '@/components/PostPreviewCard';
+
+const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#06b6d4'];
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -12,6 +15,17 @@ export default function UserProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'Ideas' | 'Portfolio'>('Ideas');
+
+  // Simulated performance history for the visual chart
+  const performanceData = [
+    { name: 'Mon', value: 100000 },
+    { name: 'Tue', value: 101200 },
+    { name: 'Wed', value: 99800 },
+    { name: 'Thu', value: 102500 },
+    { name: 'Fri', value: 105400 },
+    { name: 'Sat', value: 104800 },
+    { name: 'Sun', value: 106200 },
+  ];
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -91,22 +105,80 @@ export default function UserProfilePage() {
             ))
           )
         ) : (
-          <div className="glass-panel" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', fontSize: '1.2rem', fontWeight: 'bold' }}>
-              <Briefcase size={20} /> Current Holdings
-            </div>
-            {profile.portfolio?.length === 0 ? (
-              <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem 0' }}>No assets in portfolio.</div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {profile.portfolio?.map((asset: any) => (
-                  <div key={asset.symbol} style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', background: '#f9fafb', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{asset.symbol}</div>
-                    <div>{asset.quantity} QTY</div>
-                  </div>
-                ))}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div className="glass-panel" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', fontSize: '1.3rem', fontWeight: 'bold' }}>
+                <Activity size={24} color="var(--accent-color)" /> Performance History
               </div>
-            )}
+              <div style={{ width: '100%', height: '300px', padding: '1rem' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={performanceData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--glass-border)" vertical={false} />
+                    <XAxis dataKey="name" stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `$${(val/1000)}k`} domain={['dataMin - 1000', 'dataMax + 1000']} />
+                    <Tooltip 
+                      contentStyle={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                      formatter={(value: number) => [`$${value.toLocaleString()}`, 'Balance']}
+                    />
+                    <Line type="monotone" dataKey="value" stroke="var(--accent-color)" strokeWidth={3} dot={{ r: 4, fill: 'var(--surface-color)', strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="glass-panel" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', fontSize: '1.3rem', fontWeight: 'bold' }}>
+                <Briefcase size={24} color="#10b981" /> Current Holdings Allocation
+              </div>
+              {profile.portfolio?.length === 0 ? (
+                <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '3rem 0', background: 'rgba(0,0,0,0.02)', borderRadius: '12px' }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛒</div>
+                  No assets currently held.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+                  <div style={{ width: '350px', height: '350px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={profile.portfolio}
+                          dataKey="quantity"
+                          nameKey="symbol"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={80}
+                          outerRadius={120}
+                          paddingAngle={5}
+                        >
+                          {profile.portfolio.map((entry: any, index: number) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                          formatter={(value: number, name: string) => [`${value} Shares`, name]}
+                        />
+                        <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div style={{ flex: 1, minWidth: '300px', display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center' }}>
+                    {profile.portfolio?.map((asset: any, index: number) => (
+                      <div key={asset.symbol} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: COLORS[index % COLORS.length] }}></div>
+                          <div style={{ fontWeight: 'bold', fontSize: '1.2rem', letterSpacing: '0.5px' }}>{asset.symbol}</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{asset.quantity} QTY</div>
+                          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Avg: ${asset.avgPrice.toFixed(2)}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

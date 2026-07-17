@@ -49,7 +49,7 @@ export async function createAlpacaAccount(agentId: string, agentName: string) {
       headers,
       body: JSON.stringify({
         contact: {
-          email_address: `agent_${agentId.substring(0,8)}@example.com`,
+          email_address: `agent_${agentId.substring(0,8)}_${Math.floor(Math.random()*10000)}@example.com`,
           phone_number: "555-555-5555",
           street_address: ["123 AI Avenue"],
           city: "San Francisco",
@@ -94,6 +94,24 @@ export async function createAlpacaAccount(agentId: string, agentName: string) {
       throw new Error(data.message || 'Failed to create account');
     }
     
+    // Poll for account approval
+    let status = data.status;
+    let attempts = 0;
+    while (status !== 'ACTIVE' && attempts < 30) {
+      console.log(`Waiting for Alpaca account approval (Attempt ${attempts + 1})... Current Status: ${status}`);
+      await new Promise(r => setTimeout(r, 2000));
+      const checkRes = await fetch(`${BASE_URL}/v1/accounts/${data.id}`, { headers });
+      if (checkRes.ok) {
+        const checkData = await checkRes.json();
+        status = checkData.status;
+      }
+      attempts++;
+    }
+    
+    if (status !== 'ACTIVE') {
+      console.warn(`Alpaca account ${data.id} did not become ACTIVE within 60 seconds.`);
+    }
+
     return { success: true, accountId: data.id, accountNumber: data.account_number };
   } catch (e: any) {
     console.error('Alpaca Execution Error:', e);
@@ -105,30 +123,13 @@ export async function fundAlpacaAccount(accountId: string) {
   const headers = await getAuthHeaders();
   if (!headers) return { success: false };
 
-  // For sandbox, we can simulate an inbound ACH transfer
   try {
-    // We create a relationship first
-    const relResponse = await fetch(`${BASE_URL}/v1/accounts/${accountId}/ach_relationships`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        account_owner_name: "AI Agent",
-        bank_account_type: "CHECKING",
-        bank_account_number: "1234567890",
-        bank_routing_number: "021000021",
-        nickname: "Test Bank"
-      })
-    });
-    const relData = await relResponse.json();
-    if (!relResponse.ok) throw new Error('Failed to create ACH relationship: ' + relData.message);
-
-    // Then we fund it
+    // Then we fund it with instant_funding to bypass banking simulation delays
     const fundResponse = await fetch(`${BASE_URL}/v1/accounts/${accountId}/transfers`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
-        transfer_type: "ach",
-        relationship_id: relData.id,
+        transfer_type: "instant_funding",
         amount: "50000.00",
         direction: "INCOMING"
       })
@@ -145,43 +146,34 @@ export async function fundAlpacaAccount(accountId: string) {
 
 export async function executeAlpacaOrder(accountId: string | null, symbol: string, qty: number, side: 'BUY' | 'SELL', currentPrice: number) {
   const headers = await getAuthHeaders();
-  if (headers && accountId) {
-    try {
-      const response = await fetch(`${BASE_URL}/v1/trading/accounts/${accountId}/orders`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          symbol: symbol,
-          qty: qty.toString(),
-          side: side.toLowerCase(),
-          type: 'market',
-          time_in_force: 'gtc'
-        })
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(`Alpaca Error: ${data.message}`);
-      }
-      return {
-        success: true,
-        filledPrice: Number(data.filled_avg_price) || currentPrice,
-        orderId: data.id,
-        status: data.status
-      };
-    } catch (e: any) {
-      console.error('Alpaca Execution Error:', e);
-      return { success: false, error: e.message };
-    }
+  if (!headers || !accountId) {
+    return { success: false, error: 'Missing Broker API Credentials or Account ID' };
   }
 
-  // Fallback: Mock Execution as if Alpaca returned a success
-  const slippage = side === 'BUY' ? 1.0005 : 0.9995;
-  const filledPrice = currentPrice * slippage;
-  
-  return {
-    success: true,
-    filledPrice,
-    orderId: `mock_broker_alpaca_${Math.random().toString(36).substring(7)}`,
-    status: 'filled'
-  };
+  try {
+    const response = await fetch(`${BASE_URL}/v1/trading/accounts/${accountId}/orders`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        symbol: symbol,
+        qty: qty.toString(),
+        side: side.toLowerCase(),
+        type: 'market',
+        time_in_force: 'gtc'
+      })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(`Alpaca Error: ${data.message}`);
+    }
+    return {
+      success: true,
+      filledPrice: Number(data.filled_avg_price) || currentPrice,
+      orderId: data.id,
+      status: data.status
+    };
+  } catch (e: any) {
+    console.error('Alpaca Execution Error:', e);
+    return { success: false, error: e.message };
+  }
 }

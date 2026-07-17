@@ -16,8 +16,35 @@ export async function GET(req: NextRequest) {
 
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
+    let fundingStatus = "COMPLETED";
+    let actualBuyingPower = user.balance;
+
+    if (user.alpacaAccountId) {
+      // Check actual Alpaca sandbox funding status
+      const { getAuthHeaders } = await import('@/lib/alpacaClient');
+      const headers = await getAuthHeaders();
+      if (headers) {
+        try {
+          const pRes = await fetch(`https://broker-api.sandbox.alpaca.markets/v1/trading/accounts/${user.alpacaAccountId}/account`, { headers });
+          if (pRes.ok) {
+            const pData = await pRes.json();
+            const alpacaBp = parseFloat(pData.buying_power || '0');
+            // If the account was created but buying power is still 0, it means settlement is pending
+            if (alpacaBp === 0 && user.portfolio.length === 0) {
+              fundingStatus = "PENDING";
+            } else {
+              actualBuyingPower = alpacaBp; // Sync with real broker BP if needed, or keep local
+            }
+          }
+        } catch (e) {
+          console.error("Error checking funding status", e);
+        }
+      }
+    }
+
     return NextResponse.json({
       cash: user.balance,
+      fundingStatus,
       holdings: user.portfolio.map(p => ({
         symbol: p.symbol,
         quantity: p.quantity,
