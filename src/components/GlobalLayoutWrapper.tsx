@@ -59,13 +59,20 @@ const INDEX_NAMES: Record<string, string> = {
 import HeroLanding from '@/components/HeroLanding';
 
 export default function GlobalLayoutWrapper({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [details, setDetails] = useState<Record<string, { price: number, change: number, changePercent: number }>>({});
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (hasVisited) {
+      setIsSidebarOpen(true);
+    } else {
+      localStorage.setItem('hasVisited', 'true');
+    }
+
     fetchData();
     const interval = setInterval(fetchData, 8000);
     return () => clearInterval(interval);
@@ -102,7 +109,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
         </div>
 
         {/* Main scrollable area containing Hero and Dashboard */}
-        <div id="main-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+        <div id="main-scroll" className="hidden-scrollbar" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
           
           {/* 1. Hero Landing */}
           <HeroLanding />
