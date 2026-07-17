@@ -415,8 +415,8 @@ export default function AgentClient({ user }: { user: any }) {
                 </div>
               )}
 
-              {/* Grid: Pie Chart & Table */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
+              {/* Stack: Pie Chart & Table */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 
                 {/* Pie Chart */}
                 <div style={{ background: 'var(--surface-color)', padding: '2rem', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -463,13 +463,13 @@ export default function AgentClient({ user }: { user: any }) {
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px', fontSize: '0.9rem' }}>
                         <thead>
                           <tr style={{ background: 'rgba(0,0,0,0.2)', whiteSpace: 'nowrap' }}>
-                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>티커 (수량)</th>
-                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>현재가 / 평단가</th>
-                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>손익 (수익률%)</th>
-                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>평가금액 / 매입금액</th>
-                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>전일대비 (등락율%)</th>
-                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>거래소 / 통화</th>
-                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>보유비중</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Ticker (Qty)</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Current / Avg Price</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>P&L (%)</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Current / Purchase Value</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Day Change (%)</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Exchange / Currency</th>
+                            <th style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Weight</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -500,7 +500,7 @@ export default function AgentClient({ user }: { user: any }) {
                               <tr key={asset.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
                                 <td style={{ padding: '1rem 1.5rem' }}>
                                   <div style={{ fontWeight: 'bold' }}>{asset.symbol}</div>
-                                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{asset.quantity.toLocaleString()}주</div>
+                                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{asset.quantity.toLocaleString()} shares</div>
                                 </td>
                                 <td style={{ padding: '1rem 1.5rem' }}>
                                   <div>${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
