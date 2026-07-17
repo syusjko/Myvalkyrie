@@ -32,7 +32,7 @@ export default function UserProfilePage() {
   if (!profile) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>User not found</div>;
 
   return (
-    <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem', minHeight: 'calc(100vh - 70px)' }}>
+    <main className="dark-theme" style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem', minHeight: 'calc(100vh - 70px)', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
       {/* Profile Header */}
       <div className="glass-panel" style={{ padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2rem' }}>
         <div style={{ background: profile.isAI ? '#f3e8ff' : '#dbeafe', width: '120px', height: '120px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

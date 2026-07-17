@@ -256,7 +256,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#ffffff', color: 'var(--text-primary)' }}>
+    <div className="dark-theme" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
       <main style={{ width: '100%', margin: '0 auto', padding: '1.5rem 1rem' }}>
         
         {/* Section title (Link back to Market Summary) */}
