@@ -96,7 +96,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#ffffff' }}>
       <HeroLanding />
 
-      <main className="responsive-grid" style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '0', display: 'grid', gridTemplateColumns: isRightSidebarOpen ? '220px 1fr 300px' : '220px 1fr 60px', gap: '0', transition: 'grid-template-columns 0.3s ease', background: '#ffffff' }}>
+      <main className="responsive-grid" style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '0', display: 'grid', gridTemplateColumns: '220px 1fr', gap: '0', transition: 'grid-template-columns 0.3s ease', background: '#ffffff' }}>
         
         {/* LEFT: Market Data (Watchlist) & subchan */}
         <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', zIndex: 150, height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderRight: '1px solid var(--glass-border)', background: '#ffffff' }}>
@@ -218,134 +218,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
 
-        {/* RIGHT: Global Leaderboard */}
-        <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', zIndex: 150, height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderLeft: '1px solid var(--glass-border)', background: '#ffffff' }}>
-          <div style={{ padding: isRightSidebarOpen ? '1rem 0.8rem' : '1rem 0.4rem', flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: isRightSidebarOpen ? 'stretch' : 'center', background: '#ffffff' }}>
-            
-            <button 
-              onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)} 
-              title={isRightSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
-              style={{ 
-                position: 'absolute', left: '-15px', top: '1.5rem', background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10, boxShadow: '0 2px 5px rgba(0,0,0,0.1)', color: 'var(--text-secondary)'
-              }}
-            >
-              {isRightSidebarOpen ? '▶' : '◀'}
-            </button>
-            
-            {isRightSidebarOpen ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                
-                {/* Header with Link to Full Leaderboard */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: '1px solid var(--glass-border)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                    <Trophy size={18} color="#d97706" /> Leaderboard
-                  </div>
-                  <Link href="/leaderboard" style={{ fontSize: '0.85rem', color: 'var(--accent-color)', textDecoration: 'none', fontWeight: 'bold' }}>
-                    View Full →
-                  </Link>
-                </div>
 
-                {(() => {
-                  const aiAgents = leaderboard.filter(u => u.isAI);
-                  const topGainers = [...aiAgents].sort((a, b) => parseFloat(b.totalRoi) - parseFloat(a.totalRoi)).slice(0, 5);
-                  const topLosers = [...aiAgents].sort((a, b) => parseFloat(a.totalRoi) - parseFloat(b.totalRoi)).slice(0, 5);
-                  // Mock "Most active" by portfolio size or just slightly shuffled
-                  const mostActive = [...aiAgents].sort((a, b) => b.portfolioDist.length - a.portfolioDist.length).slice(0, 5);
-
-                  const renderSection = (title: string, data: any[]) => (
-                    <div key={title} style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--text-primary)' }}>{title}</h3>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                        {data.map(u => {
-                          const isUp = parseFloat(u.totalRoi) >= 0;
-                          const color = isUp ? 'var(--success-color)' : 'var(--danger-color)';
-                          const points = isUp 
-                            ? "0,20 10,15 20,18 30,10 40,12 50,5 60,2"
-                            : "0,2 10,8 20,5 30,15 40,12 50,20 60,22";
-                          
-                          return (
-                            <Link key={u.id} href={`/agent/${u.id}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', textDecoration: 'none', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.opacity = '0.8'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
-                              {/* Left: Name & Bio */}
-                              <div style={{ flex: 1, minWidth: 0, paddingRight: '8px' }}>
-                                <div style={{ fontWeight: 'bold', color: 'var(--accent-color)', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                  {u.name.toUpperCase().replace(/\s+/g, '')}
-                                </div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                  AI Agent
-                                </div>
-                              </div>
-                              
-                              {/* Right: Values */}
-                              <div style={{ flexShrink: 0, textAlign: 'right' }}>
-                                <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                                  {(u.netWorth / 1000).toFixed(2)}k
-                                </div>
-                                <div style={{ fontSize: '0.75rem', color: color }}>
-                                  {isUp ? '+' : ''}{u.totalRoi}%
-                                </div>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-
-                  const renderStockSection = (title: string, data: any[], formatValue: (val: number) => string) => (
-                    <div key={title} style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--text-primary)' }}>{title}</h3>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                        {data.map((item, i) => (
-                          <Link key={item.symbol} href={`/asset/${item.symbol}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', textDecoration: 'none', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.opacity = '0.8'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                              <span style={{ fontWeight: 'bold', color: i < 3 ? '#eab308' : 'var(--text-secondary)' }}>{i+1}</span>
-                              <div style={{ fontWeight: 'bold', color: 'var(--text-primary)' }}>{item.symbol}</div>
-                            </div>
-                            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                              ${formatValue(item.value || item.volume)}
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  );
-
-                  return (
-                    <>
-                      {renderSection('Top AI Gainers', topGainers)}
-                      {topLosers.length > 0 && topLosers[0].id !== topGainers[0]?.id && renderSection('Top AI Losers', topLosers)}
-                      
-                      {topHeldStocks.length > 0 && renderStockSection(
-                        'Most Held by AIs', 
-                        topHeldStocks,
-                        val => (val / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'k'
-                      )}
-                      
-                      {topTradedStocks.length > 0 && renderStockSection(
-                        "Today's AI Volume", 
-                        topTradedStocks,
-                        val => (val / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'k'
-                      )}
-                    </>
-                  );
-                })()}
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem', marginTop: '1rem' }}>
-                <div title="Leaderboard" style={{ padding: '10px', background: '#fffbeb', borderRadius: '8px', cursor: 'pointer' }} onClick={() => setIsRightSidebarOpen(true)}>
-                  <Trophy size={22} color="#d97706" />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem' }}>
-                  {leaderboard.slice(0, 5).map((u, i) => (
-                    <Link key={u.id} href={`/agent/${u.id}`} title={`${i+1}. ${u.name}`} style={{ background: u.isAI ? '#f3e8ff' : '#dbeafe', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      {u.isAI ? <Bot size={18} color="#9333ea" /> : <UserIcon size={18} color="#2563eb" />}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </main>
 
       <style jsx global>{`
