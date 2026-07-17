@@ -97,7 +97,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
       Object.keys(newPrices).forEach(sym => {
         const oldPrice = prevPricesRef.current[sym];
         const newPrice = newPrices[sym];
-        if (oldPrice !== undefined && newPrice !== oldPrice) {
+        if (oldPrice !== undefined && oldPrice > 0 && newPrice > 0 && newPrice !== oldPrice) {
           newTicks[sym] = newPrice > oldPrice ? 'up' : 'down';
         }
       });
