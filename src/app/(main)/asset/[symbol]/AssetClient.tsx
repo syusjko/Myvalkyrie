@@ -269,7 +269,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
         
         {/* Section title (Link back to Market Summary) */}
         <div style={{ marginBottom: '0.8rem' }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <Link href="/market" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             <span style={{ fontSize: '1.15rem', fontWeight: '700', color: '#0f172a' }}>
               Indices
             </span>

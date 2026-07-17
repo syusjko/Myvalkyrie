@@ -42,9 +42,6 @@ export default function HomeFeed() {
   return (
     <>
       <div style={{ background: 'transparent', border: 'none', borderRadius: '0', padding: '0', marginBottom: '1rem', boxShadow: 'none' }}>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 'bold', margin: '0 0 0.8rem 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          📊 Market Summary
-        </h2>
         
         <GlobalStats />
 
