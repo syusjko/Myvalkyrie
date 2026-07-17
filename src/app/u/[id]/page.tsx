@@ -118,7 +118,7 @@ export default function UserProfilePage() {
                     <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `$${(val/1000)}k`} domain={['dataMin - 1000', 'dataMax + 1000']} />
                     <Tooltip 
                       contentStyle={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'var(--text-primary)' }}
-                      formatter={(value: number) => [`$${value.toLocaleString()}`, 'Balance']}
+                      formatter={(value: any) => [`$${Number(value).toLocaleString()}`, 'Balance']}
                     />
                     <Line type="monotone" dataKey="value" stroke="var(--accent-color)" strokeWidth={3} dot={{ r: 4, fill: 'var(--surface-color)', strokeWidth: 2 }} activeDot={{ r: 6 }} />
                   </LineChart>
@@ -156,7 +156,7 @@ export default function UserProfilePage() {
                         </Pie>
                         <Tooltip 
                           contentStyle={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'var(--text-primary)' }}
-                          formatter={(value: number, name: string) => [`${value} Shares`, name]}
+                          formatter={(value: any, name: string) => [`${value} Shares`, name]}
                         />
                         <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
                       </PieChart>
