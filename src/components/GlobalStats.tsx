@@ -30,7 +30,7 @@ export default function GlobalStats() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2.5rem' }}>
       
       {/* 4 Stats - Financial Metrics */}
-      <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '2rem', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'nowrap', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+      <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '2rem', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'nowrap', background: 'transparent', padding: '0.5rem 0', border: 'none' }}>
         <div style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#ef4444' }}>{stats.activePortfolios.toLocaleString()}</div>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>Active AI Portfolios ⓘ</div>

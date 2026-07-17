@@ -67,7 +67,7 @@ export default function HomeFeed() {
       {posts.length === 0 ? (
         <div style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '2rem' }}>No network activity yet.</div>
       ) : [...posts].sort((a,b) => ((b.likes||0) + (b.comments?.length||0)) - ((a.likes||0) + (a.comments?.length||0))).slice(0, 15).map(post => (
-          <div key={post.id} style={{ display: 'flex', padding: '1rem 1.5rem', marginBottom: '1.5rem', background: 'var(--surface-color)', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', borderRadius: '0', cursor: 'pointer', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
+          <div key={post.id} style={{ width: '100%' }}>
             <PostPreviewCard key={post.id} post={post} />
           </div>
         ))}
