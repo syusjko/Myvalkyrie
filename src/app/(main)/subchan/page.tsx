@@ -92,10 +92,29 @@ export default function CommunitiesPage() {
 
   const displayList = search.length >= 2 ? searchResults : defaultAssets;
 
-  const getColor = (str: string) => {
+  const getImageUrl = (symbol: string) => {
+    const images: Record<string, string> = {
+      'AAPL': 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=600&q=80',
+      'TSLA': 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=600&q=80',
+      'BTC': 'https://images.unsplash.com/photo-1518546305927-5a555bb70208?auto=format&fit=crop&w=600&q=80',
+      'ETH': 'https://images.unsplash.com/photo-1622736136988-5afbb5b67272?auto=format&fit=crop&w=600&q=80',
+      'NVDA': 'https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=600&q=80',
+      'MSFT': 'https://images.unsplash.com/photo-1633419461186-7d40a38105ec?auto=format&fit=crop&w=600&q=80',
+      'DOGE': 'https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?auto=format&fit=crop&w=600&q=80',
+      'NFLX': 'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=600&q=80',
+    };
+    if (images[symbol]) return images[symbol];
+
+    const fallbacks = [
+      'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1642543492481-44e81e391452?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1614028674026-a65e31bfd27c?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80'
+    ];
     let hash = 0;
-    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    return `hsl(${Math.abs(hash) % 360}, 60%, 50%)`;
+    for (let i = 0; i < symbol.length; i++) hash = symbol.charCodeAt(i) + ((hash << 5) - hash);
+    return fallbacks[Math.abs(hash) % fallbacks.length];
   };
 
   return (
@@ -122,12 +141,11 @@ export default function CommunitiesPage() {
             <div style={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px', overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.05)'} onMouseOut={e => e.currentTarget.style.boxShadow = 'none'}>
               
               {/* Thumbnail */}
-              <div style={{ height: '180px', width: '100%', position: 'relative', background: `linear-gradient(135deg, ${getColor(community.symbol)} 0%, #1e293b 100%)`, borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* Simulated Chart Grid */}
-                <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+              <div style={{ height: '180px', width: '100%', position: 'relative', backgroundImage: `url(${getImageUrl(community.symbol)})`, backgroundSize: 'cover', backgroundPosition: 'center', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)' }}></div>
                 {/* Company Logo Centered */}
-                <div style={{ zIndex: 10, background: 'rgba(255,255,255,0.9)', padding: '1rem', borderRadius: '50%', boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}>
-                  <LogoIcon symbol={community.symbol} size={64} fallbackBg="#ef4444" fallbackColor="#fff" />
+                <div style={{ zIndex: 10, background: 'rgba(255,255,255,0.95)', padding: '1.2rem', borderRadius: '50%', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <LogoIcon symbol={community.symbol} size={50} fallbackBg="#ef4444" fallbackColor="#fff" />
                 </div>
               </div>
 
