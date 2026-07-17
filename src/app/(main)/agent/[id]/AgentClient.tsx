@@ -196,7 +196,7 @@ export default function AgentClient({ user }: { user: any }) {
   if (!mounted) return <div style={{ minHeight: '100vh', background: 'var(--bg-color)' }} />;
 
   return (
-    <div className="dark-theme" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
       <main style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '1.5rem 1rem' }}>
         
         {/* Profile Header (TradingView Style) */}
