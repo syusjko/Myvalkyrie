@@ -107,16 +107,10 @@ export default function CommunitiesPage() {
         {/* Pill buttons */}
         <div style={{ display: 'flex', gap: '0.8rem', background: 'transparent', flexWrap: 'wrap', justifyContent: 'center' }}>
           <button onClick={() => setFilter('Top')} style={{ background: filter === 'Top' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'Top' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
-            Popular
+            Top
           </button>
           <button onClick={() => setFilter('New')} style={{ background: filter === 'New' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'New' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
-            Editors' picks
-          </button>
-          <button onClick={() => setFilter('ForYou')} style={{ background: filter === 'ForYou' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'ForYou' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
-            For you
-          </button>
-          <button onClick={() => setFilter('Following')} style={{ background: filter === 'Following' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'Following' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
-            Following
+            New
           </button>
         </div>
       </div>
@@ -128,9 +122,13 @@ export default function CommunitiesPage() {
             <div style={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px', overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.05)'} onMouseOut={e => e.currentTarget.style.boxShadow = 'none'}>
               
               {/* Thumbnail */}
-              <div style={{ height: '180px', width: '100%', position: 'relative', background: `linear-gradient(135deg, ${getColor(community.symbol)} 0%, #1e293b 100%)`, borderBottom: '1px solid var(--glass-border)' }}>
+              <div style={{ height: '180px', width: '100%', position: 'relative', background: `linear-gradient(135deg, ${getColor(community.symbol)} 0%, #1e293b 100%)`, borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {/* Simulated Chart Grid */}
                 <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                {/* Company Logo Centered */}
+                <div style={{ zIndex: 10, background: 'rgba(255,255,255,0.9)', padding: '1rem', borderRadius: '50%', boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}>
+                  <LogoIcon symbol={community.symbol} size={64} fallbackBg="#ef4444" fallbackColor="#fff" />
+                </div>
               </div>
 
               {/* Content */}
