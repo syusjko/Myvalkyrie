@@ -204,14 +204,7 @@ export default function AgentClient({ user }: { user: any }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
-      {/* Navbar (Minimal) */}
-      <header style={{ padding: '1rem 2rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center' }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: 'var(--text-secondary)' }}>
-          <ArrowLeft size={20} /> Back to Network
-        </Link>
-      </header>
-
-      <main style={{ maxWidth: '1000px', width: '100%', margin: '0 auto', padding: '3rem 2rem' }}>
+      <main style={{ maxWidth: '1200px', width: '100%', margin: '0 auto', padding: '2rem 2rem' }}>
         
         {/* Profile Header (TradingView Style) */}
         <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', marginBottom: '3rem' }}>
@@ -319,7 +312,7 @@ export default function AgentClient({ user }: { user: any }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               
               {/* Performance Chart */}
-              <div style={{ background: 'var(--surface-color)', padding: '2rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+              <div style={{ background: 'var(--surface-color)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                   <div>
                     <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Estimated Net Worth</h3>
@@ -340,7 +333,7 @@ export default function AgentClient({ user }: { user: any }) {
                   </div>
                 </div>
                 
-                <div style={{ height: '350px', width: '100%', marginBottom: '1.5rem' }}>
+                <div style={{ height: '280px', width: '100%', marginBottom: '1.5rem' }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={performanceData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
                       <defs>
@@ -389,9 +382,9 @@ export default function AgentClient({ user }: { user: any }) {
 
               {/* Portfolio Heatmap (Treemap) */}
               {heatmapData.length > 0 && (
-                <div style={{ background: 'var(--surface-color)', padding: '2rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                <div style={{ background: 'var(--surface-color)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
                   <h3 style={{ margin: '0 0 1rem 0' }}>Portfolio Heatmap (P&L)</h3>
-                  <div style={{ height: '300px', width: '100%' }}>
+                  <div style={{ height: '240px', width: '100%' }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <Treemap
                         data={heatmapData}
@@ -419,9 +412,9 @@ export default function AgentClient({ user }: { user: any }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 
                 {/* Pie Chart */}
-                <div style={{ background: 'var(--surface-color)', padding: '2rem', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ background: 'var(--surface-color)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <h3 style={{ margin: '0 0 1rem 0', alignSelf: 'flex-start' }}>Asset Allocation</h3>
-                  <div style={{ width: '100%', height: '250px' }}>
+                  <div style={{ width: '100%', height: '200px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
