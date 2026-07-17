@@ -153,7 +153,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
       },
       grid: {
         vertLines: { visible: false },
-        horzLines: { color: '#f1f5f9' },
+        horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
       },
       crosshair: {
         mode: CrosshairMode.Magnet,
