@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { authenticateAgent } from '@/lib/apiAuth';
+import { executeAlpacaOrder } from '@/lib/alpacaClient';
+import { executeKISOrder } from '@/lib/kisClient';
 
 const YF = require('yahoo-finance2').default;
 const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
@@ -10,8 +12,6 @@ export async function POST(req: NextRequest) {
   if (!agent) {
     return NextResponse.json({ error: 'Unauthorized. Invalid or missing API Key.' }, { status: 401 });
   }
-
-
 
   try {
     const body = await req.json();
@@ -51,7 +51,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Error fetching live market data for ${symbol}` }, { status: 500 });
     }
 
-    const totalCost = currentPrice * quantity;
+    // Route to External API wrapper for execution
+    const isKoreanStock = symbol.endsWith('.KS') || symbol.endsWith('.KQ');
+    let executionResult;
+
+    if (isKoreanStock) {
+      executionResult = await executeKISOrder(symbol, quantity, type as 'BUY' | 'SELL', currentPrice);
+    } else {
+      executionResult = await executeAlpacaOrder(symbol, quantity, type as 'BUY' | 'SELL', currentPrice);
+    }
+
+    if (!executionResult.success) {
+      return NextResponse.json({ error: `External Execution Failed: ${executionResult.error}` }, { status: 400 });
+    }
+
+    // Use the actual filled price from the API / slippage simulator
+    const filledPrice = executionResult.filledPrice || currentPrice;
+    const totalCost = filledPrice * quantity;
 
     // Execute logic within a transaction
     const result = await prisma.$transaction(async (tx) => {
@@ -87,7 +103,7 @@ export async function POST(req: NextRequest) {
               agentId: dbAgent.id,
               symbol,
               quantity,
-              avgPrice: currentPrice
+              avgPrice: filledPrice
             }
           });
         }
@@ -120,7 +136,7 @@ export async function POST(req: NextRequest) {
           symbol,
           type,
           quantity,
-          price: currentPrice
+          price: filledPrice
         }
       });
 
@@ -129,8 +145,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Successfully executed ${type} for ${quantity} ${symbol}`,
-      trade: result
+      message: `Successfully executed ${type} for ${quantity} ${symbol} at $${filledPrice.toFixed(4)}`,
+      trade: result,
+      externalOrderId: executionResult.orderId
     });
 
   } catch (error: any) {

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { executeAlpacaOrder } from '@/lib/alpacaClient';
+import { executeKISOrder } from '@/lib/kisClient';
 
 export async function POST(req: Request) {
   try {
@@ -44,16 +46,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid symbol or market unavailable' }, { status: 400 });
     }
 
-    // --- SLIPPAGE SIMULATION ---
-    // Add a baseline spread of 0.05%
-    const baseSpread = 0.0005; 
-    // Quantity penalty: 0.01% per 100 units
-    const quantityPenalty = (quantity / 100) * 0.0001; 
-    const totalSlippage = baseSpread + quantityPenalty;
-    
-    const executedPrice = type === 'BUY' 
-      ? currentPrice * (1 + totalSlippage) 
-      : currentPrice * (1 - totalSlippage);
+    // --- EXTERNAL EXECUTION LOGIC ---
+    const isKoreanStock = symbol.endsWith('.KS') || symbol.endsWith('.KQ');
+    let executionResult;
+
+    if (isKoreanStock) {
+      executionResult = await executeKISOrder(symbol, quantity, type as 'BUY' | 'SELL', currentPrice);
+    } else {
+      executionResult = await executeAlpacaOrder(symbol, quantity, type as 'BUY' | 'SELL', currentPrice);
+    }
+
+    if (!executionResult.success) {
+      return NextResponse.json({ error: `External Execution Failed: ${executionResult.error}` }, { status: 400 });
+    }
+
+    const executedPrice = executionResult.filledPrice || currentPrice;
+    const externalOrderId = executionResult.orderId;
 
     const totalCost = executedPrice * quantity;
     let trade;
