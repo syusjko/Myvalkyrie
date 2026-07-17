@@ -53,10 +53,10 @@ export default function GlobalStats() {
       </div>
 
       {/* Top AI Agents Card */}
-      <div style={{ width: '100%', background: '#ffffff', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
+      <div style={{ width: '100%', background: 'var(--surface-color)', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
         
         {/* Header matching screenshot */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', padding: '8px 12px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)', padding: '8px 12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem' }}>
             <span style={{ color: '#10b981' }}>📈</span> Top AI Agents (By ROI)
           </div>
@@ -68,7 +68,7 @@ export default function GlobalStats() {
         </div>
         
         {/* Horizontal Card List */}
-        <div style={{ display: 'flex', overflowX: 'auto', padding: '15px', gap: '12px', background: '#ffffff' }} className="hidden-scrollbar">
+        <div style={{ display: 'flex', overflowX: 'auto', padding: '15px', gap: '12px', background: 'var(--surface-color)' }} className="hidden-scrollbar">
           {topAgents.map(agent => {
             const colors = ['#ef4444', '#f97316', '#f59e0b', '#3b82f6', '#10b981'];
             const bgColor = colors[agent.name.length % colors.length];

@@ -283,24 +283,6 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
             </div>
           </div>
           
-          {/* Theme Toggle in Collapsible Sidebar */}
-          <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', padding: '1rem', display: 'flex', justifyContent: 'space-between' }}>
-            <button 
-              onClick={() => { setThemeMode('light'); localStorage.setItem('MyValkyrie_theme', 'light'); }}
-              style={{ background: themeMode === 'light' ? 'var(--accent-color)' : 'transparent', color: themeMode === 'light' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '0.5rem', borderRadius: '8px', cursor: 'pointer', flex: 1, display: 'flex', justifyContent: 'center' }} title="Light Mode">
-              <Sun size={20} />
-            </button>
-            <button 
-              onClick={() => { setThemeMode('dark'); localStorage.setItem('MyValkyrie_theme', 'dark'); }}
-              style={{ background: themeMode === 'dark' ? 'var(--accent-color)' : 'transparent', color: themeMode === 'dark' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '0.5rem', borderRadius: '8px', cursor: 'pointer', flex: 1, display: 'flex', justifyContent: 'center' }} title="Dark Mode">
-              <Moon size={20} />
-            </button>
-            <button 
-              onClick={() => { setThemeMode('auto'); localStorage.setItem('MyValkyrie_theme', 'auto'); }}
-              style={{ background: themeMode === 'auto' ? 'var(--accent-color)' : 'transparent', color: themeMode === 'auto' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '0.5rem', borderRadius: '8px', cursor: 'pointer', flex: 1, display: 'flex', justifyContent: 'center' }} title="Auto (Page Default)">
-              <Monitor size={20} />
-            </button>
-          </div>
         </div>
 
         {/* Rightmost Thin Sidebar */}
@@ -308,6 +290,22 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }} title="Toggle Menu">
             <Menu size={24} />
           </button>
+          
+          <div style={{ marginTop: 'auto', marginBottom: '1.5rem' }}>
+            <button 
+              onClick={() => {
+                const next = themeMode === 'light' ? 'dark' : themeMode === 'dark' ? 'auto' : 'light';
+                setThemeMode(next);
+                localStorage.setItem('MyValkyrie_theme', next);
+              }}
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', borderRadius: '8px', transition: 'background 0.2s' }}
+              onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+              onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+              title={`Theme: ${themeMode}`}
+            >
+              {themeMode === 'light' ? <Sun size={24} /> : themeMode === 'dark' ? <Moon size={24} /> : <Monitor size={24} />}
+            </button>
+          </div>
         </div>
 
       </div>

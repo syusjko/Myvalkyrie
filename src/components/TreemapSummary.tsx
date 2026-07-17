@@ -125,8 +125,8 @@ export default function TreemapSummary({ type = 'volume', hideDetailsButton = fa
   }, [data, details]);
 
   return (
-    <div style={{ width: '100%', height: '450px', background: '#ffffff', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', display: 'flex', flexDirection: 'column', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
-      <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', borderBottom: '1px solid #f1f5f9' }}>
+    <div style={{ width: '100%', height: '450px', background: 'var(--surface-color)', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', display: 'flex', flexDirection: 'column', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
+      <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)', borderBottom: '1px solid var(--glass-border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <h2 style={{ fontSize: '1.2rem', margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
              {title}
@@ -143,7 +143,7 @@ export default function TreemapSummary({ type = 'volume', hideDetailsButton = fa
             </span>
           </div>
           {!hideDetailsButton && (
-            <Link href={`/market/heatmap-details?type=${type}`} style={{ fontSize: '0.85rem', padding: '6px 14px', background: '#ffffff', color: 'var(--text-primary)', border: '1px solid #e2e8f0', borderRadius: '8px', textDecoration: 'none', fontWeight: '500', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }} onMouseOver={e => {e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1';}} onMouseOut={e => {e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.borderColor = '#e2e8f0';}}>
+            <Link href={`/market/heatmap-details?type=${type}`} style={{ fontSize: '0.85rem', padding: '6px 14px', background: 'var(--surface-color)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '8px', textDecoration: 'none', fontWeight: '500', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }} onMouseOver={e => {e.currentTarget.style.background = 'rgba(0,0,0,0.02)'; e.currentTarget.style.borderColor = 'var(--accent-color)';}} onMouseOut={e => {e.currentTarget.style.background = 'var(--surface-color)'; e.currentTarget.style.borderColor = 'var(--glass-border)';}}>
               View Details <span style={{fontSize: '1rem'}}>→</span>
             </Link>
           )}
