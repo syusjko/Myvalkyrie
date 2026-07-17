@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAlpacaHistoricalBars } from '@/lib/alpacaDataClient';
-const YF = require('yahoo-finance2').default;
-const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
+import yahooFinance from 'yahoo-finance2';
+yahooFinance.suppressNotices(['yahooSurvey']);
 
 export async function GET(req: Request) {
   try {

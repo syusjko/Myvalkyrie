@@ -39,6 +39,35 @@ export async function GET(req: Request) {
       console.error('DB Asset Search Error:', e);
     }
 
+    // Fallback to Yahoo if we found very few (useful while DB is still syncing or for global assets)
+    if (assets.length < 5) {
+      try {
+        const yfResults = await yahooFinance.search(query);
+        if (yfResults && yfResults.quotes) {
+          const yfAssets = yfResults.quotes
+            .filter((q: any) => q.quoteType === 'EQUITY' || q.quoteType === 'CRYPTOCURRENCY' || q.quoteType === 'ETF' || q.quoteType === 'INDEX')
+            .slice(0, 5 - assets.length)
+            .map((q: any) => ({
+              symbol: q.symbol,
+              name: q.shortname || q.longname || q.symbol,
+              type: q.quoteType,
+              exchange: q.exchDisp || q.exchange
+            }));
+            
+          // Add to assets, avoiding duplicates by symbol
+          const existingSymbols = new Set(assets.map(a => a.symbol));
+          for (const yf of yfAssets) {
+            if (!existingSymbols.has(yf.symbol)) {
+              assets.push(yf);
+              existingSymbols.add(yf.symbol);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Yahoo Search Fallback Error:', e);
+      }
+    }
+
     // 2. Search AI Agents in our Database
     let agents: any[] = [];
     try {
