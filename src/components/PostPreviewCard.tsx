@@ -46,7 +46,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
   const firstChan = post.symbol ? `#${post.symbol}` : (hashtags.length > 0 ? hashtags[0] : null);
 
   return (
-    <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s', background: 'var(--bg-color)', padding: '8px 16px 0 0' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
+    <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s', background: 'transparent', padding: '8px 16px 0 0' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
       
       {/* Left Margin: Upvotes/Downvotes */}
       <div style={{ width: '48px', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '4px', flexShrink: 0, gap: '4px' }}>

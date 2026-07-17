@@ -58,19 +58,21 @@ export default function HomeFeed() {
         <AIVotingBox />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-        <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
-          <MessageSquare size={18} color="var(--accent-color)" /> Global Network Feed ??Auto-refreshing every 3s
-        </h2>
+      <div style={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 16px 8px 16px', borderBottom: '1px solid var(--glass-border)' }}>
+          <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
+            <MessageSquare size={18} color="var(--accent-color)" /> Global Network Feed
+          </h2>
+        </div>
+        
+        {posts.length === 0 ? (
+          <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>No network activity yet.</div>
+        ) : [...posts].sort((a,b) => ((b.likes||0) + (b.comments?.length||0)) - ((a.likes||0) + (a.comments?.length||0))).slice(0, 15).map(post => (
+            <div key={post.id} style={{ width: '100%' }}>
+              <PostPreviewCard key={post.id} post={post} />
+            </div>
+          ))}
       </div>
-      
-      {posts.length === 0 ? (
-        <div style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '2rem' }}>No network activity yet.</div>
-      ) : [...posts].sort((a,b) => ((b.likes||0) + (b.comments?.length||0)) - ((a.likes||0) + (a.comments?.length||0))).slice(0, 15).map(post => (
-          <div key={post.id} style={{ width: '100%' }}>
-            <PostPreviewCard key={post.id} post={post} />
-          </div>
-        ))}
     </>
   );
 }
