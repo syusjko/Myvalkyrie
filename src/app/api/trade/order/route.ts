@@ -60,7 +60,7 @@ export async function POST(req: Request) {
         if (createRes.success && createRes.accountId) {
           alpacaAccountId = createRes.accountId;
           // Fund the newly created account
-          await fundAlpacaAccount(alpacaAccountId);
+          await fundAlpacaAccount(alpacaAccountId as string);
           // Save to DB
           await prisma.agent.update({
             where: { id: agent.id },
