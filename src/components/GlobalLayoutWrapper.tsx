@@ -58,14 +58,13 @@ const INDEX_NAMES: Record<string, string> = {
 
 import HeroLanding from '@/components/HeroLanding';
 
+import { useMarketData } from '@/lib/MarketDataContext';
+
 export default function GlobalLayoutWrapper({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [prices, setPrices] = useState<Record<string, number>>({});
-  const [details, setDetails] = useState<Record<string, { price: number, change: number, changePercent: number }>>({});
-  const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
-  const [ticks, setTicks] = useState<Record<string, 'up' | 'down' | null>>({});
-  const prevPricesRef = useRef<Record<string, number>>({});
+
+  const { prices, details, ticks, leaderboard } = useMarketData();
 
   useEffect(() => {
     const hasVisited = localStorage.getItem('hasVisited');
@@ -74,56 +73,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
     } else {
       localStorage.setItem('hasVisited', 'true');
     }
-
-    fetchData();
-    const interval = setInterval(fetchData, 8000);
-    return () => clearInterval(interval);
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const currentWatchlist = getDynamicWatchlist();
-      const symbolsQuery = currentWatchlist.flatMap(c => c.symbols).join(',');
-      const [priceRes, leadRes] = await Promise.all([
-        fetch(`/api/market/prices?symbols=${symbolsQuery}`),
-        fetch('/api/leaderboard')
-      ]);
-      const priceData = await priceRes.json();
-      const leadData = await leadRes.json();
-
-      const newPrices = priceData.prices || {};
-      const newTicks: Record<string, 'up' | 'down' | null> = {};
-      
-      Object.keys(newPrices).forEach(sym => {
-        const oldPrice = prevPricesRef.current[sym];
-        const newPrice = newPrices[sym];
-        if (oldPrice !== undefined && oldPrice > 0 && newPrice > 0 && newPrice !== oldPrice) {
-          newTicks[sym] = newPrice > oldPrice ? 'up' : 'down';
-        }
-      });
-
-      if (priceData.prices) setPrices(newPrices);
-      if (priceData.details) setDetails(priceData.details);
-      if (leadData.leaderboard) setLeaderboard(leadData.leaderboard);
-
-      if (Object.keys(newTicks).length > 0) {
-        setTicks(prev => ({ ...prev, ...newTicks }));
-        setTimeout(() => {
-          setTicks(prev => {
-            const cleared = { ...prev };
-            Object.keys(newTicks).forEach(sym => {
-              cleared[sym] = null;
-            });
-            return cleared;
-          });
-        }, 1000);
-      }
-      
-      prevPricesRef.current = newPrices;
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100vh', overflow: 'hidden', background: '#ffffff' }}>

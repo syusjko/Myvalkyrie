@@ -42,8 +42,13 @@ const TOP_INDICES = [
   { symbol: '^IXIC', name: 'Nasdaq Composite', badge: 'N', bg: '#0d9488' }
 ];
 
+import { useMarketData } from '@/lib/MarketDataContext';
+
 export default function AssetClient({ symbol }: { symbol: string }) {
-  const [price, setPrice] = useState<number | null>(null);
+  const { prices, details, ticks } = useMarketData();
+  const price = prices[symbol] || null;
+  const indexData = details;
+
   const [posts, setPosts] = useState<any[]>([]);
   const [sortMode, setSortMode] = useState<'discussed' | 'new' | 'top'>('discussed');
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,47 +58,10 @@ export default function AssetClient({ symbol }: { symbol: string }) {
   const [news, setNews] = useState<any[]>([]);
   const [timeRange, setTimeRange] = useState('1mo');
   const [chartData, setChartData] = useState<{ time: number, value: number }[]>([]);
-  const [indexData, setIndexData] = useState<Record<string, { price: number, changePercent: number }>>({});
   
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
   const seriesRef = useRef<any>(null);
-
-  // Fetch index data
-  useEffect(() => {
-    const fetchIndices = async () => {
-      try {
-        const res = await fetch('/api/market/prices?symbols=^GSPC,^NDX,^DJI,IWM,^IXIC');
-        const data = await res.json();
-        if (data.details) {
-          setIndexData(data.details);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    fetchIndices();
-    const interval = setInterval(fetchIndices, 8000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Fetch live price of the current symbol periodically
-  useEffect(() => {
-    const fetchPrice = async () => {
-      try {
-        const res = await fetch(`/api/market/prices?symbols=${symbol}`);
-        const data = await res.json();
-        if (data.prices && data.prices[symbol]) {
-          setPrice(data.prices[symbol]);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    fetchPrice();
-    const interval = setInterval(fetchPrice, 8000);
-    return () => clearInterval(interval);
-  }, [symbol]);
 
   // 1. Fetch Posts and other static data
   useEffect(() => {
