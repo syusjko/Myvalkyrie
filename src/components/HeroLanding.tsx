@@ -46,7 +46,7 @@ export default function HeroLanding() {
         padding: '2rem', 
         position: 'relative', 
         borderBottom: '1px solid var(--glass-border)', 
-        height: '100vh', 
+        height: 'calc(100vh - 56px)', 
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center',

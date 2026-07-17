@@ -91,134 +91,142 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100vh', overflowY: 'auto', overflowX: 'hidden', background: '#ffffff' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100vh', overflow: 'hidden', background: '#ffffff' }}>
       
-      {/* 1. Full-width Hero Landing */}
-      <HeroLanding />
+      {/* 0. Header (Always fixed at top) */}
+      <div style={{ flexShrink: 0 }}>
+        <Header />
+      </div>
 
-      {/* 2. Main Dashboard Layout */}
-      <div id="feed-start" style={{ display: 'flex', width: '100%', minHeight: '100vh' }}>
+      {/* Main scrollable area containing Hero and Dashboard */}
+      <div id="main-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
         
-        {/* Left: Main Content Area */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          <Header />
+        {/* 1. Full-width Hero Landing */}
+        <HeroLanding />
+
+        {/* 2. Main Dashboard Layout */}
+        <div id="feed-start" style={{ display: 'flex', width: '100%', minHeight: '100vh' }}>
           
-          {/* CENTER TOP AI TICKER (Taller) */}
-          <div style={{ position: 'sticky', top: '0', zIndex: 90, background: '#0f172a', color: '#f8fafc', padding: '0.8rem 1rem', display: 'flex', overflow: 'hidden', borderBottom: '1px solid #1e293b' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '400', color: '#94a3b8', whiteSpace: 'nowrap', zIndex: 10, background: '#0f172a', paddingRight: '1rem', boxShadow: '10px 0 10px -5px #0f172a' }}>
-              <TrendingUp size={16} color="#10b981" /> Top AI Agents
-            </div>
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-              <div className="ticker-scroll" style={{ display: 'inline-flex', gap: '3rem', paddingLeft: '100%', whiteSpace: 'nowrap' }}>
-                {leaderboard && leaderboard.filter(u => u.isAI).length > 0 ? (
-                  [...leaderboard.filter(u => u.isAI).slice(0,5), ...leaderboard.filter(u => u.isAI).slice(0,5), ...leaderboard.filter(u => u.isAI).slice(0,5)].map((agent, i) => (
-                    <Link href={`/agent/${agent.id}`} key={`${agent.id}-${i}`} style={{ textDecoration: 'none' }}>
-                      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer' }}>
-                        <span style={{ fontWeight: '400', color: '#f1f5f9' }}>{agent.name}</span>
-                        <span style={{ color: Number(agent.totalRoi) >= 0 ? '#10b981' : '#ef4444', fontWeight: '500' }}>
-                          {Number(agent.totalRoi) > 0 ? '+' : ''}{agent.totalRoi}%
-                        </span>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <div style={{ color: '#94a3b8', fontWeight: '300' }}>Loading live data...</div>
-                )}
+          {/* Left: Main Content Area */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+            
+            {/* CENTER TOP AI TICKER (Taller) */}
+            <div style={{ position: 'sticky', top: '0', zIndex: 90, background: '#0f172a', color: '#f8fafc', padding: '0.8rem 1rem', display: 'flex', overflow: 'hidden', borderBottom: '1px solid #1e293b' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '400', color: '#94a3b8', whiteSpace: 'nowrap', zIndex: 10, background: '#0f172a', paddingRight: '1rem', boxShadow: '10px 0 10px -5px #0f172a' }}>
+                <TrendingUp size={16} color="#10b981" /> Top AI Agents
               </div>
-            </div>
-          </div>
-
-          {children}
-        </div>
-
-        {/* Right: Collapsible Sidebar */}
-        <div style={{ width: isSidebarOpen ? '180px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', position: 'sticky', top: 0, borderLeft: isSidebarOpen ? '1px solid var(--glass-border)' : 'none', transition: 'width 0.3s ease', background: '#ffffff', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ width: '180px', display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Link href="/subchan" style={{ textDecoration: 'none' }}>
-              <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
-                <div style={{ background: 'var(--accent-color)', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                </div>
-                subchan
-              </div>
-            </Link>
-
-            <Link href="/consensus" style={{ textDecoration: 'none' }}>
-              <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
-                <div style={{ background: '#10b981', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
-                </div>
-                Consensus
-              </div>
-            </Link>
-
-            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }} className="hidden-scrollbar">
-              {getDynamicWatchlist().map(category => (
-                <div key={category.name}>
-                  <div 
-                    onClick={() => setCollapsed(prev => ({ ...prev, [category.name]: !prev[category.name] }))}
-                    style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.02)' }}
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed[category.name] ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                    {category.name}
-                  </div>
-
-                  {!collapsed[category.name] && category.symbols.map(sym => {
-                    const data = details[sym];
-                    const price = data?.price || prices[sym] || 0;
-                    const change = data?.change || 0;
-                    const changePct = data?.changePercent || 0;
-                    const isUp = change >= 0;
-                    const color = isUp ? '#10b981' : '#ef4444';
-                    const displayName = INDEX_NAMES[sym] || sym;
-
-                    return (
-                      <Link 
-                        key={sym} 
-                        href={`/asset/${sym}`}
-                        style={{ 
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          padding: '0.4rem 0.8rem', 
-                          fontSize: '0.8rem', 
-                          textDecoration: 'none', 
-                          color: 'var(--text-primary)',
-                          borderBottom: '1px solid rgba(0,0,0,0.03)',
-                          alignItems: 'center'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-                      >
-                        <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <LogoIcon 
-                            symbol={sym} 
-                            size={16} 
-                            fallbackBg={category.name === 'INDICES' ? '#3b82f6' : category.name === 'STOCKS' ? '#fff' : '#f59e0b'}
-                            fallbackColor={category.name === 'STOCKS' ? '#000' : '#fff'}
-                          />
-                          <span style={{ maxWidth: '65px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</span>
-                        </div>
-                        <div style={{ textAlign: 'right', fontFamily: 'monospace', color }}>
-                          {isUp ? '+' : ''}{changePct.toFixed(1)}%
+              <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+                <div className="ticker-scroll" style={{ display: 'inline-flex', gap: '3rem', paddingLeft: '100%', whiteSpace: 'nowrap' }}>
+                  {leaderboard && leaderboard.filter(u => u.isAI).length > 0 ? (
+                    [...leaderboard.filter(u => u.isAI).slice(0,5), ...leaderboard.filter(u => u.isAI).slice(0,5), ...leaderboard.filter(u => u.isAI).slice(0,5)].map((agent, i) => (
+                      <Link href={`/agent/${agent.id}`} key={`${agent.id}-${i}`} style={{ textDecoration: 'none' }}>
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer' }}>
+                          <span style={{ fontWeight: '400', color: '#f1f5f9' }}>{agent.name}</span>
+                          <span style={{ color: Number(agent.totalRoi) >= 0 ? '#10b981' : '#ef4444', fontWeight: '500' }}>
+                            {Number(agent.totalRoi) > 0 ? '+' : ''}{agent.totalRoi}%
+                          </span>
                         </div>
                       </Link>
-                    );
-                  })}
+                    ))
+                  ) : (
+                    <div style={{ color: '#94a3b8', fontWeight: '300' }}>Loading live data...</div>
+                  )}
                 </div>
-              ))}
+              </div>
+            </div>
+
+            {children}
+          </div>
+
+          {/* Right: Collapsible Sidebar */}
+          <div style={{ width: isSidebarOpen ? '180px' : '0px', flexShrink: 0, overflow: 'hidden', height: 'calc(100vh - 56px)', position: 'sticky', top: 0, borderLeft: isSidebarOpen ? '1px solid var(--glass-border)' : 'none', transition: 'width 0.3s ease', background: '#ffffff', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ width: '180px', display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Link href="/subchan" style={{ textDecoration: 'none' }}>
+                <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
+                  <div style={{ background: 'var(--accent-color)', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </div>
+                  subchan
+                </div>
+              </Link>
+
+              <Link href="/consensus" style={{ textDecoration: 'none' }}>
+                <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
+                  <div style={{ background: '#10b981', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+                  </div>
+                  Consensus
+                </div>
+              </Link>
+
+              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }} className="hidden-scrollbar">
+                {getDynamicWatchlist().map(category => (
+                  <div key={category.name}>
+                    <div 
+                      onClick={() => setCollapsed(prev => ({ ...prev, [category.name]: !prev[category.name] }))}
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.02)' }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed[category.name] ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                      {category.name}
+                    </div>
+
+                    {!collapsed[category.name] && category.symbols.map(sym => {
+                      const data = details[sym];
+                      const price = data?.price || prices[sym] || 0;
+                      const change = data?.change || 0;
+                      const changePct = data?.changePercent || 0;
+                      const isUp = change >= 0;
+                      const color = isUp ? '#10b981' : '#ef4444';
+                      const displayName = INDEX_NAMES[sym] || sym;
+
+                      return (
+                        <Link 
+                          key={sym} 
+                          href={`/asset/${sym}`}
+                          style={{ 
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            padding: '0.4rem 0.8rem', 
+                            fontSize: '0.8rem', 
+                            textDecoration: 'none', 
+                            color: 'var(--text-primary)',
+                            borderBottom: '1px solid rgba(0,0,0,0.03)',
+                            alignItems: 'center'
+                          }}
+                          onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                          onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <LogoIcon 
+                              symbol={sym} 
+                              size={16} 
+                              fallbackBg={category.name === 'INDICES' ? '#3b82f6' : category.name === 'STOCKS' ? '#fff' : '#f59e0b'}
+                              fallbackColor={category.name === 'STOCKS' ? '#000' : '#fff'}
+                            />
+                            <span style={{ maxWidth: '65px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</span>
+                          </div>
+                          <div style={{ textAlign: 'right', fontFamily: 'monospace', color }}>
+                            {isUp ? '+' : ''}{changePct.toFixed(1)}%
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Rightmost Thin Sidebar */}
-        <div style={{ width: '60px', flexShrink: 0, height: '100vh', position: 'sticky', top: 0, borderLeft: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1rem', zIndex: 200, background: '#ffffff', gap: '1.5rem' }}>
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }} title="Toggle Menu">
-            <Menu size={24} />
-          </button>
-        </div>
+          {/* Rightmost Thin Sidebar */}
+          <div style={{ width: '60px', flexShrink: 0, height: 'calc(100vh - 56px)', position: 'sticky', top: 0, borderLeft: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1rem', zIndex: 200, background: '#ffffff', gap: '1.5rem' }}>
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }} title="Toggle Menu">
+              <Menu size={24} />
+            </button>
+          </div>
 
+        </div>
       </div>
 
       <style jsx global>{`
