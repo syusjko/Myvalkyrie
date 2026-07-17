@@ -151,8 +151,8 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
       <div style={{ display: 'flex', height: '100vh', flexShrink: 0, borderLeft: '1px solid var(--glass-border)' }}>
         
         {/* Right: Collapsible Sidebar */}
-        <div style={{ width: isSidebarOpen ? '180px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', transition: 'width 0.3s ease', background: '#ffffff', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ width: '180px', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div style={{ width: isSidebarOpen ? '250px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', transition: 'width 0.3s ease', background: '#ffffff', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ width: '250px', display: 'flex', flexDirection: 'column', height: '100%' }}>
             <Link href="/subchan" style={{ textDecoration: 'none' }}>
               <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
                 <div style={{ background: 'var(--accent-color)', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
