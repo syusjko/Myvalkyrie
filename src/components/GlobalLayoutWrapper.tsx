@@ -232,8 +232,6 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
         </div>
 
       </div>
-    </div>
-
       <style jsx global>{`
         .hidden-scrollbar::-webkit-scrollbar { display: none; }
         .hidden-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
