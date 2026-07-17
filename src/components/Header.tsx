@@ -82,7 +82,7 @@ export default function Header() {
         gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center', 
         padding: '0.4rem 2rem', 
-        background: 'rgba(16, 185, 129, 0.95)',
+        background: 'rgba(212, 255, 0, 0.95)',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid var(--glass-border)',
         position: 'relative',
@@ -94,7 +94,7 @@ export default function Header() {
         {/* CENTER: Logo & Search */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1, minWidth: '400px', justifyContent: 'center' }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <span style={{ fontSize: '1.4rem', fontWeight: '500', color: '#ffffff', letterSpacing: '-0.5px' }}>
+            <span style={{ fontSize: '1.4rem', fontWeight: '500', color: '#000000', letterSpacing: '-0.5px' }}>
               MyValkyrie
             </span>
           </Link>
@@ -205,7 +205,7 @@ export default function Header() {
       </header>
 
       {/* TOP AI TICKER (Sticky under header) */}
-      <div style={{ background: '#0f172a', color: '#f8fafc', padding: '0.6rem 2rem', display: 'flex', overflow: 'hidden', borderBottom: '1px solid #1e293b', position: 'relative' }}>
+      <div style={{ background: '#0f172a', color: '#f8fafc', padding: '0.3rem 2rem', display: 'flex', overflow: 'hidden', borderBottom: '1px solid #1e293b', position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '400', color: '#94a3b8', whiteSpace: 'nowrap', zIndex: 10, background: '#0f172a', paddingRight: '2rem', boxShadow: '10px 0 10px -5px #0f172a' }}>
           <TrendingUp size={16} color="#10b981" /> Top AI Agents
         </div>
