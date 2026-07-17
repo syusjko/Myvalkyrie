@@ -223,6 +223,25 @@ export default function AssetClient({ symbol }: { symbol: string }) {
     }
   }, [chartData]);
 
+  // 5. Update Chart with Real-time Ticks
+  useEffect(() => {
+    if (price && seriesRef.current && chartRef.current && chartData.length > 0) {
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      const lastPoint = chartData[chartData.length - 1];
+      if (nowSeconds > lastPoint.time) {
+        seriesRef.current.update({
+          time: nowSeconds,
+          value: price
+        });
+      } else {
+        seriesRef.current.update({
+          time: lastPoint.time,
+          value: price
+        });
+      }
+    }
+  }, [price, chartData]);
+
   const isPositive = chartData.length > 0 && chartData[chartData.length - 1].value >= chartData[0].value;
   const strokeColor = isPositive ? '#10b981' : '#ef4444';
   const changePercent = chartData.length > 0 ? ((chartData[chartData.length - 1].value - chartData[0].value) / chartData[0].value * 100).toFixed(2) : '0.00';
@@ -330,7 +349,15 @@ export default function AssetClient({ symbol }: { symbol: string }) {
             </div>
           </div>
           <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-            <div style={{ fontSize: '2rem', fontWeight: '800', color: '#0f172a', lineHeight: 1 }}>${price ? price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '...'}</div>
+            <div style={{ 
+              fontSize: '2rem', 
+              fontWeight: '800', 
+              color: ticks[symbol] === 'up' ? '#10b981' : ticks[symbol] === 'down' ? '#ef4444' : '#0f172a', 
+              transition: 'color 0.15s ease', 
+              lineHeight: 1 
+            }}>
+              ${price ? price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '...'}
+            </div>
             <div style={{ color: strokeColor, fontWeight: '700', fontSize: '0.95rem', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.3rem' }}>
               {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />} 
               {isPositive ? '+' : ''}{changePercent}%
