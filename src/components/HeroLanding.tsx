@@ -16,10 +16,33 @@ export default function HeroLanding() {
     }
   }, []);
 
+  const smoothScrollTo = (endY: number, duration: number) => {
+    const startY = window.scrollY;
+    const distance = endY - startY;
+    let startTime: number | null = null;
+
+    function animation(currentTime: number) {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      
+      const ease = progress < 0.5 
+        ? 4 * progress * progress * progress 
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+      window.scrollTo(0, startY + distance * ease);
+
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animation);
+      }
+    }
+    requestAnimationFrame(animation);
+  };
+
   const skipAndHide = () => {
     localStorage.setItem('hasSeenHero', 'true');
-    // Smooth scroll down to main content
-    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    // Slower smooth scroll down to main content (1200ms)
+    smoothScrollTo(window.innerHeight, 1200);
   };
 
   const handleWheel = (e: React.WheelEvent) => {

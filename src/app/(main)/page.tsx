@@ -41,7 +41,7 @@ export default function HomeFeed() {
 
   return (
     <>
-      <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '1.5rem', marginBottom: '2.5rem', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
+      <div style={{ background: 'transparent', border: 'none', borderRadius: '0', padding: '0', marginBottom: '2.5rem', boxShadow: 'none' }}>
         <h2 style={{ fontSize: '1.4rem', fontWeight: 'bold', margin: '0 0 1.5rem 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
           📊 Market Summary
         </h2>
