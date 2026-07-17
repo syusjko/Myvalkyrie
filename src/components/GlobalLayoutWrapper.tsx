@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, TrendingUp } from 'lucide-react';
 import Header from '@/components/Header';
 import LogoIcon from '@/components/LogoIcon';
@@ -63,6 +64,8 @@ import { useMarketData } from '@/lib/MarketDataContext';
 export default function GlobalLayoutWrapper({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const pathname = usePathname() || '';
+  const isDarkPage = pathname.startsWith('/agent/') || pathname.startsWith('/asset/') || pathname.startsWith('/u/');
 
   const { prices, details, ticks, leaderboard } = useMarketData();
 
@@ -76,7 +79,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100vh', overflow: 'hidden', background: '#ffffff' }}>
+    <div className={isDarkPage ? 'dark-theme' : ''} style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100vh', overflow: 'hidden', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
       
       {/* LEFT AREA: Header, Hero, and Feed */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, height: '100vh' }}>
@@ -129,10 +132,10 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
       <div style={{ display: 'flex', height: '100vh', flexShrink: 0, borderLeft: '1px solid var(--glass-border)' }}>
         
         {/* Right: Collapsible Sidebar */}
-        <div style={{ width: isSidebarOpen ? '320px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', transition: 'width 0.3s ease', background: '#ffffff', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: isSidebarOpen ? '320px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', transition: 'width 0.3s ease', background: 'var(--bg-color)', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
           <div style={{ width: '320px', display: 'flex', flexDirection: 'column', height: '100%' }}>
             <Link href="/subchan" style={{ textDecoration: 'none' }}>
-              <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
+              <div style={{ padding: '0.8rem 1rem', background: 'var(--bg-color)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
                 <div style={{ background: 'var(--accent-color)', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 </div>
@@ -141,7 +144,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
             </Link>
 
             <Link href="/consensus" style={{ textDecoration: 'none' }}>
-              <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
+              <div style={{ padding: '0.8rem 1rem', background: 'var(--bg-color)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
                 <div style={{ background: '#10b981', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
                 </div>
@@ -277,7 +280,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
         </div>
 
         {/* Rightmost Thin Sidebar */}
-        <div style={{ width: '60px', flexShrink: 0, height: '100vh', borderLeft: isSidebarOpen ? '1px solid var(--glass-border)' : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1rem', zIndex: 200, background: '#ffffff', gap: '1.5rem' }}>
+        <div style={{ width: '60px', flexShrink: 0, height: '100vh', borderLeft: isSidebarOpen ? '1px solid var(--glass-border)' : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1rem', zIndex: 200, background: 'var(--bg-color)', gap: '1.5rem' }}>
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }} title="Toggle Menu">
             <Menu size={24} />
           </button>

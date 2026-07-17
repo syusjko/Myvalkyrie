@@ -3,6 +3,8 @@
 :root {
   --bg-color: #ffffff; /* Pure white */
   --surface-color: #ffffff; /* White panel */
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --search-bg: rgba(248, 250, 252, 0.8);
   --glass-border: #cbd5e1; /* Slightly darker light border */
   --text-primary: #0f172a; /* Dark text */
   --text-secondary: #64748b; /* Medium gray text */
@@ -18,6 +20,8 @@
 .dark-theme {
   --bg-color: #0b0f19;
   --surface-color: #1a1f2e;
+  --header-bg: rgba(11, 15, 25, 0.95);
+  --search-bg: rgba(30, 41, 59, 0.8);
   --glass-border: #2a3441;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
