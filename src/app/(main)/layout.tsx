@@ -96,7 +96,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#ffffff' }}>
       <HeroLanding />
 
-      <main className="responsive-grid" style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '2rem 0 0 0', display: 'grid', gridTemplateColumns: isRightSidebarOpen ? '220px 1fr 300px' : '220px 1fr 60px', gap: '0', transition: 'grid-template-columns 0.3s ease', background: '#ffffff' }}>
+      <main className="responsive-grid" style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '80vh 0 0 0', display: 'grid', gridTemplateColumns: isRightSidebarOpen ? '220px 1fr 300px' : '220px 1fr 60px', gap: '0', transition: 'grid-template-columns 0.3s ease', background: '#ffffff' }}>
         
         {/* LEFT: Market Data (Watchlist) & subchan */}
         <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderRight: '1px solid var(--glass-border)', background: '#ffffff' }}>
@@ -197,7 +197,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* CENTER: Dynamic Content */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem 1.5rem', background: '#ffffff', minHeight: '100vh' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.5rem 1rem', background: '#ffffff', minHeight: '100vh' }}>
           {children}
         </div>
 
