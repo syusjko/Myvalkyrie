@@ -43,34 +43,31 @@ async function run() {
   const assets = await assetsRes.json();
   console.log(`Fetched ${assets.length} active assets. Updating DB...`);
 
-  const CHUNK_SIZE = 500;
+  const CHUNK_SIZE = 1000;
   let successCount = 0;
 
   for (let i = 0; i < assets.length; i += CHUNK_SIZE) {
     const chunk = assets.slice(i, i + CHUNK_SIZE);
-    const queries = chunk.map((asset: any) => {
-      return prisma.asset.upsert({
-        where: { symbol: asset.symbol },
-        update: {
-          name: asset.name || asset.symbol,
-          exchange: asset.exchange,
-          assetClass: asset.class,
-          status: asset.status,
-          tradable: asset.tradable,
-        },
-        create: {
+    
+    // Instead of complex upserts, just createMany and skip duplicates
+    // This is much faster and avoids deadlocks
+    try {
+      await prisma.asset.createMany({
+        data: chunk.map((asset: any) => ({
           symbol: asset.symbol,
           name: asset.name || asset.symbol,
           exchange: asset.exchange,
           assetClass: asset.class,
           status: asset.status,
           tradable: asset.tradable,
-        }
+        })),
+        skipDuplicates: true,
       });
-    });
-    await prisma.$transaction(queries);
-    successCount += chunk.length;
-    console.log(`Processed ${successCount}/${assets.length}`);
+      successCount += chunk.length;
+      console.log(`Processed ${successCount}/${assets.length}`);
+    } catch (e: any) {
+      console.error('Batch error:', e.message);
+    }
   }
   
   console.log('Done!');

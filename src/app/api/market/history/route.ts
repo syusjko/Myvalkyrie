@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAlpacaHistoricalBars } from '@/lib/alpacaDataClient';
 import yahooFinance from 'yahoo-finance2';
-yahooFinance.suppressNotices(['yahooSurvey']);
 
 export async function GET(req: Request) {
   try {
