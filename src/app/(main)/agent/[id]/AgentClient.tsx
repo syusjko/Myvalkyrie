@@ -133,12 +133,16 @@ export default function AgentClient({ user }: { user: any }) {
 
   // ... (Portfolio Pie Data logic is kept below)
   const pieData = useMemo(() => {
-    const data = [{ name: 'Cash', value: user.balance }];
+    const data = [{ name: 'Cash', value: user.balance > 0 ? user.balance : 0 }];
     user.portfolio.forEach((p: any) => {
-      data.push({ name: p.symbol, value: p.quantity * p.avgPrice });
+      const currentPrice = livePrices[p.symbol] || p.avgPrice;
+      const val = p.quantity * currentPrice;
+      if (val > 0) {
+        data.push({ name: p.symbol, value: val });
+      }
     });
-    return data;
-  }, [user]);
+    return data.filter(d => d.value > 0);
+  }, [user, livePrices]);
 
 
 
@@ -455,6 +459,44 @@ export default function AgentClient({ user }: { user: any }) {
                           </tr>
                         </thead>
                         <tbody>
+                          {/* Cash Row */}
+                          <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                            <td style={{ padding: '1rem 1.5rem' }}>
+                              <div style={{ fontWeight: 'bold' }}>Cash</div>
+                              <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Available Funds</div>
+                            </td>
+                            <td style={{ padding: '1rem 1.5rem' }}>
+                              <div>$1.00</div>
+                              <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>$1.00</div>
+                            </td>
+                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)' }}>
+                              <div>$0.00</div>
+                              <div style={{ fontSize: '0.8rem' }}>0.00%</div>
+                            </td>
+                            <td style={{ padding: '1rem 1.5rem' }}>
+                              <div>${user.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                              <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>${user.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            </td>
+                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)' }}>
+                              <div>$0.00</div>
+                              <div style={{ fontSize: '0.8rem' }}>0.00%</div>
+                            </td>
+                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-secondary)' }}>
+                              <div>N/A</div>
+                              <div style={{ fontSize: '0.8rem' }}>USD</div>
+                            </td>
+                            <td style={{ padding: '1rem 1.5rem' }}>
+                              {(() => {
+                                const totalPortfolioValue = user.balance + user.portfolio.reduce((sum: number, p: any) => {
+                                  const pPrice = marketDetails[p.symbol]?.price || p.avgPrice;
+                                  return sum + p.quantity * pPrice;
+                                }, 0);
+                                const weight = totalPortfolioValue > 0 ? (user.balance / totalPortfolioValue) * 100 : 0;
+                                return `${weight.toFixed(2)}%`;
+                              })()}
+                            </td>
+                          </tr>
+
                           {user.portfolio.map((asset: any) => {
                             if (asset.quantity <= 0) return null;
                             const details = marketDetails[asset.symbol] || {};
@@ -481,7 +523,7 @@ export default function AgentClient({ user }: { user: any }) {
                             return (
                               <tr key={asset.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
                                 <td style={{ padding: '1rem 1.5rem' }}>
-                                  <div style={{ fontWeight: 'bold' }}>{asset.symbol}</div>
+                                  <Link href={`/asset/${asset.symbol}`} style={{ fontWeight: 'bold', color: 'var(--accent-color)', textDecoration: 'none' }} onMouseOver={e => e.currentTarget.style.textDecoration = 'underline'} onMouseOut={e => e.currentTarget.style.textDecoration = 'none'}>{asset.symbol}</Link>
                                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{asset.quantity.toLocaleString()} shares</div>
                                 </td>
                                 <td style={{ padding: '1rem 1.5rem' }}>
