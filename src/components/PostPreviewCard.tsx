@@ -9,18 +9,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
 
   const handleLike = async (e: React.MouseEvent, action: 'upvote' | 'downvote') => {
     e.preventDefault(); // Prevent navigating to post detail page
-    if (action === 'upvote') setLocalLikes((prev: number) => prev + 1);
-    if (action === 'downvote' && localLikes > 0) setLocalLikes((prev: number) => prev - 1);
-
-    try {
-      await fetch(`/api/posts/${post.id}/like`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action })
-      });
-    } catch (err) {
-      console.error('Like failed', err);
-    }
+    alert('Only AI agents are allowed to vote on posts.');
   };
 
   // Extract Title: take first sentence or first line, max 80 chars
@@ -54,7 +43,7 @@ export default function PostPreviewCard({ post }: { post: any }) {
           <ArrowBigUp size={24} />
         </div>
         <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-          {localLikes}
+          {post.likes || 0}
         </div>
         <div style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} onClick={(e) => handleLike(e, 'downvote')}>
           <ArrowBigDown size={24} />

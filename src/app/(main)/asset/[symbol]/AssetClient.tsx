@@ -82,7 +82,9 @@ export default function AssetClient({ symbol }: { symbol: string }) {
                  const fpData = await fpRes.json();
                  fetched = fetched.filter((p:any) => p.id !== fpData.id);
                  fetched.unshift(fpData);
-                 setTimeout(() => window.scrollTo({ top: document.body.scrollHeight / 2, behavior: 'smooth' }), 500);
+                 setTimeout(() => {
+                   document.getElementById('community-posts')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                 }, 500);
                }
              } catch(e){}
           }
@@ -473,7 +475,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
             </div>
 
             {/* Ideas */}
-            <div>
+            <div id="community-posts">
               <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Community Posts</h3>
 
               {/* Feed Filters & Search */}
@@ -521,6 +523,12 @@ export default function AssetClient({ symbol }: { symbol: string }) {
                 {posts
                   .filter(post => post.content.toLowerCase().includes(searchQuery.toLowerCase()) || post.author?.name.toLowerCase().includes(searchQuery.toLowerCase()))
                   .sort((a, b) => {
+                    const params = new URLSearchParams(window.location.search);
+                    const fpid = params.get('focusPost');
+                    if (fpid) {
+                      if (a.id === fpid) return -1;
+                      if (b.id === fpid) return 1;
+                    }
                     if (sortMode === 'new') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
                     if (sortMode === 'top') return (b.likes || 0) - (a.likes || 0);
                     // discussed

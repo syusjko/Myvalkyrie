@@ -68,56 +68,42 @@ export default function GlobalStats() {
           </div>
         </div>
         
-        {/* Horizontal Card List as Marquee */}
-        <div style={{ overflow: 'hidden', position: 'relative', background: 'var(--surface-color)', padding: '15px 0' }}>
-          <div className="agent-marquee" style={{ display: 'flex', gap: '12px', whiteSpace: 'nowrap', width: 'max-content', paddingLeft: '12px' }}>
-            {[...topAgents, ...topAgents].map((agent, idx) => {
-              const colors = ['#ef4444', '#f97316', '#f59e0b', '#3b82f6', '#10b981'];
-              const bgColor = colors[agent.name.length % colors.length];
-              
-              return (
-                <Link href={`/agent/${agent.id}`} key={`${agent.id}-${idx}`} style={{ textDecoration: 'none', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', flexShrink: 0, minWidth: '220px', transition: 'transform 0.2s, box-shadow 0.2s' }} onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'var(--accent-color)'; }} onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}>
-                  
-                  <div style={{ position: 'relative', flexShrink: 0 }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: bgColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', fontWeight: 'bold' }}>
-                      {agent.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div style={{ position: 'absolute', bottom: '-4px', right: '-4px', background: 'var(--surface-color)', borderRadius: '50%', padding: '2px' }}>
-                      <ShieldCheck size={16} fill="#10b981" color="var(--surface-color)" />
-                    </div>
+        {/* Horizontal Card List */}
+        <div style={{ display: 'flex', overflowX: 'auto', padding: '15px', gap: '12px', background: 'var(--surface-color)' }} className="hidden-scrollbar">
+          {topAgents.map((agent, idx) => {
+            const colors = ['#ef4444', '#f97316', '#f59e0b', '#3b82f6', '#10b981'];
+            const bgColor = colors[agent.name.length % colors.length];
+            
+            return (
+              <Link href={`/agent/${agent.id}`} key={`${agent.id}-${idx}`} style={{ textDecoration: 'none', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', flexShrink: 0, minWidth: '220px', transition: 'transform 0.2s, box-shadow 0.2s' }} onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'var(--accent-color)'; }} onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}>
+                
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: bgColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', fontWeight: 'bold' }}>
+                    {agent.name.charAt(0).toUpperCase()}
                   </div>
-                  
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontWeight: 'bold', fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>
-                        {agent.name.toLowerCase()}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }}>
-                      <span style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
-                        ${agent.netWorth >= 1000 ? (agent.netWorth / 1000).toFixed(1) + 'k' : agent.netWorth?.toFixed(0) || '0'}
-                      </span>
-                      <span style={{ color: parseFloat(agent.totalRoi) >= 0 ? '#10b981' : '#ef4444', fontWeight: 'bold' }}>
-                        {parseFloat(agent.totalRoi) > 0 ? '+' : ''}{agent.totalRoi}%
-                      </span>
-                    </div>
+                  <div style={{ position: 'absolute', bottom: '-4px', right: '-4px', background: 'var(--surface-color)', borderRadius: '50%', padding: '2px' }}>
+                    <ShieldCheck size={16} fill="#10b981" color="var(--surface-color)" />
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-          <style jsx global>{`
-            @keyframes marqueeAgents {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(calc(-50% - 6px)); } /* 6px is half the gap */
-            }
-            .agent-marquee {
-              animation: marqueeAgents 30s linear infinite;
-            }
-            .agent-marquee:hover {
-              animation-play-state: paused;
-            }
-          `}</style>
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>
+                      {agent.name.toLowerCase()}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }}>
+                    <span style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
+                      ${agent.netWorth >= 1000 ? (agent.netWorth / 1000).toFixed(1) + 'k' : agent.netWorth?.toFixed(0) || '0'}
+                    </span>
+                    <span style={{ color: parseFloat(agent.totalRoi) >= 0 ? '#10b981' : '#ef4444', fontWeight: 'bold' }}>
+                      {parseFloat(agent.totalRoi) > 0 ? '+' : ''}{agent.totalRoi}%
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
