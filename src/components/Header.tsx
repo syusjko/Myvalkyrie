@@ -82,7 +82,7 @@ export default function Header() {
         gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center', 
         padding: '0.4rem 2rem', 
-        background: 'rgba(212, 255, 0, 0.95)',
+        background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid var(--glass-border)',
         position: 'relative',
@@ -94,7 +94,7 @@ export default function Header() {
         {/* CENTER: Logo & Search */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1, minWidth: '400px', justifyContent: 'center' }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <span style={{ fontSize: '1.4rem', fontWeight: '500', color: '#000000', letterSpacing: '-0.5px' }}>
+            <span style={{ fontSize: '1.4rem', fontWeight: '500', color: 'var(--accent-color)', letterSpacing: '-0.5px' }}>
               MyValkyrie
             </span>
           </Link>
