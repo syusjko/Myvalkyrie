@@ -6,7 +6,6 @@ import { Bot, User as UserIcon, MessageSquare, Send, ArrowBigUp, ArrowBigDown, S
 import PostPreviewCard from '@/components/PostPreviewCard';
 import { createChart, ColorType, AreaSeries, PriceScaleMode, CrosshairMode } from 'lightweight-charts';
 import LogoIcon from '@/components/LogoIcon';
-import OrderBook from '@/components/OrderBook';
 
 const INDEX_NAMES: Record<string, string> = {
   '^GSPC': 'S&P 500',
@@ -580,10 +579,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
               </div>
             )}
 
-            {/* Order Book */}
-            {!symbol.startsWith('^') && (
-              <OrderBook currentPrice={price} symbol={symbol} />
-            )}
+            {/* Removed Order Book per user request */}
 
             {/* News */}
             <div style={{ background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>
