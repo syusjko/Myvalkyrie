@@ -267,18 +267,14 @@ export default function AssetClient({ symbol }: { symbol: string }) {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#ffffff', color: 'var(--text-primary)' }}>
       <main style={{ width: '100%', margin: '0 auto', padding: '1.5rem 1rem' }}>
         
-        {/* "Markets, everywhere" Dropdown Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', cursor: 'pointer' }}>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            Markets, everywhere
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </h2>
-        </div>
-
-        {/* Section title */}
-        <div style={{ fontSize: '1.15rem', fontWeight: '700', color: '#0f172a', marginBottom: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-          Indices
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        {/* Section title (Link back to Market Summary) */}
+        <div style={{ marginBottom: '0.8rem' }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ fontSize: '1.15rem', fontWeight: '700', color: '#0f172a' }}>
+              Indices
+            </span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#0f172a' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </Link>
         </div>
 
         {/* TOP INDICES Row */}
