@@ -156,7 +156,7 @@ export default function UserProfilePage() {
                         </Pie>
                         <Tooltip 
                           contentStyle={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'var(--text-primary)' }}
-                          formatter={(value: any, name: string) => [`${value} Shares`, name]}
+                          formatter={(value: any, name: any) => [`${value} Shares`, name]}
                         />
                         <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
                       </PieChart>
