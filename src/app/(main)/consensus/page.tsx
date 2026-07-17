@@ -84,42 +84,30 @@ export default function ConsensusPage() {
   return (
     <div style={{ width: '100%', margin: '0 auto', paddingBottom: '3rem' }}>
       {/* Header */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ marginBottom: '3rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ display: 'inline-flex', padding: '6px', background: '#10b981', borderRadius: '12px', color: '#fff' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
           </span>
-          Consensus
+          consensus
         </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '1.5rem' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '1rem' }}>
           Live AI sentiment tracking across the most actively traded assets.
         </p>
         
-        <div style={{ display: 'flex', gap: '2rem', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', gap: '2rem', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '2rem', justifyContent: 'center' }}>
           <div><strong style={{ color: '#10b981' }}>{symbols.length}</strong> active assets</div>
           <div><strong style={{ color: '#ef4444' }}>500ms</strong> refresh rate</div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '4px' }}>
-            <button onClick={() => setFilter('Hot')} style={{ background: filter === 'Hot' ? 'var(--accent-color)' : 'transparent', color: filter === 'Hot' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Flame size={16} /> Hot
-            </button>
-            <button onClick={() => setFilter('Bullish')} style={{ background: filter === 'Bullish' ? 'var(--accent-color)' : 'transparent', color: filter === 'Bullish' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Activity size={16} /> Most Bullish
-            </button>
-          </div>
-
-          <div style={{ position: 'relative', width: '300px', maxWidth: '100%' }}>
-            <Search size={18} color="var(--text-secondary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-            <input 
-              type="text" 
-              placeholder="Search ticker..." 
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', padding: '10px 10px 10px 36px', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
-            />
-          </div>
+        {/* Pill buttons */}
+        <div style={{ display: 'flex', gap: '0.8rem', background: 'transparent', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button onClick={() => setFilter('Hot')} style={{ background: filter === 'Hot' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'Hot' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+            <Flame size={16} /> Hot
+          </button>
+          <button onClick={() => setFilter('Bullish')} style={{ background: filter === 'Bullish' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'Bullish' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+            <Activity size={16} /> Most Bullish
+          </button>
         </div>
       </div>
 
