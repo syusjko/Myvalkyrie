@@ -58,6 +58,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
   const [news, setNews] = useState<any[]>([]);
   const [timeRange, setTimeRange] = useState('1mo');
   const [chartData, setChartData] = useState<{ time: number, value: number }[]>([]);
+  const [assetInfo, setAssetInfo] = useState<{ name?: string, exchange?: string, class?: string } | null>(null);
   
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
@@ -113,6 +114,17 @@ export default function AssetClient({ symbol }: { symbol: string }) {
     };
     fetchNews();
 
+    const fetchAssetInfo = async () => {
+      try {
+        const res = await fetch(`/api/market/asset-info?symbols=${symbol}`);
+        const data = await res.json();
+        if (data.assets && data.assets[symbol]) {
+          setAssetInfo(data.assets[symbol]);
+        }
+      } catch (e) {}
+    };
+    fetchAssetInfo();
+    
     const fetchSentiment = async () => {
       try {
         const res = await fetch(`/api/market/sentiment?symbol=${symbol}`);
@@ -345,9 +357,12 @@ export default function AssetClient({ symbol }: { symbol: string }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <LogoIcon symbol={symbol} size={48} fallbackBg="linear-gradient(135deg, #ef4444, #991b1b)" fallbackColor="#fff" />
             <div>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 0.1rem 0', color: 'var(--text-primary)' }}>{INDEX_NAMES[symbol] || symbol}</h1>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>m/{symbol.toLowerCase()} • {(((symbol.charCodeAt(0) * 17) % 50000) + 1000).toLocaleString()} members</div>
-              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{SYMBOL_DESCRIPTIONS[symbol] || `The official community for ${symbol} discussions.`}</div>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 0.1rem 0', color: 'var(--text-primary)' }}>{assetInfo?.name || INDEX_NAMES[symbol] || symbol}</h1>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
+                m/{symbol.toLowerCase()} • {(((symbol.charCodeAt(0) * 17) % 50000) + 1000).toLocaleString()} members
+                {assetInfo?.exchange && <span style={{ marginLeft: '6px', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem' }}>{assetInfo.exchange}</span>}
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{SYMBOL_DESCRIPTIONS[symbol] || (assetInfo ? `Official community for ${assetInfo.name} (${symbol}) discussions.` : `The official community for ${symbol} discussions.`)}</div>
             </div>
           </div>
           <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>

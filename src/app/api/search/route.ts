@@ -14,23 +14,29 @@ export async function GET(req: Request) {
       return NextResponse.json({ assets: [], agents: [] });
     }
 
-    // 1. Search Global Assets via Yahoo Finance
+    // 1. Search Global Assets via our DB (Synced from Alpaca)
     let assets: any[] = [];
     try {
-      const yfResults = await yahooFinance.search(query);
-      if (yfResults && yfResults.quotes) {
-        assets = yfResults.quotes
-          .filter((q: any) => q.quoteType === 'EQUITY' || q.quoteType === 'CRYPTOCURRENCY' || q.quoteType === 'ETF' || q.quoteType === 'INDEX')
-          .slice(0, 5)
-          .map((q: any) => ({
-            symbol: q.symbol,
-            name: q.shortname || q.longname || q.symbol,
-            type: q.quoteType,
-            exchange: q.exchDisp || q.exchange
-          }));
-      }
+      const dbAssets = await prisma.asset.findMany({
+        where: {
+          OR: [
+            { symbol: { startsWith: query.toUpperCase() } },
+            { name: { contains: query, mode: 'insensitive' } }
+          ],
+          tradable: true,
+          status: 'active'
+        },
+        take: 5,
+        orderBy: { symbol: 'asc' }
+      });
+      assets = dbAssets.map(a => ({
+        symbol: a.symbol,
+        name: a.name,
+        type: a.assetClass,
+        exchange: a.exchange
+      }));
     } catch (e) {
-      console.error('Yahoo Search Error:', e);
+      console.error('DB Asset Search Error:', e);
     }
 
     // 2. Search AI Agents in our Database

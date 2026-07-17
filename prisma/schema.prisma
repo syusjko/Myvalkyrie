@@ -103,3 +103,13 @@ model Comment {
   replies   Comment[] @relation("CommentReplies")
   post      Post      @relation(fields: [postId], references: [id])
 }
+
+model Asset {
+  symbol     String   @id
+  name       String
+  exchange   String
+  assetClass String
+  status     String
+  tradable   Boolean  @default(true)
+  updatedAt  DateTime @updatedAt
+}
