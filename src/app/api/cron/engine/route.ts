@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     // 1. Fetch all pending orders
     const pendingOrders = await prisma.order.findMany({
       where: { status: 'PENDING' },
-      include: { user: true }
+      include: { agent: true }
     });
 
     const host = req.headers.get('host');
@@ -53,7 +53,7 @@ export async function GET(req: Request) {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'x-api-key': order.user.apiKey || '' // Assuming AI agents have api keys
+              'x-api-key': order.agent.apiKey || ''
             },
             body: JSON.stringify({
               symbol: order.symbol,
@@ -76,15 +76,15 @@ export async function GET(req: Request) {
     }
 
     // 4. Process Liquidations (Margin Calls)
-    const users = await prisma.user.findMany({ include: { portfolio: true } });
+    const agents = await prisma.agent.findMany({ include: { portfolio: true } });
     let liquidatedCount = 0;
 
-    for (const user of users) {
+    for (const agent of agents) {
       let portfolioValue = 0;
       let shortLiability = 0;
       let longAsset = 0;
 
-      for (const p of user.portfolio) {
+      for (const p of agent.portfolio) {
         const currentPrice = prices[p.symbol] || p.avgPrice;
         if (p.positionType === 'LONG') {
           longAsset += p.quantity * currentPrice;
@@ -94,18 +94,18 @@ export async function GET(req: Request) {
       }
       portfolioValue = longAsset - shortLiability;
 
-      const netWorth = user.balance + portfolioValue;
+      const netWorth = agent.balance + portfolioValue;
       
       // Margin Call Condition: If Net Worth falls below 20% of the Short Liability (Maintenance Margin)
       // Or if balance goes deeply negative. (Simplified Liquidation Logic)
       if (shortLiability > 0 && netWorth < (shortLiability * 0.2)) {
         // Liquidate!
-        for (const p of user.portfolio) {
+        for (const p of agent.portfolio) {
           if (p.positionType === 'SHORT' && p.quantity > 0) {
             // Market Buy to cover short
             await fetch(`${protocol}://${host}/api/trade/order`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'x-api-key': user.apiKey || '' },
+              headers: { 'Content-Type': 'application/json', 'x-api-key': agent.apiKey || '' },
               body: JSON.stringify({ symbol: p.symbol, type: 'BUY', quantity: p.quantity, orderType: 'MARKET' })
             });
           }

@@ -42,15 +42,34 @@ export async function POST(req: Request) {
     const verificationCode = `reef-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
     // Save to our simulated Prisma database
-    const user = await prisma.user.create({
-      data: {
-        name: name,
-        bio: description || '',
-        isAI: !isHuman,
-        apiKey: isHuman ? null : apiKey,
-        balance: 100000.0,
+    let user;
+    if (isHuman) {
+      user = await prisma.user.create({
+        data: {
+          name: name,
+          apiKey: apiKey
+        }
+      });
+    } else {
+      let master = await prisma.user.findFirst();
+      if (!master) {
+        master = await prisma.user.create({
+          data: {
+            name: 'SystemMaster',
+            apiKey: `MyValkyrie_master_${Math.random().toString(36).substring(2, 15)}`
+          }
+        });
       }
-    });
+      user = await prisma.agent.create({
+        data: {
+          name: name,
+          bio: description || '',
+          apiKey: apiKey,
+          balance: 100000.0,
+          ownerId: master.id
+        }
+      });
+    }
 
     if (isHuman) {
       return NextResponse.json({

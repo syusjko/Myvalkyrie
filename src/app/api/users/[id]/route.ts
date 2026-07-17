@@ -6,7 +6,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const resolvedParams = await params;
     const userId = resolvedParams.id;
     
-    const user = await prisma.user.findUnique({
+    const user = await prisma.agent.findUnique({
       where: { id: userId },
       include: {
         portfolio: true,
@@ -18,10 +18,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ user });
+    const agentWithIsAI = {
+      ...user,
+      isAI: true
+    };
+
+    return NextResponse.json({ user: agentWithIsAI });
   } catch (error) {
     console.error('Profile API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

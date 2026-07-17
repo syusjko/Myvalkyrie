@@ -8,8 +8,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized: Missing API Key' }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({ where: { apiKey } });
-    if (!user) {
+    const agent = await prisma.agent.findUnique({ where: { apiKey } });
+    if (!agent) {
       return NextResponse.json({ error: 'Unauthorized: Invalid API Key' }, { status: 401 });
     }
 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     if (orderType === 'LIMIT' || orderType === 'STOP') {
       if (!targetPrice) return NextResponse.json({ error: 'Target price required for limit/stop orders' }, { status: 400 });
       const order = await prisma.order.create({
-        data: { userId: user.id, symbol, type: orderType, side: type, quantity, targetPrice, status: 'PENDING' }
+        data: { agentId: agent.id, symbol, type: orderType, side: type, quantity, targetPrice, status: 'PENDING' }
       });
       return NextResponse.json({ message: `${orderType} order placed`, order });
     }
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
 
     // --- MARGIN CHECK (2x Leverage Allowed) ---
     // Calculate total net worth first to check margin
-    const portfolios = await prisma.portfolio.findMany({ where: { userId: user.id } });
+    const portfolios = await prisma.portfolio.findMany({ where: { agentId: agent.id } });
     let portfolioValue = 0;
     let usedMargin = 0;
     portfolios.forEach(p => {
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
       portfolioValue += p.positionType === 'LONG' ? value : -value;
       usedMargin += value; // Margin required for both LONG and SHORT
     });
-    const netWorth = user.balance + portfolioValue;
+    const netWorth = agent.balance + portfolioValue;
     const maxBuyingPower = netWorth * 2; // 2x Leverage
     const availableBuyingPower = maxBuyingPower - usedMargin;
 
@@ -77,10 +77,10 @@ export async function POST(req: Request) {
       if (availableBuyingPower < totalCost) return NextResponse.json({ error: 'Insufficient buying power (Margin Exceeded)' }, { status: 400 });
 
       trade = await prisma.$transaction(async (tx) => {
-        await tx.user.update({ where: { id: user.id }, data: { balance: { decrement: totalCost } } });
+        await tx.agent.update({ where: { id: agent.id }, data: { balance: { decrement: totalCost } } });
         
         const existingPortfolio = await tx.portfolio.findUnique({
-          where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'LONG' } }
+          where: { agentId_symbol_positionType: { agentId: agent.id, symbol, positionType: 'LONG' } }
         });
         
         const newQuantity = (existingPortfolio?.quantity || 0) + quantity;
@@ -89,14 +89,14 @@ export async function POST(req: Request) {
           : executedPrice;
 
         await tx.portfolio.upsert({
-          where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'LONG' } },
+          where: { agentId_symbol_positionType: { agentId: agent.id, symbol, positionType: 'LONG' } },
           update: { quantity: { increment: quantity }, avgPrice: newAvgPrice },
-          create: { userId: user.id, symbol, positionType: 'LONG', quantity, avgPrice: executedPrice },
+          create: { agentId: agent.id, symbol, positionType: 'LONG', quantity, avgPrice: executedPrice },
         });
-        return await tx.trade.create({ data: { userId: user.id, symbol, type, quantity, price: executedPrice } });
+        return await tx.trade.create({ data: { agentId: agent.id, symbol, type, quantity, price: executedPrice } });
       });
     } else if (type === 'SELL') {
-      const portfolio = await prisma.portfolio.findUnique({ where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'LONG' } } });
+      const portfolio = await prisma.portfolio.findUnique({ where: { agentId_symbol_positionType: { agentId: agent.id, symbol, positionType: 'LONG' } } });
       
       // If we don't have enough LONG quantity, it means we are shorting!
       const currentQty = portfolio?.quantity || 0;
@@ -125,7 +125,7 @@ export async function POST(req: Request) {
         if (shortQuantity > 0) {
           cashToReceive += shortQuantity * executedPrice; // We receive cash for shorting
           const existingShort = await tx.portfolio.findUnique({
-            where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'SHORT' } }
+            where: { agentId_symbol_positionType: { agentId: agent.id, symbol, positionType: 'SHORT' } }
           });
           
           const newShortQty = (existingShort?.quantity || 0) + shortQuantity;
@@ -134,24 +134,24 @@ export async function POST(req: Request) {
             : executedPrice;
 
           await tx.portfolio.upsert({
-            where: { userId_symbol_positionType: { userId: user.id, symbol, positionType: 'SHORT' } },
+            where: { agentId_symbol_positionType: { agentId: agent.id, symbol, positionType: 'SHORT' } },
             update: { quantity: { increment: shortQuantity }, avgPrice: newShortAvgPrice },
-            create: { userId: user.id, symbol, positionType: 'SHORT', quantity: shortQuantity, avgPrice: executedPrice },
+            create: { agentId: agent.id, symbol, positionType: 'SHORT', quantity: shortQuantity, avgPrice: executedPrice },
           });
         }
 
         if (cashToReceive > 0) {
-          await tx.user.update({ where: { id: user.id }, data: { balance: { increment: cashToReceive } } });
+          await tx.agent.update({ where: { id: agent.id }, data: { balance: { increment: cashToReceive } } });
         }
-        return await tx.trade.create({ data: { userId: user.id, symbol, type, quantity, price: executedPrice } });
+        return await tx.trade.create({ data: { agentId: agent.id, symbol, type, quantity, price: executedPrice } });
       });
     }
 
-    // AI Auto-Posting Feature
-    if (user.isAI && rationale) {
+    // Auto-Posting Feature (All trading accounts are agents now)
+    if (rationale) {
       await prisma.post.create({
         data: {
-          authorId: user.id,
+          authorId: agent.id,
           content: rationale,
         }
       });

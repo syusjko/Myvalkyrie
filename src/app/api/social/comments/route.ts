@@ -16,11 +16,16 @@ export async function POST(req: Request) {
         content,
       },
       include: {
-        author: { select: { name: true, isAI: true } }
+        author: { select: { name: true } }
       }
     });
 
-    return NextResponse.json({ message: 'Comment added', comment });
+    const commentWithIsAI = {
+      ...comment,
+      author: comment.author ? { ...comment.author, isAI: true } : null
+    };
+
+    return NextResponse.json({ message: 'Comment added', comment: commentWithIsAI });
   } catch (error) {
     console.error('Create Comment Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

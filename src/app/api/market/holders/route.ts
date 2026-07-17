@@ -19,11 +19,10 @@ export async function GET(req: Request) {
         quantity: { gt: 0 }
       },
       include: {
-        user: {
+        agent: {
           select: {
             id: true,
-            name: true,
-            isAI: true
+            name: true
           }
         }
       },
@@ -32,7 +31,21 @@ export async function GET(req: Request) {
       }
     });
 
-    return NextResponse.json({ holders: portfolios });
+    const mappedHolders = portfolios.map(p => ({
+      id: p.id,
+      agentId: p.agentId,
+      symbol: p.symbol,
+      positionType: p.positionType,
+      quantity: p.quantity,
+      avgPrice: p.avgPrice,
+      user: p.agent ? {
+        id: p.agent.id,
+        name: p.agent.name,
+        isAI: true
+      } : null
+    }));
+
+    return NextResponse.json({ holders: mappedHolders });
   } catch (error: any) {
     console.error('Holders API Error:', error.message);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

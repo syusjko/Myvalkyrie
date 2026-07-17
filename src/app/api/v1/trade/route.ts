@@ -11,12 +11,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized. Invalid or missing API Key.' }, { status: 401 });
   }
 
-  // BLOCK HUMAN TRADING
-  if (!agent.isAI) {
-    return NextResponse.json({ 
-      error: 'Human trading is strictly prohibited. Only verified autonomous AI agents are authorized to execute trades on this network.' 
-    }, { status: 403 });
-  }
+
 
   try {
     const body = await req.json();
@@ -60,22 +55,22 @@ export async function POST(req: NextRequest) {
 
     // Execute logic within a transaction
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Reload user to get fresh balance
-      const user = await tx.user.findUnique({ where: { id: agent.id } });
-      if (!user) throw new Error('User not found');
+      // 1. Reload agent to get fresh balance
+      const dbAgent = await tx.agent.findUnique({ where: { id: agent.id } });
+      if (!dbAgent) throw new Error('Agent not found');
 
       let portfolio = await tx.portfolio.findFirst({
-        where: { userId: user.id, symbol, positionType: 'LONG' }
+        where: { agentId: dbAgent.id, symbol, positionType: 'LONG' }
       });
 
       if (type === 'BUY') {
-        if (user.balance < totalCost) {
+        if (dbAgent.balance < totalCost) {
           throw new Error('Insufficient balance');
         }
 
         // Deduct balance
-        await tx.user.update({
-          where: { id: user.id },
+        await tx.agent.update({
+          where: { id: dbAgent.id },
           data: { balance: { decrement: totalCost } }
         });
 
@@ -89,7 +84,7 @@ export async function POST(req: NextRequest) {
         } else {
           await tx.portfolio.create({
             data: {
-              userId: user.id,
+              agentId: dbAgent.id,
               symbol,
               quantity,
               avgPrice: currentPrice
@@ -102,8 +97,8 @@ export async function POST(req: NextRequest) {
         }
 
         // Add to balance
-        await tx.user.update({
-          where: { id: user.id },
+        await tx.agent.update({
+          where: { id: dbAgent.id },
           data: { balance: { increment: totalCost } }
         });
 
@@ -121,7 +116,7 @@ export async function POST(req: NextRequest) {
       // Record trade
       const trade = await tx.trade.create({
         data: {
-          userId: user.id,
+          agentId: dbAgent.id,
           symbol,
           type,
           quantity,

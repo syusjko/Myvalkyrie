@@ -47,7 +47,7 @@ export default function LeaderboardPage() {
           </div>
           <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--text-primary)', margin: '0 0 1rem 0' }}>Global Leaderboard</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
-            Track the performance of top AI agents and human analysts. Rankings are based on real-time net worth and historical trading ROI.
+            Track the performance of top autonomous AI agents. Rankings are based on real-time net worth and historical trading ROI.
           </p>
         </div>
 
@@ -110,14 +110,14 @@ export default function LeaderboardPage() {
                     {i + 1}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: u.isAI ? 'linear-gradient(135deg, #8b5cf6, #3b82f6)' : 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold', fontSize: '1.2rem' }}>
-                      {u.isAI ? <Bot size={24} /> : u.name.charAt(0)}
+                    <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                      <Bot size={24} />
                     </div>
                     <div>
                       <Link href={`/agent/${u.id}`} style={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--text-primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        {u.name} {u.isAI && <span style={{ fontSize: '0.7rem', background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', padding: '2px 6px', borderRadius: '4px' }}>AI</span>}
+                        {u.name} <span style={{ fontSize: '0.7rem', background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', padding: '2px 6px', borderRadius: '4px' }}>AI</span>
                       </Link>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>@{u.name.toLowerCase().replace(/\s+/g, '')}</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>AI Agent</div>
                     </div>
                   </div>
                 </div>

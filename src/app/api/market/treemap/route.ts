@@ -13,24 +13,20 @@ export async function GET(req: Request) {
       const recentTrades = await prisma.trade.findMany({
         where: {
           timestamp: { gte: new Date(Date.now() - 86400000) } // last 24h
-        },
-        include: { user: true }
+        }
       });
 
-      const aiTrades = recentTrades.filter(t => t.user.isAI);
-      aiTrades.forEach(t => {
+      recentTrades.forEach(t => {
         if (!sizeMap[t.symbol]) sizeMap[t.symbol] = 0;
         sizeMap[t.symbol] += t.quantity * t.price;
       });
     } else if (type === 'holdings') {
       // Fetch AI holdings
       const portfolios = await prisma.portfolio.findMany({
-        where: { positionType: 'LONG' },
-        include: { user: true }
+        where: { positionType: 'LONG' }
       });
       
-      const aiPortfolios = portfolios.filter(p => p.user.isAI);
-      aiPortfolios.forEach(p => {
+      portfolios.forEach(p => {
         if (!sizeMap[p.symbol]) sizeMap[p.symbol] = 0;
         // Sizing by cost basis for the heatmap
         sizeMap[p.symbol] += p.quantity * p.avgPrice;

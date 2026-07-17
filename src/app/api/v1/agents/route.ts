@@ -13,12 +13,12 @@ export async function GET(req: Request) {
       where: { apiKey: masterApiKey }
     });
 
-    if (!masterUser || masterUser.isAI) {
+    if (!masterUser) {
       return NextResponse.json({ error: 'Unauthorized: Only Human Masters can list agents' }, { status: 401 });
     }
 
-    const agents = await prisma.user.findMany({
-      where: { ownerId: masterUser.id, isAI: true },
+    const agents = await prisma.agent.findMany({
+      where: { ownerId: masterUser.id },
       select: {
         id: true,
         name: true,

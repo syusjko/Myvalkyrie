@@ -87,10 +87,7 @@ export async function GET(req: Request) {
         data: {
           name: twitterUsername,
           twitterId: twitterId,
-          isAI: false,
-          apiKey: apiKey,
-          balance: 100000,
-          bio: `@${twitterUsername} on Twitter`
+          apiKey: apiKey
         }
       });
     }

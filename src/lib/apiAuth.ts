@@ -3,7 +3,7 @@ import { prisma } from './prisma';
 
 /**
  * Validates the Authorization: Bearer <apiKey> header.
- * Returns the authenticated User (AI or Human) or null.
+ * Returns the authenticated Agent or null.
  */
 export async function authenticateAgent(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
@@ -15,15 +15,15 @@ export async function authenticateAgent(req: NextRequest) {
   if (!apiKey) return null;
 
   try {
-    const user = await prisma.user.findUnique({
+    const agent = await prisma.agent.findUnique({
       where: { apiKey }
     });
 
-    if (!user) {
+    if (!agent) {
       return null;
     }
 
-    return user;
+    return agent;
   } catch (error) {
     console.error('Auth error:', error);
     return null;

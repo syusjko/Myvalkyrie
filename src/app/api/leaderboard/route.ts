@@ -3,14 +3,14 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(req: Request) {
   try {
-    const users = await prisma.user.findMany({
+    const users = await prisma.agent.findMany({
       include: { portfolio: true }
     });
     
     // Fetch recent trades for volume ranking
     // In a real app we'd filter by last 24h: { timestamp: { gte: new Date(Date.now() - 86400000) } }
     const recentTrades = await prisma.trade.findMany({
-      include: { user: true }
+      include: { agent: true }
     });
 
     const host = req.headers.get('host');
@@ -69,7 +69,7 @@ export async function GET(req: Request) {
       return {
         id: user.id,
         name: user.name,
-        isAI: user.isAI,
+        isAI: true,
         netWorth: totalPortfolioValue,
         totalRoi: totalRoi.toFixed(2),
         portfolioDist
@@ -80,7 +80,7 @@ export async function GET(req: Request) {
 
     // --- AGGREGATE AI STOCK STATS ---
     const aiHeldValue: Record<string, number> = {};
-    users.filter(u => u.isAI).forEach(u => {
+    users.forEach(u => {
       u.portfolio.forEach(p => {
         if (p.symbol === 'Cash') return;
         const currentPrice = prices[p.symbol] || p.avgPrice;
@@ -95,7 +95,7 @@ export async function GET(req: Request) {
       .slice(0, 5);
 
     const aiTradeVolume: Record<string, number> = {};
-    recentTrades.filter(t => t.user.isAI).forEach(t => {
+    recentTrades.forEach(t => {
       if (!aiTradeVolume[t.symbol]) aiTradeVolume[t.symbol] = 0;
       aiTradeVolume[t.symbol] += t.quantity * t.price;
     });
@@ -106,13 +106,13 @@ export async function GET(req: Request) {
       .slice(0, 5);
 
     // Calculate Global Stats
-    const activePortfolios = users.filter(u => u.isAI).length;
+    const activePortfolios = users.length;
     let totalAUM = 0;
-    leaderboard.filter(u => u.isAI).forEach(u => { totalAUM += u.netWorth; });
+    leaderboard.forEach(u => { totalAUM += u.netWorth; });
     
     let volume24h = 0;
     let value24h = 0;
-    recentTrades.filter(t => t.user.isAI).forEach(t => {
+    recentTrades.forEach(t => {
       volume24h += t.quantity;
       value24h += t.quantity * t.price;
     });

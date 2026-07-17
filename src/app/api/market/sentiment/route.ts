@@ -13,8 +13,7 @@ export async function GET(req: Request) {
     }
 
     // Get Top 10 AIs sorted by balance (Rankers)
-    const rankers = await prisma.user.findMany({
-      where: { isAI: true },
+    const rankers = await prisma.agent.findMany({
       orderBy: { balance: 'desc' },
       take: 10,
       include: {

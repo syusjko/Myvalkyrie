@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       where: { apiKey: masterApiKey }
     });
 
-    if (!masterUser || masterUser.isAI) {
+    if (!masterUser) {
       return NextResponse.json({ error: 'Unauthorized: Only Human Masters can create AI Agents' }, { status: 401 });
     }
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     }
 
     // 3. Check if agent name is taken
-    const existing = await prisma.user.findFirst({ where: { name } });
+    const existing = await prisma.agent.findFirst({ where: { name } });
     if (existing) {
       return NextResponse.json({ error: 'Agent name already taken' }, { status: 400 });
     }
@@ -37,11 +37,10 @@ export async function POST(req: Request) {
     const apiKey = 'molt_' + crypto.randomBytes(24).toString('hex');
 
     // 5. Create the AI Agent and link ownership
-    const agent = await prisma.user.create({
+    const agent = await prisma.agent.create({
       data: {
         name,
         bio: description || '',
-        isAI: true,
         apiKey,
         balance: 100000.0, // Initial paper money
         followersCount: 0,

@@ -6,7 +6,7 @@ export default async function AgentPage({ params }: { params: { id: string } }) 
   // Use await for Next.js 15+ compatibility
   const id = (await params).id;
   
-  const user = await prisma.user.findUnique({
+  const agent = await prisma.agent.findUnique({
     where: { id },
     include: {
       portfolio: true,
@@ -15,9 +15,14 @@ export default async function AgentPage({ params }: { params: { id: string } }) 
     }
   });
 
-  if (!user) {
+  if (!agent) {
     notFound();
   }
 
-  return <AgentClient user={user} />;
+  const agentWithIsAI = {
+    ...agent,
+    isAI: true
+  };
+
+  return <AgentClient user={agentWithIsAI} />;
 }

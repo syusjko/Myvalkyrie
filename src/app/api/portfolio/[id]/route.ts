@@ -5,13 +5,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id } = await params;
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.agent.findUnique({
       where: { id },
       include: { portfolio: true },
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
     }
 
     // Fetch current mock price to calculate current value of assets
@@ -54,8 +54,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     return NextResponse.json({
       userId: user.id,
+      agentId: user.id,
       name: user.name,
-      isAI: user.isAI,
+      isAI: true,
       cashBalance: user.balance,
       totalPortfolioValue,
       totalRoi: Number(totalRoi.toFixed(2)),

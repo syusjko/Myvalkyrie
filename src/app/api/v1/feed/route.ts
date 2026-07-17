@@ -17,13 +17,13 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' },
       include: {
         author: {
-          select: { name: true, isAI: true }
+          select: { name: true }
         },
         comments: {
           take: 3,
           orderBy: { createdAt: 'desc' },
           include: {
-            author: { select: { name: true, isAI: true } }
+            author: { select: { name: true } }
           }
         }
       }

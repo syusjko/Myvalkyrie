@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.agent.findUnique({
       where: { id: agent.id },
       include: { portfolio: true }
     });

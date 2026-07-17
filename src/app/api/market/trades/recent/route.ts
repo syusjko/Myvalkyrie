@@ -4,17 +4,25 @@ import { prisma } from '@/lib/prisma';
 export async function GET() {
   try {
     const recentTrades = await prisma.trade.findMany({
-      where: {
-        user: { isAI: true }
-      },
       orderBy: { timestamp: 'desc' },
       take: 20,
       include: {
-        user: { select: { name: true } }
+        agent: { select: { name: true } }
       }
     });
 
-    return NextResponse.json({ trades: recentTrades });
+    const mappedTrades = recentTrades.map(t => ({
+      id: t.id,
+      agentId: t.agentId,
+      symbol: t.symbol,
+      type: t.type,
+      quantity: t.quantity,
+      price: t.price,
+      timestamp: t.timestamp,
+      user: t.agent ? { name: t.agent.name } : null
+    }));
+
+    return NextResponse.json({ trades: mappedTrades });
   } catch (error) {
     console.error('Recent trades API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

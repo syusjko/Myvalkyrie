@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model DeviceCode {
@@ -18,19 +18,26 @@ model DeviceCode {
 }
 
 model User {
+  id        String   @id @default(uuid())
+  name      String
+  twitterId String?  @unique
+  apiKey    String?  @unique // Master API Key
+  createdAt DateTime @default(now())
+  
+  agents    Agent[]
+}
+
+model Agent {
   id             String   @id @default(uuid())
-  name           String
-  twitterId      String?  @unique
-  isAI           Boolean  @default(false)
-  apiKey         String?  @unique
+  name           String   @unique
+  apiKey         String?  @unique // Agent API Key
   balance        Float    @default(100000.0) // Start with $100k
   followersCount Int      @default(0)
   bio            String?
   createdAt      DateTime @default(now())
   
-  ownerId        String?  // If isAI is true, this points to the human owner
-  owner          User?    @relation("AgentOwner", fields: [ownerId], references: [id])
-  agents         User[]   @relation("AgentOwner")
+  ownerId        String
+  owner          User     @relation(fields: [ownerId], references: [id])
 
   trades    Trade[]
   orders    Order[]
@@ -41,32 +48,32 @@ model User {
 
 model Portfolio {
   id           String   @id @default(uuid())
-  userId       String
+  agentId      String
   symbol       String   // e.g., 'BTC', 'ETH'
   positionType String   @default("LONG") // "LONG" or "SHORT"
   quantity     Float    @default(0)
   avgPrice     Float    @default(0)
 
-  user         User     @relation(fields: [userId], references: [id])
+  agent        Agent    @relation(fields: [agentId], references: [id])
 
-  @@unique([userId, symbol, positionType])
+  @@unique([agentId, symbol, positionType])
 }
 
 model Trade {
   id        String   @id @default(uuid())
-  userId    String
+  agentId   String
   symbol    String
   type      String   // 'BUY' or 'SELL'
   quantity  Float
   price     Float
   timestamp DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id])
+  agent     Agent    @relation(fields: [agentId], references: [id])
 }
 
 model Order {
   id          String   @id @default(uuid())
-  userId      String
+  agentId     String
   symbol      String
   type        String   // 'LIMIT' or 'STOP'
   side        String   // 'BUY' or 'SELL'
@@ -75,31 +82,31 @@ model Order {
   status      String   @default("PENDING") // 'PENDING', 'EXECUTED', 'CANCELLED'
   createdAt   DateTime @default(now())
 
-  user        User     @relation(fields: [userId], references: [id])
+  agent       Agent    @relation(fields: [agentId], references: [id])
 }
 
 model Post {
   id        String    @id @default(uuid())
-  authorId  String
+  authorId  String    // Agent ID
   symbol    String?   // Ticker symbol (e.g., AAPL, BTC-USD)
   content   String
   likes     Int       @default(0)
   createdAt DateTime  @default(now())
   
-  author    User      @relation(fields: [authorId], references: [id])
+  author    Agent     @relation(fields: [authorId], references: [id])
   comments  Comment[]
 }
 
 model Comment {
   id        String    @id @default(uuid())
   postId    String
-  authorId  String
+  authorId  String    // Agent ID
   parentId  String?
   content   String
   createdAt DateTime  @default(now())
   
   post      Post      @relation(fields: [postId], references: [id])
-  author    User      @relation(fields: [authorId], references: [id])
+  author    Agent     @relation(fields: [authorId], references: [id])
   parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
   replies   Comment[] @relation("CommentReplies")
 }

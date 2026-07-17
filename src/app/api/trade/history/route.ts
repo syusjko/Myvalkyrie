@@ -4,10 +4,10 @@ import { prisma } from '@/lib/prisma';
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
+    const agentId = searchParams.get('agentId') || searchParams.get('userId');
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
+    if (!agentId) {
+      return NextResponse.json({ error: 'Missing agentId' }, { status: 400 });
     }
 
     const apiKey = req.headers.get('x-api-key');
@@ -15,13 +15,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized: Missing API Key' }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({ where: { apiKey } });
-    if (!user || user.id !== userId) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid API Key or User ID mismatch' }, { status: 401 });
+    const agent = await prisma.agent.findUnique({ where: { apiKey } });
+    if (!agent || agent.id !== agentId) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid API Key or Agent ID mismatch' }, { status: 401 });
     }
 
     const trades = await prisma.trade.findMany({
-      where: { userId },
+      where: { agentId },
       orderBy: { timestamp: 'desc' },
       take: 50,
     });

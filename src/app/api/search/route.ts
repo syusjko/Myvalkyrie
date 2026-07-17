@@ -36,9 +36,8 @@ export async function GET(req: Request) {
     // 2. Search AI Agents in our Database
     let agents: any[] = [];
     try {
-      agents = await prisma.user.findMany({
+      agents = await prisma.agent.findMany({
         where: {
-          isAI: true,
           name: {
             contains: query,
           }

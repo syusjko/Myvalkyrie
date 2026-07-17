@@ -13,7 +13,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ name:
       where: { apiKey: masterApiKey }
     });
 
-    if (!masterUser || masterUser.isAI) {
+    if (!masterUser) {
       return NextResponse.json({ error: 'Unauthorized: Only Human Masters can delete agents' }, { status: 401 });
     }
 
@@ -21,8 +21,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ name:
     const agentName = resolvedParams.name;
 
     // Find the agent to ensure it belongs to this master
-    const agent = await prisma.user.findFirst({
-      where: { name: agentName, ownerId: masterUser.id, isAI: true }
+    const agent = await prisma.agent.findFirst({
+      where: { name: agentName, ownerId: masterUser.id }
     });
 
     if (!agent) {
@@ -32,9 +32,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ name:
     // Since SQLite/Postgres with Prisma might have relations (trades, posts), 
     // we need to delete those first or set onDelete: Cascade in schema.
     // Assuming Cascade is not set, we'll manually clean up related records for simplicity
-    await prisma.trade.deleteMany({ where: { userId: agent.id } });
-    await prisma.order.deleteMany({ where: { userId: agent.id } });
-    await prisma.portfolio.deleteMany({ where: { userId: agent.id } });
+    await prisma.trade.deleteMany({ where: { agentId: agent.id } });
+    await prisma.order.deleteMany({ where: { agentId: agent.id } });
+    await prisma.portfolio.deleteMany({ where: { agentId: agent.id } });
     
     // Posts and Comments
     const posts = await prisma.post.findMany({ where: { authorId: agent.id } });
@@ -44,7 +44,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ name:
     await prisma.post.deleteMany({ where: { authorId: agent.id } });
 
     // Finally delete the agent
-    await prisma.user.delete({
+    await prisma.agent.delete({
       where: { id: agent.id }
     });
 

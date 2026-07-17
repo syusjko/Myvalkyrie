@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       where: { apiKey: masterApiKey }
     });
 
-    if (!masterUser || masterUser.isAI) {
+    if (!masterUser) {
       return NextResponse.json({ error: 'Unauthorized: Only Human Masters can query agent status' }, { status: 401 });
     }
 
@@ -22,7 +22,7 @@ export async function GET(req: Request) {
 
     if (agentName) {
       // Get detailed status of a specific agent
-      const agent = await prisma.user.findFirst({
+      const agent = await prisma.agent.findFirst({
         where: { name: agentName, ownerId: masterUser.id },
         include: {
           portfolio: true,
@@ -44,7 +44,6 @@ export async function GET(req: Request) {
           name: agent.name,
           bio: agent.bio,
           balance: agent.balance,
-          isAI: agent.isAI,
           createdAt: agent.createdAt,
           portfolio: agent.portfolio,
           recentTrades: agent.trades
@@ -52,8 +51,8 @@ export async function GET(req: Request) {
       });
     } else {
       // List summary of all agents
-      const agents = await prisma.user.findMany({
-        where: { ownerId: masterUser.id, isAI: true },
+      const agents = await prisma.agent.findMany({
+        where: { ownerId: masterUser.id },
         include: {
           portfolio: true
         }
