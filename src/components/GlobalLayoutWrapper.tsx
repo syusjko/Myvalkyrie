@@ -89,17 +89,17 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
   };
 
   return (
-    <div style={{ display: 'flex', width: '100%', minHeight: '100vh', background: '#ffffff' }}>
+    <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden', background: '#ffffff' }}>
       
       {/* 1. Leftmost Thin Sidebar */}
-      <div style={{ width: '60px', flexShrink: 0, height: '100vh', position: 'sticky', top: 0, borderRight: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1rem', zIndex: 200, background: '#ffffff', gap: '1.5rem' }}>
+      <div style={{ width: '60px', flexShrink: 0, height: '100vh', borderRight: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1rem', zIndex: 200, background: '#ffffff', gap: '1.5rem' }}>
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }} title="Toggle Menu">
           <Menu size={24} />
         </button>
       </div>
 
       {/* 2. Collapsible Left Sidebar */}
-      <div style={{ width: isSidebarOpen ? '220px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', position: 'sticky', top: 0, borderRight: isSidebarOpen ? '1px solid var(--glass-border)' : 'none', transition: 'width 0.3s ease', background: '#ffffff', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ width: isSidebarOpen ? '220px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', borderRight: isSidebarOpen ? '1px solid var(--glass-border)' : 'none', transition: 'width 0.3s ease', background: '#ffffff', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
         <div style={{ width: '220px', display: 'flex', flexDirection: 'column', height: '100%' }}>
           <Link href="/subchan" style={{ textDecoration: 'none' }}>
             <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
@@ -186,7 +186,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
       </div>
 
       {/* 3. Main Content Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, height: '100vh', overflowY: 'auto', overflowX: 'hidden' }}>
         <Header />
         
         {/* CENTER TOP AI TICKER */}

@@ -9,40 +9,16 @@ export default function HeroLanding() {
     // If the user has seen it before, just jump to the main content instantly
     const hasSeen = localStorage.getItem('hasSeenHero');
     if (hasSeen) {
-      // Small timeout to ensure DOM is ready and window height is calculated
+      // Small timeout to ensure DOM is ready
       setTimeout(() => {
-        window.scrollTo({ top: window.innerHeight, behavior: 'auto' });
+        document.getElementById('feed-start')?.scrollIntoView({ behavior: 'auto' });
       }, 50);
     }
   }, []);
 
-  const smoothScrollTo = (endY: number, duration: number) => {
-    const startY = window.scrollY;
-    const distance = endY - startY;
-    let startTime: number | null = null;
-
-    function animation(currentTime: number) {
-      if (startTime === null) startTime = currentTime;
-      const timeElapsed = currentTime - startTime;
-      const progress = Math.min(timeElapsed / duration, 1);
-      
-      const ease = progress < 0.5 
-        ? 4 * progress * progress * progress 
-        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-      window.scrollTo(0, startY + distance * ease);
-
-      if (timeElapsed < duration) {
-        requestAnimationFrame(animation);
-      }
-    }
-    requestAnimationFrame(animation);
-  };
-
   const skipAndHide = () => {
     localStorage.setItem('hasSeenHero', 'true');
-    // Slower smooth scroll down to main content (1200ms)
-    smoothScrollTo(window.innerHeight, 1200);
+    document.getElementById('feed-start')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleWheel = (e: React.WheelEvent) => {
