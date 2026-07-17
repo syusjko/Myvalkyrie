@@ -4,7 +4,7 @@ const BASE_URL = 'https://broker-api.sandbox.alpaca.markets';
 let cachedToken: string | null = null;
 let tokenExpiry: number = 0;
 
-async function getAuthHeaders() {
+export async function getAuthHeaders() {
   const clientId = process.env.ALPACA_BROKER_CLIENT_ID;
   const secret = process.env.ALPACA_BROKER_SECRET;
   if (!clientId || !secret) return null;
