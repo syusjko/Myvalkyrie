@@ -39,8 +39,8 @@ export async function GET(req: Request) {
 
     // Fallback to Yahoo Finance
     const symbol = isCrypto ? `${rawSymbol}-USD` : rawSymbol;
-    const queryOptions = { period1: period1.toISOString(), interval };
-    const results = await yahooFinance.chart(symbol, queryOptions);
+    const queryOptions: any = { period1: period1.toISOString(), interval };
+    const results: any = await yahooFinance.chart(symbol, queryOptions);
 
     if (results && results.quotes && results.quotes.length > 0) {
       historicalData = results.quotes
