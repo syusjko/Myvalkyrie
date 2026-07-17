@@ -91,68 +91,8 @@ export function MarketDataProvider({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     fetchData();
-    const fetchInterval = setInterval(fetchData, 6000); // Fetch real data every 6s
+    const fetchInterval = setInterval(fetchData, 2000); // Fetch real data tightly every 2s
     return () => clearInterval(fetchInterval);
-  }, []);
-
-  // Simulate micro-fluctuations (every 300ms) to look hyper real-time
-  useEffect(() => {
-    const microTick = () => {
-      const currentPrices = { ...pricesStateRef.current };
-      const currentDetails = { ...detailsStateRef.current };
-      const microTicks: Record<string, 'up' | 'down' | null> = {};
-
-      // Select 1-3 random assets to fluctuate
-      const symbols = Object.keys(currentPrices).filter(sym => currentPrices[sym] > 0);
-      if (symbols.length === 0) return;
-
-      const numChanges = Math.floor(Math.random() * 3) + 1;
-      let changed = false;
-
-      for (let i = 0; i < numChanges; i++) {
-        const sym = symbols[Math.floor(Math.random() * symbols.length)];
-        const oldPrice = currentPrices[sym];
-        
-        // Very tiny change (-0.02% to +0.02%)
-        const percentChange = (Math.random() * 0.04 - 0.02) / 100;
-        if (percentChange === 0) continue;
-
-        const delta = oldPrice * percentChange;
-        const newPrice = oldPrice + delta;
-
-        currentPrices[sym] = newPrice;
-        microTicks[sym] = newPrice > oldPrice ? 'up' : 'down';
-
-        if (currentDetails[sym]) {
-          const detail = currentDetails[sym];
-          currentDetails[sym] = {
-            ...detail,
-            price: newPrice,
-            change: detail.change + delta,
-            changePercent: ((detail.price + delta - (detail.price - detail.change)) / (detail.price - detail.change)) * 100
-          };
-        }
-        changed = true;
-      }
-
-      if (changed) {
-        setPrices(currentPrices);
-        setDetails(currentDetails);
-        setTicks(prev => ({ ...prev, ...microTicks }));
-        setTimeout(() => {
-          setTicks(prev => {
-            const cleared = { ...prev };
-            Object.keys(microTicks).forEach(sym => {
-              cleared[sym] = null;
-            });
-            return cleared;
-          });
-        }, 600);
-      }
-    };
-
-    const microInterval = setInterval(microTick, 400); // Trigger micro tick every 400ms
-    return () => clearInterval(microInterval);
   }, []);
 
   return (

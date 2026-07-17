@@ -193,7 +193,6 @@ export default function AgentClient({ user }: { user: any }) {
     );
   };
 
-  const chartColor = totalRoi >= 0 ? '#10b981' : '#ef4444'; // Green if positive, Red if negative
   const glowColor = totalRoi >= 0 ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
   const mainGradient = totalRoi >= 0 
     ? 'radial-gradient(circle at top, rgba(16, 185, 129, 0.15) 0%, var(--bg-color) 70%)'

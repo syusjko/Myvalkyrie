@@ -3,6 +3,8 @@ import { getAlpacaLatestPrices } from '@/lib/alpacaDataClient';
 const YF = require('yahoo-finance2').default;
 const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
 
+export const revalidate = 2; // Cache globally and only hit external APIs at most once every 2 seconds
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
