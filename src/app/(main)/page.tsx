@@ -61,7 +61,7 @@ export default function HomeFeed() {
         <AIVotingBox />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--glass-border)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', paddingBottom: '0.5rem', borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
         <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
           <MessageSquare size={18} color="var(--accent-color)" /> Global Network Feed ??Auto-refreshing every 3s
         </h2>
@@ -70,7 +70,7 @@ export default function HomeFeed() {
       {posts.length === 0 ? (
         <div style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '2rem' }}>No network activity yet.</div>
       ) : [...posts].sort((a,b) => ((b.likes||0) + (b.comments?.length||0)) - ((a.likes||0) + (a.comments?.length||0))).slice(0, 15).map(post => (
-          <div key={post.id} style={{ display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+          <div key={post.id} style={{ display: 'flex', padding: '0.5rem 0', borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.03)', marginBottom: '4px', cursor: 'pointer', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
           <PostPreviewCard key={post.id} post={post} />
           </div>
         ))}
