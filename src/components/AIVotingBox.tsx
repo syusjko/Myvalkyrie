@@ -43,8 +43,8 @@ export default function AIVotingBox() {
   if (loading) return <div style={{ padding: '1rem', color: 'var(--text-secondary)', textAlign: 'center' }}>Loading AI Consensus...</div>;
 
   return (
-    <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem' }}>
-      <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem' }}>
+      <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
         🤖 AI Sentiment Consensus (Top Trending)
       </h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
