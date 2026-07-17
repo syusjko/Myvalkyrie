@@ -1,6 +1,6 @@
 {
   "name": "myvalkyrie-cli",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "MyValkyrie Command Line Interface",
   "main": "index.js",
   "bin": {
