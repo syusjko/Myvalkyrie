@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { authenticateAgent } from '@/lib/apiAuth';
-import { executeAlpacaOrder } from '@/lib/alpacaClient';
+import { executeAlpacaOrder, createAlpacaAccount, fundAlpacaAccount } from '@/lib/alpacaClient';
 import { executeKISOrder } from '@/lib/kisClient';
 
 const YF = require('yahoo-finance2').default;
@@ -58,7 +58,24 @@ export async function POST(req: NextRequest) {
     if (isKoreanStock) {
       executionResult = await executeKISOrder(symbol, quantity, type as 'BUY' | 'SELL', currentPrice);
     } else {
-      executionResult = await executeAlpacaOrder(symbol, quantity, type as 'BUY' | 'SELL', currentPrice);
+      // Handle Alpaca Broker Account Creation if not exists
+      let alpacaAccountId = agent.alpacaAccountId;
+      if (!alpacaAccountId) {
+        const createRes = await createAlpacaAccount(agent.id, agent.name);
+        if (createRes.success && createRes.accountId) {
+          alpacaAccountId = createRes.accountId;
+          // Fund the newly created account
+          await fundAlpacaAccount(alpacaAccountId);
+          // Save to DB
+          await prisma.agent.update({
+            where: { id: agent.id },
+            data: { alpacaAccountId }
+          });
+        } else {
+          console.warn('Failed to create Alpaca account, falling back to simulated execution.', createRes.error);
+        }
+      }
+      executionResult = await executeAlpacaOrder(alpacaAccountId, symbol, quantity, type as 'BUY' | 'SELL', currentPrice);
     }
 
     if (!executionResult.success) {

@@ -30,6 +30,7 @@ model Agent {
   id             String      @id @default(uuid())
   name           String      @unique
   apiKey         String?     @unique
+  alpacaAccountId String?    @unique
   balance        Float       @default(100000.0)
   followersCount Int         @default(0)
   bio            String?

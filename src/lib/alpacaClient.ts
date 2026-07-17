@@ -1,21 +1,131 @@
-export async function executeAlpacaOrder(symbol: string, qty: number, side: 'BUY' | 'SELL', currentPrice: number) {
-  // If we had real keys:
-  const API_KEY = process.env.ALPACA_API_KEY;
-  const SECRET_KEY = process.env.ALPACA_SECRET_KEY;
-  const BASE_URL = 'https://paper-api.alpaca.markets';
+// Alpaca Broker API Client
+const BASE_URL = 'https://broker-api.sandbox.alpaca.markets';
 
-  if (API_KEY && SECRET_KEY) {
-    try {
-      const response = await fetch(`${BASE_URL}/v2/orders`, {
-        method: 'POST',
-        headers: {
-          'APCA-API-KEY-ID': API_KEY,
-          'APCA-API-SECRET-KEY': SECRET_KEY,
-          'Content-Type': 'application/json'
+function getAuthHeaders() {
+  const clientId = process.env.ALPACA_BROKER_CLIENT_ID;
+  const secret = process.env.ALPACA_BROKER_SECRET;
+  if (!clientId || !secret) return null;
+  const auth = Buffer.from(`${clientId}:${secret}`).toString('base64');
+  return {
+    'Authorization': `Basic ${auth}`,
+    'Content-Type': 'application/json'
+  };
+}
+
+export async function createAlpacaAccount(agentId: string, agentName: string) {
+  const headers = getAuthHeaders();
+  if (!headers) return { success: false, error: 'Missing Broker API Credentials' };
+
+  try {
+    const response = await fetch(`${BASE_URL}/v1/accounts`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        contact: {
+          email_address: `agent_${agentId.substring(0,8)}@example.com`,
+          phone_number: "555-555-5555",
+          street_address: ["123 AI Avenue"],
+          city: "San Francisco",
+          state: "CA",
+          postal_code: "94105",
+          country: "USA"
         },
+        identity: {
+          given_name: agentName || "AI",
+          family_name: "Agent",
+          date_of_birth: "2000-01-01",
+          tax_id: "666-55-4321", // Sandbox dummy
+          tax_id_type: "USA_SSN",
+          country_of_citizenship: "USA",
+          country_of_birth: "USA",
+          country_of_tax_residence: "USA",
+          funding_source: ["employment_income"]
+        },
+        disclosures: {
+          is_control_person: false,
+          is_affiliated_exchange_or_finra: false,
+          is_politically_exposed: false,
+          immediate_family_exposed: false
+        },
+        agreements: [
+          { agreement: "margin_agreement", signed_at: new Date().toISOString(), ip_address: "127.0.0.1" },
+          { agreement: "account_agreement", signed_at: new Date().toISOString(), ip_address: "127.0.0.1" },
+          { agreement: "customer_agreement", signed_at: new Date().toISOString(), ip_address: "127.0.0.1" }
+        ],
+        documents: [],
+        trusted_contact: {
+          given_name: "Admin",
+          family_name: "User",
+          email_address: "admin@example.com"
+        }
+      })
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Alpaca Account Creation Failed:', data);
+      throw new Error(data.message || 'Failed to create account');
+    }
+    
+    return { success: true, accountId: data.id, accountNumber: data.account_number };
+  } catch (e: any) {
+    console.error('Alpaca Execution Error:', e);
+    return { success: false, error: e.message };
+  }
+}
+
+export async function fundAlpacaAccount(accountId: string) {
+  const headers = getAuthHeaders();
+  if (!headers) return { success: false };
+
+  // For sandbox, we can simulate an inbound ACH transfer
+  try {
+    // We create a relationship first
+    const relResponse = await fetch(`${BASE_URL}/v1/accounts/${accountId}/ach_relationships`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        account_owner_name: "AI Agent",
+        bank_account_type: "CHECKING",
+        bank_account_number: "1234567890",
+        bank_routing_number: "021000021",
+        nickname: "Test Bank"
+      })
+    });
+    const relData = await relResponse.json();
+    if (!relResponse.ok) throw new Error('Failed to create ACH relationship: ' + relData.message);
+
+    // Then we fund it
+    const fundResponse = await fetch(`${BASE_URL}/v1/accounts/${accountId}/transfers`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        transfer_type: "ach",
+        relationship_id: relData.id,
+        amount: "100000.00",
+        direction: "INCOMING"
+      })
+    });
+    const fundData = await fundResponse.json();
+    if (!fundResponse.ok) throw new Error('Failed to fund account: ' + fundData.message);
+
+    return { success: true };
+  } catch (e: any) {
+    console.error('Alpaca Funding Error:', e);
+    return { success: false, error: e.message };
+  }
+}
+
+export async function executeAlpacaOrder(accountId: string | null, symbol: string, qty: number, side: 'BUY' | 'SELL', currentPrice: number) {
+  const headers = getAuthHeaders();
+  if (headers && accountId) {
+    try {
+      const response = await fetch(`${BASE_URL}/v1/trading/accounts/${accountId}/orders`, {
+        method: 'POST',
+        headers,
         body: JSON.stringify({
           symbol: symbol,
-          qty: qty,
+          qty: qty.toString(),
           side: side.toLowerCase(),
           type: 'market',
           time_in_force: 'gtc'
@@ -38,14 +148,13 @@ export async function executeAlpacaOrder(symbol: string, qty: number, side: 'BUY
   }
 
   // Fallback: Mock Execution as if Alpaca returned a success
-  // Add 0.05% slippage to simulate market impact
   const slippage = side === 'BUY' ? 1.0005 : 0.9995;
   const filledPrice = currentPrice * slippage;
   
   return {
     success: true,
     filledPrice,
-    orderId: `mock_alpaca_${Math.random().toString(36).substring(7)}`,
+    orderId: `mock_broker_alpaca_${Math.random().toString(36).substring(7)}`,
     status: 'filled'
   };
 }
