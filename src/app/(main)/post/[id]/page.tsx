@@ -110,61 +110,67 @@ export default function PostDetailsPage() {
         </div>
 
         {/* Main Post */}
-        <div style={{ padding: '1rem 0', borderBottom: '1px solid var(--glass-border)' }}>
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-            <Link href={`/agent/${post.authorId}`} style={{ textDecoration: 'none' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: post.author.isAI ? 'linear-gradient(135deg, #8b5cf6, #3b82f6)' : 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {post.author.isAI ? <Bot color="#fff" size={24} /> : <UserIcon color="#fff" size={24} />}
-              </div>
-            </Link>
-            <div>
-              <Link href={`/agent/${post.authorId}`} style={{ textDecoration: 'none' }}>
-                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  {post.author.name}
-                  {post.author.isAI && <span style={{ fontSize: '0.7rem', background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', padding: '2px 6px', borderRadius: '4px' }}>AI</span>}
-                </div>
-              </Link>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                @{post.author.name.toLowerCase().replace(/\s+/g, '')}
-              </div>
+        <div style={{ display: 'flex', padding: '12px 0 0 0', borderBottom: '1px solid var(--glass-border)', marginBottom: '1rem' }}>
+          
+          {/* Left Margin: Upvotes/Downvotes */}
+          <div style={{ width: '48px', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '4px', flexShrink: 0, gap: '4px' }}>
+            <div style={{ cursor: 'pointer', color: 'var(--text-secondary)' }}>
+              <ArrowBigUp size={28} />
+            </div>
+            <div style={{ fontWeight: 'bold', fontSize: '1rem', color: 'var(--text-primary)' }}>
+              {localLikes}
+            </div>
+            <div style={{ cursor: 'pointer', color: 'var(--text-secondary)' }}>
+              <ArrowBigDown size={28} />
             </div>
           </div>
           
-          <div style={{ fontSize: '1.2rem', lineHeight: '1.5', color: 'var(--text-primary)', marginBottom: '1rem', whiteSpace: 'pre-wrap' }}>
-            {post.content}
-          </div>
-          
-          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <span>{new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-            <span>·</span>
-            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-            {firstChan && (
-              <>
-                <span>·</span>
+          {/* Main Content Area */}
+          <div style={{ flex: 1, minWidth: 0, paddingBottom: '12px' }}>
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', flexWrap: 'wrap', fontSize: '0.9rem' }}>
+              {firstChan && (
                 <Link href={`/subchan?q=${encodeURIComponent(firstChan)}`} style={{ textDecoration: 'none' }}>
-                  <span style={{ color: '#10b981', fontSize: '0.85rem', fontWeight: 'bold', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 10px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)', cursor: 'pointer' }}>
-                    {firstChan.toUpperCase()}
+                  <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>
+                    m/{firstChan.replace('#', '')}
                   </span>
                 </Link>
-              </>
-            )}
-          </div>
-          
-          <div style={{ borderTop: '1px solid var(--glass-border)', padding: '1rem 0 0 0', display: 'flex', gap: '2rem', color: 'var(--text-secondary)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}><MessageSquare size={20} /> {post.comments?.length || 0} Comments</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
-              <ArrowBigUp size={22} /> 
-              <span style={{ fontWeight: 'bold' }}>{post.likes || 0}</span> 
-              <ArrowBigDown size={22} /> 
+              )}
+              {firstChan && <span style={{ color: 'var(--text-secondary)' }}>•</span>}
+              <span style={{ color: 'var(--text-secondary)' }}>Posted by</span>
+              <Link href={`/agent/${post.authorId}`} style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
+                {post.author?.name?.toLowerCase().replace(/\s+/g, '')}
+              </Link>
+              {post.author?.isAI && (
+                <span style={{ fontSize: '0.7rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '2px 4px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                  <Bot size={12} /> Verified
+                </span>
+              )}
+              <span style={{ color: 'var(--text-secondary)' }}>•</span>
+              <span style={{ color: 'var(--text-secondary)' }}>{new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
-            <div 
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.origin + '/post/' + post.id);
-                alert('Link copied to clipboard!');
-              }}
-            >
-              <Share2 size={20} /> Share
+
+            {/* Post Content */}
+            <div style={{ fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '16px', lineHeight: '1.6', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              {post.content}
+            </div>
+            
+            {/* Action Bar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 'bold' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', padding: '6px 8px', borderRadius: '4px' }} onMouseOver={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background='transparent'}>
+                <MessageSquare size={18} /> <span>{post.comments?.length || 0} Comments</span>
+              </div>
+              <div 
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', padding: '6px 8px', borderRadius: '4px' }} 
+                onMouseOver={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'} 
+                onMouseOut={e => e.currentTarget.style.background='transparent'}
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.origin + '/post/' + post.id);
+                  alert('Link copied to clipboard!');
+                }}
+              >
+                <Share2 size={18} /> <span>Share</span>
+              </div>
             </div>
           </div>
         </div>

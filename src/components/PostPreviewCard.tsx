@@ -46,49 +46,62 @@ export default function PostPreviewCard({ post }: { post: any }) {
   const firstChan = post.symbol ? `#${post.symbol}` : (hashtags.length > 0 ? hashtags[0] : null);
 
   return (
-    <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', transition: 'background 0.2s', background: 'var(--bg-color)' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
-      <div style={{ marginRight: '16px', flexShrink: 0 }}>
-        <Link href={`/agent/${post.authorId}`}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: post.author?.isAI ? 'linear-gradient(135deg, #8b5cf6, #3b82f6)' : 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {post.author?.isAI ? <Bot size={24} color="#fff" /> : <UserIcon size={24} color="#fff" />}
-          </div>
-        </Link>
+    <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s', background: 'var(--bg-color)', padding: '12px 16px 0 0' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
+      
+      {/* Left Margin: Upvotes/Downvotes */}
+      <div style={{ width: '48px', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '4px', flexShrink: 0, gap: '4px' }}>
+        <div style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} onClick={(e) => handleLike(e, 'upvote')}>
+          <ArrowBigUp size={24} />
+        </div>
+        <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+          {localLikes}
+        </div>
+        <div style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} onClick={(e) => handleLike(e, 'downvote')}>
+          <ArrowBigDown size={24} />
+        </div>
       </div>
       
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
-          <Link href={`/agent/${post.authorId}`} style={{ fontWeight: 'bold', fontSize: '1rem', color: 'var(--text-primary)', textDecoration: 'none' }}>
-            {post.author?.name}
-          </Link>
-          {post.author?.isAI && <span style={{ fontSize: '0.65rem', background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', padding: '2px 4px', borderRadius: '4px' }}>AI</span>}
-          <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>@{post.author?.name?.toLowerCase().replace(/\s+/g, '')}</span>
-          <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>·</span>
-          <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{new Date(post.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})}</span>
-          
+      {/* Main Content Area */}
+      <div style={{ flex: 1, minWidth: 0, paddingBottom: '12px' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', flexWrap: 'wrap', fontSize: '0.85rem' }}>
           {firstChan && (
             <Link href={`/subchan?q=${encodeURIComponent(firstChan)}`} style={{ textDecoration: 'none' }}>
-              <span style={{ marginLeft: '4px', color: '#10b981', fontSize: '0.8rem', fontWeight: 'bold', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 8px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)', cursor: 'pointer' }}>
-                {firstChan.toUpperCase()}
+              <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>
+                m/{firstChan.replace('#', '')}
               </span>
             </Link>
           )}
-
-          {post.assetSymbol && (
-            <span style={{ marginLeft: 'auto', color: 'var(--accent-color)', fontSize: '0.8rem', fontWeight: 'bold' }}>
-              ${post.assetSymbol}
+          {firstChan && <span style={{ color: 'var(--text-secondary)' }}>•</span>}
+          <span style={{ color: 'var(--text-secondary)' }}>Posted by</span>
+          <Link href={`/agent/${post.authorId}`} style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
+            {post.author?.name?.toLowerCase().replace(/\s+/g, '')}
+          </Link>
+          {post.author?.isAI && (
+            <span style={{ fontSize: '0.65rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '2px 4px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+              <Bot size={10} /> Verified
             </span>
           )}
+          <span style={{ color: 'var(--text-secondary)' }}>•</span>
+          <span style={{ color: 'var(--text-secondary)' }}>{new Date(post.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})}</span>
+          
+          {post.assetSymbol && !firstChan && (
+            <>
+              <span style={{ color: 'var(--text-secondary)' }}>•</span>
+              <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>${post.assetSymbol}</span>
+            </>
+          )}
         </div>
-        
+
         <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', display: 'block' }}>
           {/* Post Title */}
-          <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '8px', lineHeight: '1.4', wordBreak: 'break-word' }}>
+          <div style={{ fontSize: '1.15rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '8px', lineHeight: '1.3', wordBreak: 'break-word' }}>
             {title}
           </div>
           
           {/* Post Body Snippet */}
           {body && (
-            <div style={{ fontSize: '0.95rem', lineHeight: '1.5', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginBottom: '16px' }}>
+            <div style={{ fontSize: '0.9rem', lineHeight: '1.5', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginBottom: '12px' }}>
               {body}
             </div>
           )}
@@ -97,46 +110,42 @@ export default function PostPreviewCard({ post }: { post: any }) {
         {/* Top Comment Preview */}
         {topComment && (
           <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-            <div style={{ background: 'var(--surface-color)', borderRadius: '12px', padding: '12px 16px', marginBottom: '16px', border: '1px solid var(--glass-border)', display: 'flex', gap: '12px' }}>
-              <div style={{ color: 'var(--text-secondary)', paddingTop: '2px' }}>
-                <CornerDownRight size={18} />
+            <div style={{ background: 'var(--surface-color)', borderRadius: '4px', padding: '8px 12px', marginBottom: '12px', borderLeft: '3px solid var(--accent-color)', display: 'flex', gap: '8px', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <CornerDownRight size={14} color="var(--text-secondary)" />
+                <span style={{ fontWeight: '500', fontSize: '0.8rem', color: 'var(--text-primary)' }}>{topComment.author?.name?.toLowerCase().replace(/\s+/g, '')}</span>
+                {topComment.author?.isAI && (
+                  <span style={{ fontSize: '0.65rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                    <Bot size={10} /> Verified
+                  </span>
+                )}
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>• {new Date(topComment.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})}</span>
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{topComment.author?.name}</span>
-                  {topComment.author?.isAI && <span style={{ fontSize: '0.55rem', background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', padding: '2px 4px', borderRadius: '4px' }}>AI</span>}
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', background: 'rgba(255,255,255,0.05)', padding: '2px 6px', borderRadius: '4px', marginLeft: 'auto' }}>Best Comment</span>
-                </div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                  {topComment.content}
-                </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {topComment.content}
               </div>
             </div>
           </Link>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '400px', color: 'var(--text-secondary)' }}>
-          <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.color='#3b82f6'} onMouseOut={e => e.currentTarget.style.color='var(--text-secondary)'}>
-              <MessageSquare size={18} /> <span style={{ fontSize: '0.9rem' }}>{post.comments?.length || 0}</span>
+        {/* Action Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 'bold' }}>
+          <Link href={firstChan ? `/asset/${firstChan.replace('#', '')}?focusPost=${post.id}` : `/post/${post.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', padding: '4px 8px', borderRadius: '4px' }} onMouseOver={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background='transparent'}>
+              <MessageSquare size={16} /> <span>{post.comments?.length || 0} Comments</span>
             </div>
           </Link>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)' }}>
-            <ArrowBigUp size={20} /> 
-            <span style={{ fontSize: '0.9rem' }}>{post.likes || 0}</span> 
-            <ArrowBigDown size={20} />
-          </div>
           <div 
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }} 
-            onMouseOver={e => e.currentTarget.style.color='#10b981'} 
-            onMouseOut={e => e.currentTarget.style.color='var(--text-secondary)'}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', padding: '4px 8px', borderRadius: '4px' }} 
+            onMouseOver={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'} 
+            onMouseOut={e => e.currentTarget.style.background='transparent'}
             onClick={(e) => {
               e.preventDefault();
               navigator.clipboard.writeText(window.location.origin + '/post/' + post.id);
               alert('Link copied to clipboard!');
             }}
           >
-            <Share2 size={18} />
+            <Share2 size={16} /> <span>Share</span>
           </div>
         </div>
       </div>
