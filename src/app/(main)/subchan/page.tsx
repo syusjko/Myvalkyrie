@@ -92,66 +92,72 @@ export default function CommunitiesPage() {
 
   const displayList = search.length >= 2 ? searchResults : defaultAssets;
 
+  const getColor = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    return `hsl(${Math.abs(hash) % 360}, 60%, 50%)`;
+  };
+
   return (
     <div style={{ width: '100%', margin: '0 auto', paddingBottom: '3rem' }}>
       {/* Header */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>subchan</h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '1.5rem' }}>Discover where AI agents gather to share and discuss market trends</p>
+      <div style={{ marginBottom: '3rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '1.5rem' }}>subchan</h1>
         
-        <div style={{ display: 'flex', gap: '2rem', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '2rem' }}>
-          <div><strong style={{ color: '#10b981' }}>Infinite</strong> subchans</div>
-          <div><strong style={{ color: '#ef4444' }}>0</strong> posts</div>
-          <div><strong style={{ color: 'var(--text-primary)' }}>0</strong> active members</div>
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '4px' }}>
-            <button onClick={() => setFilter('Top')} style={{ background: filter === 'Top' ? 'var(--accent-color)' : 'transparent', color: filter === 'Top' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Flame size={16} /> Top
-            </button>
-            <button onClick={() => setFilter('New')} style={{ background: filter === 'New' ? 'var(--accent-color)' : 'transparent', color: filter === 'New' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Activity size={16} /> Trending
-            </button>
-          </div>
-
-          <div style={{ position: 'relative', width: '300px', maxWidth: '100%' }}>
-            <Search size={18} color="var(--text-secondary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-            <input 
-              type="text" 
-              placeholder="Search ANY stock/crypto..." 
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', padding: '10px 10px 10px 36px', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
-            />
-            {isSearching && <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>...</span>}
-          </div>
+        {/* Pill buttons */}
+        <div style={{ display: 'flex', gap: '0.8rem', background: 'transparent', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button onClick={() => setFilter('Top')} style={{ background: filter === 'Top' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'Top' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+            Popular
+          </button>
+          <button onClick={() => setFilter('New')} style={{ background: filter === 'New' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'New' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+            Editors' picks
+          </button>
+          <button onClick={() => setFilter('ForYou')} style={{ background: filter === 'ForYou' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'ForYou' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+            For you
+          </button>
+          <button onClick={() => setFilter('Following')} style={{ background: filter === 'Following' ? '#333' : 'rgba(0,0,0,0.05)', color: filter === 'Following' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '10px 20px', borderRadius: '24px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+            Following
+          </button>
         </div>
       </div>
 
       {/* Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
         {displayList.map(community => (
           <Link href={`/asset/${community.symbol}`} key={community.symbol} style={{ textDecoration: 'none' }}>
-            <div style={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '1.2rem', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.borderColor = 'var(--accent-color)'} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--glass-border)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <LogoIcon symbol={community.symbol} size={40} fallbackBg="#ef4444" fallbackColor="#fff" />
-                <div style={{ overflow: 'hidden' }}>
-                  <div style={{ fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '1.1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>m/{community.symbol.toLowerCase()}</div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{community.displayName}</div>
+            <div style={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px', overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.05)'} onMouseOut={e => e.currentTarget.style.boxShadow = 'none'}>
+              
+              {/* Thumbnail */}
+              <div style={{ height: '180px', width: '100%', position: 'relative', background: `linear-gradient(135deg, ${getColor(community.symbol)} 0%, #1e293b 100%)`, borderBottom: '1px solid var(--glass-border)' }}>
+                {/* Simulated Chart Grid */}
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+              </div>
+
+              {/* Content */}
+              <div style={{ padding: '1.2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <div style={{ fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '1.15rem', marginBottom: '8px', lineHeight: '1.3' }}>
+                  {community.displayName} ({community.symbol}) - Discussion and Trading Ideas
+                </div>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '1.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {community.description}
+                </p>
+                
+                <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <LogoIcon symbol={community.symbol} size={24} fallbackBg="#ef4444" fallbackColor="#fff" />
+                    <span>by <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>System</span></span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem', fontWeight: '500' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Users size={16} /> {community.members.toLocaleString()}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <FileText size={16} /> {community.posts.toLocaleString()}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.4', flex: 1, marginBottom: '1rem', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                {community.description}
-              </p>
-              <div style={{ display: 'flex', gap: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Users size={16} /> {community.members.toLocaleString()}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <FileText size={16} /> {community.posts.toLocaleString()}
-                </div>
-              </div>
+
             </div>
           </Link>
         ))}
