@@ -96,12 +96,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#ffffff' }}>
       <HeroLanding />
 
-      <main className="responsive-grid" style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '3rem 0 0 0', display: 'grid', gridTemplateColumns: isRightSidebarOpen ? '220px 1fr 300px' : '220px 1fr 60px', gap: '0', transition: 'grid-template-columns 0.3s ease', background: '#ffffff' }}>
+      <main className="responsive-grid" style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '0', display: 'grid', gridTemplateColumns: isRightSidebarOpen ? '220px 1fr 300px' : '220px 1fr 60px', gap: '0', transition: 'grid-template-columns 0.3s ease', background: '#ffffff' }}>
         
         {/* LEFT: Market Data (Watchlist) & subchan */}
-        <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderRight: 'none', background: '#ffffff' }}>
+        <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderRight: '1px solid var(--glass-border)', background: '#ffffff' }}>
           <Link href="/subchan" style={{ textDecoration: 'none' }}>
-            <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', marginBottom: '2px', borderRadius: '0', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
+            <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', borderRadius: '0', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
               <div style={{ background: 'var(--accent-color)', width: '32px', height: '32px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
               </div>
@@ -110,7 +110,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           </Link>
 
           <Link href="/consensus" style={{ textDecoration: 'none' }}>
-            <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', marginBottom: '2px', borderRadius: '0', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
+            <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', borderRadius: '0', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
               <div style={{ background: '#10b981', width: '32px', height: '32px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
               </div>
@@ -118,12 +118,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             </div>
           </Link>
 
-          <div style={{ padding: '0', display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', background: '#ffffff', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-            <div style={{ padding: '0.8rem 1rem', borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ padding: '0', display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', background: '#ffffff' }}>
+            <div style={{ padding: '0.8rem 1rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0 }}>Watchlist</h3>
             </div>
 
-            <div style={{ padding: '0.5rem 1rem', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', fontSize: '0.75rem', color: 'var(--text-secondary)', borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', marginBottom: '2px' }}>
+            <div style={{ padding: '0.5rem 1rem', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', fontSize: '0.75rem', color: 'var(--text-secondary)', borderBottom: '1px solid var(--glass-border)' }}>
               <div>Symbol</div>
               <div style={{ textAlign: 'right' }}>Last</div>
               <div style={{ textAlign: 'right' }}>Chg</div>
@@ -163,9 +163,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                           fontSize: '0.85rem', 
                           textDecoration: 'none', 
                           color: 'var(--text-primary)',
-                          borderBottom: 'none',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-                          marginBottom: '2px',
+                          borderBottom: '1px solid rgba(0,0,0,0.03)',
                           alignItems: 'center'
                         }}
                         onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
@@ -204,7 +202,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* RIGHT: Global Leaderboard */}
-        <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderLeft: 'none', background: '#ffffff' }}>
+        <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderLeft: '1px solid var(--glass-border)', background: '#ffffff' }}>
           <div style={{ padding: isRightSidebarOpen ? '1rem 0.8rem' : '1rem 0.4rem', flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: isRightSidebarOpen ? 'stretch' : 'center', background: '#ffffff' }}>
             
             <button 
@@ -221,7 +219,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 
                 {/* Header with Link to Full Leaderboard */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.03)', marginBottom: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: '1px solid var(--glass-border)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
                     <Trophy size={18} color="#d97706" /> Leaderboard
                   </div>
@@ -238,7 +236,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   const mostActive = [...aiAgents].sort((a, b) => b.portfolioDist.length - a.portfolioDist.length).slice(0, 5);
 
                   const renderSection = (title: string, data: any[]) => (
-                    <div key={title} style={{ borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.03)', marginBottom: '4px', paddingBottom: '1rem' }}>
+                    <div key={title} style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--text-primary)' }}>{title}</h3>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                         {data.map(u => {
@@ -277,7 +275,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   );
 
                   const renderStockSection = (title: string, data: any[], formatValue: (val: number) => string) => (
-                    <div key={title} style={{ borderBottom: 'none', boxShadow: '0 2px 4px rgba(0,0,0,0.03)', marginBottom: '4px', paddingBottom: '1rem' }}>
+                    <div key={title} style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--text-primary)' }}>{title}</h3>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                         {data.map((item, i) => (
