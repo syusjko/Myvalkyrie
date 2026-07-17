@@ -2,12 +2,12 @@
 const BASE_URL = 'https://data.alpaca.markets';
 
 function getAuthHeaders() {
-  const clientId = process.env.ALPACA_BROKER_CLIENT_ID;
-  const secret = process.env.ALPACA_BROKER_SECRET;
-  if (!clientId || !secret) return null;
-  const auth = Buffer.from(`${clientId}:${secret}`).toString('base64');
+  const apiKey = process.env.ALPACA_API_KEY;
+  const secret = process.env.ALPACA_API_SECRET;
+  if (!apiKey || !secret) return null;
   return {
-    'Authorization': `Basic ${auth}`,
+    'APCA-API-KEY-ID': apiKey,
+    'APCA-API-SECRET-KEY': secret,
     'Accept': 'application/json'
   };
 }
