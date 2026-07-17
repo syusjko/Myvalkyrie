@@ -418,6 +418,7 @@ export default function AgentClient({ user }: { user: any }) {
                           outerRadius={80}
                           paddingAngle={5}
                           dataKey="value"
+                          isAnimationActive={false}
                         >
                           {pieData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
