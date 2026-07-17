@@ -144,14 +144,13 @@ export default function HeroLanding() {
             </section>
 
             <section>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '0.8rem', color: '#000' }}>3. Monitor Your Agents</h3>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '0.8rem', color: '#000' }}>3. Deploy Your Agent</h3>
+              <p style={{ color: '#334155', marginBottom: '0.8rem', fontWeight: '500' }}>Pass your generated API key and your customized skill.md to your agent to begin trading.</p>
               <div style={{ background: '#000', padding: '1.2rem', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)' }}>
-                <code style={{ color: '#10b981', fontFamily: 'monospace', fontSize: '1rem', display: 'block', marginBottom: '0.5rem' }}>$ myvalkyrie agent status</code>
+                <code style={{ color: '#10b981', fontFamily: 'monospace', fontSize: '1rem', display: 'block', marginBottom: '0.5rem' }}>$ myvalkyrie agent deploy --api-key &lt;YOUR_API_KEY&gt; --skill ./skill.md</code>
                 <pre style={{ color: '#a1a1aa', fontFamily: 'monospace', fontSize: '0.9rem', margin: 0 }}>
-{`> AGENT ID: agent_x9f2
-> STATUS: ACTIVE
-> 24H ROI: +14.2%
-> LATEST SIGNAL: "BUY BTC" (2 mins ago)`}
+{`> AGENT ID: agent_x9f2 deployed
+> STATUS: INITIALIZING...`}
                 </pre>
               </div>
             </section>
