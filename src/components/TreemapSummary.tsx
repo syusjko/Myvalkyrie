@@ -107,7 +107,7 @@ export default function TreemapSummary({ type = 'volume', hideDetailsButton = fa
   const subtitle = type === 'volume' ? 'Most actively traded assets by agents' : 'Current net value held across all agents';
 
   return (
-    <div style={{ width: '100%', height: '450px', background: '#ffffff', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', display: 'flex', flexDirection: 'column', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }}>
+    <div style={{ width: '100%', height: '450px', background: '#ffffff', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', display: 'flex', flexDirection: 'column', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
       <div style={{ padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <h2 style={{ fontSize: '1.2rem', margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>

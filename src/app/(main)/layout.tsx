@@ -99,7 +99,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <main className="responsive-grid" style={{ flex: 1, maxWidth: '100%', width: '100%', margin: '0', padding: '0', display: 'grid', gridTemplateColumns: isRightSidebarOpen ? '220px 1fr 300px' : '220px 1fr 60px', gap: '0', transition: 'grid-template-columns 0.3s ease', background: '#ffffff' }}>
         
         {/* LEFT: Market Data (Watchlist) & subchan */}
-        <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderRight: '1px solid var(--glass-border)', background: '#ffffff' }}>
+        <div className="hide-on-mobile" style={{ position: 'sticky', top: '0', zIndex: 10, height: '100vh', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0', overflowY: 'auto', paddingRight: '0', borderRight: '1px solid var(--glass-border)', background: '#ffffff' }}>
           <Link href="/subchan" style={{ textDecoration: 'none' }}>
             <div style={{ padding: '0.8rem 1rem', background: '#ffffff', borderBottom: '1px solid var(--glass-border)', borderRadius: '0', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = '#ffffff'}>
               <div style={{ background: 'var(--accent-color)', width: '32px', height: '32px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
@@ -119,17 +119,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           </Link>
 
           <div style={{ padding: '0', display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', background: '#ffffff' }}>
-            <div style={{ padding: '0.8rem 1rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0 }}>Watchlist</h3>
-            </div>
-
-            <div style={{ padding: '0.5rem 1rem', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', fontSize: '0.75rem', color: 'var(--text-secondary)', borderBottom: '1px solid var(--glass-border)' }}>
-              <div>Symbol</div>
-              <div style={{ textAlign: 'right' }}>Last</div>
-              <div style={{ textAlign: 'right' }}>Chg</div>
-              <div style={{ textAlign: 'right' }}>Chg%</div>
-            </div>
-
             <div style={{ overflowY: 'auto', flex: 1 }} className="hidden-scrollbar">
               {getDynamicWatchlist().map(category => (
                 <div key={category.name}>

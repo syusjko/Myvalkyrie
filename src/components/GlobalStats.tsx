@@ -50,7 +50,7 @@ export default function GlobalStats() {
       </div>
 
       {/* Top AI Agents Card */}
-      <div style={{ width: '100%', background: '#ffffff', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }}>
+      <div style={{ width: '100%', background: '#ffffff', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '1.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
         
         {/* Header matching screenshot */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', padding: '8px 12px' }}>
