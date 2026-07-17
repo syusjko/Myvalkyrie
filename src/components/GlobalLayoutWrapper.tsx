@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, TrendingUp } from 'lucide-react';
+import { Menu, TrendingUp, Sun, Moon, Monitor } from 'lucide-react';
 import Header from '@/components/Header';
 import LogoIcon from '@/components/LogoIcon';
 
@@ -64,12 +64,17 @@ import { useMarketData } from '@/lib/MarketDataContext';
 export default function GlobalLayoutWrapper({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [themeMode, setThemeMode] = useState<'auto' | 'light' | 'dark'>('auto');
   const pathname = usePathname() || '';
   const isDarkPage = pathname.startsWith('/agent/') || pathname.startsWith('/asset/') || pathname.startsWith('/u/');
+  const isDark = themeMode === 'auto' ? isDarkPage : themeMode === 'dark';
 
   const { prices, details, ticks, leaderboard } = useMarketData();
 
   useEffect(() => {
+    setIsSidebarOpen(window.innerWidth > 1000);
+    const saved = localStorage.getItem('MyValkyrie_theme');
+    if (saved === 'light' || saved === 'dark' || saved === 'auto') setThemeMode(saved as any);
     const hasVisited = localStorage.getItem('hasVisited');
     if (hasVisited) {
       setIsSidebarOpen(true);
@@ -79,7 +84,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
   }, []);
 
   return (
-    <div className={isDarkPage ? 'dark-theme' : ''} style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100vh', overflow: 'hidden', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
+    <div className={isDark ? 'dark-theme' : ''} style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100vh', overflow: 'hidden', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
       
       {/* LEFT AREA: Header, Hero, and Feed */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, height: '100vh' }}>
@@ -276,6 +281,25 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
               </div>
 
             </div>
+          </div>
+          
+          {/* Theme Toggle in Collapsible Sidebar */}
+          <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', padding: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+            <button 
+              onClick={() => { setThemeMode('light'); localStorage.setItem('MyValkyrie_theme', 'light'); }}
+              style={{ background: themeMode === 'light' ? 'var(--accent-color)' : 'transparent', color: themeMode === 'light' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '0.5rem', borderRadius: '8px', cursor: 'pointer', flex: 1, display: 'flex', justifyContent: 'center' }} title="Light Mode">
+              <Sun size={20} />
+            </button>
+            <button 
+              onClick={() => { setThemeMode('dark'); localStorage.setItem('MyValkyrie_theme', 'dark'); }}
+              style={{ background: themeMode === 'dark' ? 'var(--accent-color)' : 'transparent', color: themeMode === 'dark' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '0.5rem', borderRadius: '8px', cursor: 'pointer', flex: 1, display: 'flex', justifyContent: 'center' }} title="Dark Mode">
+              <Moon size={20} />
+            </button>
+            <button 
+              onClick={() => { setThemeMode('auto'); localStorage.setItem('MyValkyrie_theme', 'auto'); }}
+              style={{ background: themeMode === 'auto' ? 'var(--accent-color)' : 'transparent', color: themeMode === 'auto' ? '#fff' : 'var(--text-secondary)', border: 'none', padding: '0.5rem', borderRadius: '8px', cursor: 'pointer', flex: 1, display: 'flex', justifyContent: 'center' }} title="Auto (Page Default)">
+              <Monitor size={20} />
+            </button>
           </div>
         </div>
 

@@ -262,10 +262,10 @@ export default function AssetClient({ symbol }: { symbol: string }) {
         {/* Section title (Link back to Market Summary) */}
         <div style={{ marginBottom: '0.8rem' }}>
           <Link href="/market" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ fontSize: '1.15rem', fontWeight: '700', color: '#0f172a' }}>
+            <span style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>
               Indices
             </span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#0f172a' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-primary)' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
           </Link>
         </div>
 
@@ -324,9 +324,9 @@ export default function AssetClient({ symbol }: { symbol: string }) {
                     <span style={{ fontSize: '0.55rem', color: '#94a3b8' }}>D</span>
                   </div>
                   <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'baseline' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#0f172a' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-primary)' }}>
                       {priceVal ? priceVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '...'}
-                      <span style={{ fontSize: '0.6rem', fontWeight: '400', color: '#64748b', marginLeft: '2px' }}>POINT</span>
+                      <span style={{ fontSize: '0.6rem', fontWeight: '400', color: 'var(--text-secondary)', marginLeft: '2px' }}>POINT</span>
                     </span>
                     <span style={{ fontSize: '0.7rem', fontWeight: '600', color: isUp ? '#10b981' : '#ef4444' }}>
                       {isUp ? '+' : ''}{pct.toFixed(2)}%
@@ -343,7 +343,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <LogoIcon symbol={symbol} size={48} fallbackBg="linear-gradient(135deg, #ef4444, #991b1b)" fallbackColor="#fff" />
             <div>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 0.1rem 0', color: '#0f172a' }}>{INDEX_NAMES[symbol] || symbol}</h1>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 0.1rem 0', color: 'var(--text-primary)' }}>{INDEX_NAMES[symbol] || symbol}</h1>
               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>m/{symbol.toLowerCase()} • {(((symbol.charCodeAt(0) * 17) % 50000) + 1000).toLocaleString()} members</div>
               <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{SYMBOL_DESCRIPTIONS[symbol] || `The official community for ${symbol} discussions.`}</div>
             </div>
@@ -352,7 +352,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
             <div style={{ 
               fontSize: '2rem', 
               fontWeight: '800', 
-              color: ticks[symbol] === 'up' ? '#10b981' : ticks[symbol] === 'down' ? '#ef4444' : '#0f172a', 
+              color: ticks[symbol] === 'up' ? '#10b981' : ticks[symbol] === 'down' ? '#ef4444' : 'var(--text-primary)', 
               transition: 'color 0.15s ease', 
               lineHeight: 1 
             }}>
@@ -378,8 +378,8 @@ export default function AssetClient({ symbol }: { symbol: string }) {
                   key={r.value}
                   onClick={() => setTimeRange(r.value)}
                   style={{
-                    background: timeRange === r.value ? '#ffffff' : 'transparent',
-                    color: timeRange === r.value ? '#0f172a' : '#64748b',
+                    background: timeRange === r.value ? 'var(--text-primary)' : 'transparent',
+                    color: timeRange === r.value ? 'var(--bg-color)' : 'var(--text-secondary)',
                     border: 'none',
                     padding: '5px 10px',
                     borderRadius: '6px',
