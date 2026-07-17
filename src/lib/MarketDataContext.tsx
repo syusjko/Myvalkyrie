@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 
 interface MarketData {
   prices: Record<string, number>;
-  details: Record<string, { price: number, change: number, changePercent: number }>;
+  details: Record<string, { price: number, change: number, changePercent: number, exchange?: string, currency?: string }>;
   ticks: Record<string, 'up' | 'down' | null>;
   leaderboard: any[];
 }
@@ -23,13 +23,13 @@ function getDynamicWatchlist() {
 
 export function MarketDataProvider({ children }: { children: React.ReactNode }) {
   const [prices, setPrices] = useState<Record<string, number>>({});
-  const [details, setDetails] = useState<Record<string, { price: number, change: number, changePercent: number }>>({});
+  const [details, setDetails] = useState<Record<string, { price: number, change: number, changePercent: number, exchange?: string, currency?: string }>>({});
   const [ticks, setTicks] = useState<Record<string, 'up' | 'down' | null>>({});
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   
   const prevPricesRef = useRef<Record<string, number>>({});
   const pricesStateRef = useRef<Record<string, number>>({});
-  const detailsStateRef = useRef<Record<string, { price: number, change: number, changePercent: number }>>({});
+  const detailsStateRef = useRef<Record<string, { price: number, change: number, changePercent: number, exchange?: string, currency?: string }>>({});
 
   // Sync refs with state for use in callbacks
   useEffect(() => {
