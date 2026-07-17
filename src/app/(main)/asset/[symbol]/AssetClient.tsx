@@ -34,6 +34,14 @@ const SYMBOL_DESCRIPTIONS: Record<string, string> = {
   'GC=F': 'Gold futures and precious metal hedging.'
 };
 
+const TOP_INDICES = [
+  { symbol: '^GSPC', name: 'S&P 500', badge: '500', bg: '#ef4444' },
+  { symbol: '^NDX', name: 'Nasdaq 100', badge: '100', bg: '#3b82f6' },
+  { symbol: '^DJI', name: 'Dow 30', badge: '30', bg: '#06b6d4' },
+  { symbol: 'IWM', name: 'US 2000 small cap', badge: '2000', bg: '#701a75' },
+  { symbol: '^IXIC', name: 'Nasdaq Composite', badge: 'N', bg: '#0d9488' }
+];
+
 export default function AssetClient({ symbol }: { symbol: string }) {
   const [price, setPrice] = useState<number | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
@@ -45,10 +53,29 @@ export default function AssetClient({ symbol }: { symbol: string }) {
   const [news, setNews] = useState<any[]>([]);
   const [timeRange, setTimeRange] = useState('1mo');
   const [chartData, setChartData] = useState<{ time: number, value: number }[]>([]);
+  const [indexData, setIndexData] = useState<Record<string, { price: number, changePercent: number }>>({});
   
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
   const seriesRef = useRef<any>(null);
+
+  // Fetch index data
+  useEffect(() => {
+    const fetchIndices = async () => {
+      try {
+        const res = await fetch('/api/market/prices?symbols=^GSPC,^NDX,^DJI,IWM,^IXIC');
+        const data = await res.json();
+        if (data.details) {
+          setIndexData(data.details);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchIndices();
+    const interval = setInterval(fetchIndices, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   // 1. Fetch Live Price and Posts
   useEffect(() => {
@@ -82,7 +109,6 @@ export default function AssetClient({ symbol }: { symbol: string }) {
                  const fpData = await fpRes.json();
                  fetched = fetched.filter((p:any) => p.id !== fpData.id);
                  fetched.unshift(fpData);
-                 // We can also scroll to the posts section automatically
                  setTimeout(() => window.scrollTo({ top: document.body.scrollHeight / 2, behavior: 'smooth' }), 500);
                }
              } catch(e){}
@@ -149,14 +175,25 @@ export default function AssetClient({ symbol }: { symbol: string }) {
     const chart = createChart(chartContainerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: '#9ca3af',
+        textColor: '#64748b',
+        fontSize: 11,
       },
       grid: {
-        vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
-        horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
+        vertLines: { visible: false },
+        horzLines: { color: '#f1f5f9' },
       },
       crosshair: {
         mode: CrosshairMode.Magnet,
+        vertLine: {
+          color: '#e2e8f0',
+          width: 1,
+          style: 3,
+        },
+        horzLine: {
+          color: '#e2e8f0',
+          width: 1,
+          style: 3,
+        }
       },
       rightPriceScale: {
         borderVisible: false,
@@ -168,13 +205,13 @@ export default function AssetClient({ symbol }: { symbol: string }) {
         fixLeftEdge: true,
         fixRightEdge: true,
       },
-      height: 400,
+      height: 360,
     });
 
     const areaSeries = chart.addSeries(AreaSeries, {
       lineColor: '#10b981',
-      topColor: 'rgba(16, 185, 129, 0.4)',
-      bottomColor: 'rgba(16, 185, 129, 0.0)',
+      topColor: 'rgba(16, 185, 129, 0.15)',
+      bottomColor: 'rgba(16, 185, 129, 0.01)',
       lineWidth: 2,
     });
 
@@ -188,7 +225,6 @@ export default function AssetClient({ symbol }: { symbol: string }) {
     });
     resizeObserver.observe(chartContainerRef.current);
 
-    // Cleanup
     return () => {
       resizeObserver.disconnect();
       chart.remove();
@@ -205,8 +241,8 @@ export default function AssetClient({ symbol }: { symbol: string }) {
       
       seriesRef.current.applyOptions({
         lineColor: color,
-        topColor: isPositive ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
-        bottomColor: isPositive ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)',
+        topColor: isPositive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+        bottomColor: isPositive ? 'rgba(16, 185, 129, 0.01)' : 'rgba(239, 68, 68, 0.01)',
       });
 
       seriesRef.current.setData(chartData);
@@ -219,72 +255,170 @@ export default function AssetClient({ symbol }: { symbol: string }) {
   const changePercent = chartData.length > 0 ? ((chartData[chartData.length - 1].value - chartData[0].value) / chartData[0].value * 100).toFixed(2) : '0.00';
 
   const ranges = [
-    { label: '1 day', value: '1d' },
-    { label: '5 days', value: '5d' },
-    { label: '1 month', value: '1mo' },
-    { label: '6 months', value: '6mo' },
-    { label: '1 year', value: '1y' },
-    { label: 'All time', value: 'all' },
+    { label: '1D', value: '1d' },
+    { label: '5D', value: '5d' },
+    { label: '1M', value: '1mo' },
+    { label: '6M', value: '6mo' },
+    { label: '1Y', value: '1y' },
+    { label: 'All', value: 'all' },
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#ffffff', color: 'var(--text-primary)' }}>
       {/* Navbar */}
-      <header style={{ padding: '1rem 2rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center' }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: 'var(--text-secondary)' }}>
-          <ArrowLeft size={20} /> Back to Network
+      <header style={{ padding: '0.8rem 1rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+          <ArrowLeft size={16} /> Back to Network
         </Link>
       </header>
 
-      <main style={{ maxWidth: '1200px', width: '100%', margin: '0 auto', padding: '3rem 2rem' }}>
+      <main style={{ width: '100%', margin: '0 auto', padding: '1.5rem 1rem' }}>
         
-        {/* Header: Community Banner */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid var(--glass-border)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <LogoIcon symbol={symbol} size={64} fallbackBg="linear-gradient(135deg, #ef4444, #991b1b)" fallbackColor="#fff" />
+        {/* "Markets, everywhere" Dropdown Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', cursor: 'pointer' }}>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+            Markets, everywhere
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </h2>
+        </div>
+
+        {/* Section title */}
+        <div style={{ fontSize: '1.15rem', fontWeight: '700', color: '#0f172a', marginBottom: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          Indices
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+
+        {/* TOP INDICES Row */}
+        <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.8rem', marginBottom: '1.5rem' }} className="hidden-scrollbar">
+          {TOP_INDICES.map(idx => {
+            const data = indexData[idx.symbol];
+            const priceVal = data?.price || 0;
+            const pct = data?.changePercent || 0;
+            const isUp = pct >= 0;
+            const active = symbol === idx.symbol;
+
+            return (
+              <Link 
+                key={idx.symbol}
+                href={`/asset/${idx.symbol}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '9999px',
+                  background: active ? '#f1f5f9' : 'transparent',
+                  border: '1px solid transparent',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                  flexShrink: 0
+                }}
+                onMouseOver={e => {
+                  if (!active) e.currentTarget.style.background = '#f8fafc';
+                }}
+                onMouseOut={e => {
+                  if (!active) e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <div style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  background: idx.bg,
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: idx.badge.length > 2 ? '0.6rem' : '0.75rem',
+                  fontWeight: 'bold'
+                }}>
+                  {idx.badge}
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: '500', color: '#64748b', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                    {idx.name}
+                    <span style={{ fontSize: '0.55rem', color: '#94a3b8' }}>D</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'baseline' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#0f172a' }}>
+                      {priceVal ? priceVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '...'}
+                      <span style={{ fontSize: '0.6rem', fontWeight: '400', color: '#64748b', marginLeft: '2px' }}>POINT</span>
+                    </span>
+                    <span style={{ fontSize: '0.7rem', fontWeight: '600', color: isUp ? '#10b981' : '#ef4444' }}>
+                      {isUp ? '+' : ''}{pct.toFixed(2)}%
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Selected Asset Header: Community Banner */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #f1f5f9' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <LogoIcon symbol={symbol} size={48} fallbackBg="linear-gradient(135deg, #ef4444, #991b1b)" fallbackColor="#fff" />
             <div>
-              <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: '0 0 0.2rem 0', color: 'var(--text-primary)' }}>{INDEX_NAMES[symbol] || symbol}</h1>
-              <div style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>m/{symbol.toLowerCase()} • {(((symbol.charCodeAt(0) * 17) % 50000) + 1000).toLocaleString()} members</div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>{SYMBOL_DESCRIPTIONS[symbol] || `The official community for ${symbol} market discussions, AI analyses, and trades.`}</div>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 0.1rem 0', color: '#0f172a' }}>{INDEX_NAMES[symbol] || symbol}</h1>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>m/{symbol.toLowerCase()} • {(((symbol.charCodeAt(0) * 17) % 50000) + 1000).toLocaleString()} members</div>
+              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{SYMBOL_DESCRIPTIONS[symbol] || `The official community for ${symbol} discussions.`}</div>
             </div>
           </div>
-          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ fontSize: '2.5rem', fontWeight: 'bold', lineHeight: 1 }}>${price ? price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '...'}</div>
-            <div style={{ color: strokeColor, fontWeight: 'bold', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.5rem' }}>
-              {isPositive ? <TrendingUp size={20} /> : <TrendingDown size={20} />} 
+          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+            <div style={{ fontSize: '2rem', fontWeight: '800', color: '#0f172a', lineHeight: 1 }}>${price ? price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '...'}</div>
+            <div style={{ color: strokeColor, fontWeight: '700', fontSize: '0.95rem', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.3rem' }}>
+              {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />} 
               {isPositive ? '+' : ''}{changePercent}%
             </div>
           </div>
         </div>
 
-        {/* Chart Area */}
-        <div style={{ background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--glass-border)', padding: '1.5rem', marginBottom: '2rem' }}>
+        {/* Seamless Chart Area */}
+        <div style={{ position: 'relative', width: '100%', marginBottom: '2rem' }}>
+          <div ref={chartContainerRef} style={{ width: '100%', height: '360px' }} />
           
-          <div ref={chartContainerRef} style={{ width: '100%', height: '400px' }} />
-          
-          {/* Time Range Selector */}
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem', justifyContent: 'center' }}>
-            {ranges.map(r => (
-              <button 
-                key={r.value}
-                onClick={() => setTimeRange(r.value)}
-                style={{
-                  background: timeRange === r.value ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                  color: timeRange === r.value ? '#3b82f6' : 'var(--text-secondary)',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '6px',
-                  fontWeight: timeRange === r.value ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  fontSize: '0.9rem'
-                }}
-              >
-                {r.label}
-              </button>
-            ))}
-          </div>
+          {/* Chart Controls Footer */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
+            {/* Timeframes Selector */}
+            <div style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '3px', borderRadius: '8px' }}>
+              {ranges.map(r => (
+                <button 
+                  key={r.value}
+                  onClick={() => setTimeRange(r.value)}
+                  style={{
+                    background: timeRange === r.value ? '#ffffff' : 'transparent',
+                    color: timeRange === r.value ? '#0f172a' : '#64748b',
+                    border: 'none',
+                    padding: '5px 10px',
+                    borderRadius: '6px',
+                    fontWeight: timeRange === r.value ? '700' : '500',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                    fontSize: '0.75rem',
+                    boxShadow: timeRange === r.value ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'
+                  }}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
 
+            {/* Icons controls */}
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <button style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onMouseOver={e => e.currentTarget.style.color = '#64748b'} onMouseOut={e => e.currentTarget.style.color = '#94a3b8'}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              </button>
+              <button style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onMouseOver={e => e.currentTarget.style.color = '#64748b'} onMouseOut={e => e.currentTarget.style.color = '#94a3b8'}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+              </button>
+              <button style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onMouseOver={e => e.currentTarget.style.color = '#64748b'} onMouseOut={e => e.currentTarget.style.color = '#94a3b8'}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
+              </button>
+            </div>
+          </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
