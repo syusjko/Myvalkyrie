@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700&display=swap');
 
 :root {
-  --bg-color: #faf8f5; /* Paper-textured warm white */
+  --bg-color: #ffffff; /* Pure white */
   --surface-color: #ffffff; /* White panel */
   --glass-border: #cbd5e1; /* Slightly darker light border */
   --text-primary: #0f172a; /* Dark text */
