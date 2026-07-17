@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Menu, TrendingUp } from 'lucide-react';
 import Header from '@/components/Header';
@@ -64,6 +64,8 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
   const [details, setDetails] = useState<Record<string, { price: number, change: number, changePercent: number }>>({});
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [ticks, setTicks] = useState<Record<string, 'up' | 'down' | null>>({});
+  const prevPricesRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     const hasVisited = localStorage.getItem('hasVisited');
@@ -89,9 +91,35 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
       const priceData = await priceRes.json();
       const leadData = await leadRes.json();
 
-      if (priceData.prices) setPrices(priceData.prices);
+      const newPrices = priceData.prices || {};
+      const newTicks: Record<string, 'up' | 'down' | null> = {};
+      
+      Object.keys(newPrices).forEach(sym => {
+        const oldPrice = prevPricesRef.current[sym];
+        const newPrice = newPrices[sym];
+        if (oldPrice !== undefined && newPrice !== oldPrice) {
+          newTicks[sym] = newPrice > oldPrice ? 'up' : 'down';
+        }
+      });
+
+      if (priceData.prices) setPrices(newPrices);
       if (priceData.details) setDetails(priceData.details);
       if (leadData.leaderboard) setLeaderboard(leadData.leaderboard);
+
+      if (Object.keys(newTicks).length > 0) {
+        setTicks(prev => ({ ...prev, ...newTicks }));
+        setTimeout(() => {
+          setTicks(prev => {
+            const cleared = { ...prev };
+            Object.keys(newTicks).forEach(sym => {
+              cleared[sym] = null;
+            });
+            return cleared;
+          });
+        }, 1000);
+      }
+      
+      prevPricesRef.current = newPrices;
     } catch (err) {
       console.error(err);
     }
@@ -171,14 +199,22 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
               </div>
             </Link>
 
+            {/* Watchlist Columns Header */}
+            <div style={{ display: 'flex', padding: '0.5rem 0.8rem', fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--text-secondary)', borderBottom: '1px solid rgba(0,0,0,0.05)', background: 'rgba(0,0,0,0.01)' }}>
+              <span style={{ flex: 1.6, textAlign: 'left' }}>Symbol</span>
+              <span style={{ flex: 1.1, textAlign: 'right' }}>Last</span>
+              <span style={{ flex: 1, textAlign: 'right' }}>Chg</span>
+              <span style={{ flex: 0.9, textAlign: 'right' }}>Chg%</span>
+            </div>
+
             <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }} className="hidden-scrollbar">
               {getDynamicWatchlist().map(category => (
                 <div key={category.name}>
                   <div 
                     onClick={() => setCollapsed(prev => ({ ...prev, [category.name]: !prev[category.name] }))}
-                    style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.02)' }}
+                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(0,0,0,0.02)', textTransform: 'uppercase', letterSpacing: '0.05em' }}
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed[category.name] ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed[category.name] ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                       <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                     {category.name}
@@ -193,40 +229,99 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
                     const color = isUp ? '#10b981' : '#ef4444';
                     const displayName = INDEX_NAMES[sym] || sym;
 
+                    // Tick color logic for real-time visual update matching TradingView style
+                    let lastColor = 'var(--text-primary)';
+                    if (ticks[sym] === 'up') lastColor = '#10b981';
+                    else if (ticks[sym] === 'down') lastColor = '#ef4444';
+
+                    const formatPrice = (val: number) => {
+                      if (val === 0) return '-';
+                      if (sym.includes('BTC') || sym.includes('ETH')) {
+                        return val.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                      }
+                      return val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    };
+
                     return (
                       <Link 
                         key={sym} 
                         href={`/asset/${sym}`}
                         style={{ 
                           display: 'flex',
-                          justifyContent: 'space-between',
                           padding: '0.4rem 0.8rem', 
-                          fontSize: '0.8rem', 
+                          fontSize: '0.78rem', 
                           textDecoration: 'none', 
                           color: 'var(--text-primary)',
                           borderBottom: '1px solid rgba(0,0,0,0.03)',
                           alignItems: 'center'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'}
                         onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
                       >
-                        <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {/* Symbol */}
+                        <div style={{ flex: 1.6, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
                           <LogoIcon 
                             symbol={sym} 
-                            size={16} 
-                            fallbackBg={category.name === 'INDICES' ? '#3b82f6' : category.name === 'STOCKS' ? '#fff' : '#f59e0b'}
-                            fallbackColor={category.name === 'STOCKS' ? '#000' : '#fff'}
+                            size={14} 
+                            fallbackBg={category.name.includes('INDICES') ? '#3b82f6' : category.name.includes('STOCKS') ? '#7e22ce' : '#f59e0b'}
+                            fallbackColor="#fff"
                           />
-                          <span style={{ maxWidth: '65px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</span>
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={displayName}>{displayName}</span>
                         </div>
-                        <div style={{ textAlign: 'right', fontFamily: 'monospace', color }}>
-                          {isUp ? '+' : ''}{changePct.toFixed(1)}%
+
+                        {/* Last */}
+                        <div style={{ flex: 1.1, textAlign: 'right', fontFamily: 'monospace', color: lastColor, transition: 'color 0.15s ease', fontWeight: ticks[sym] ? 'bold' : 'normal' }}>
+                          {formatPrice(price)}
+                        </div>
+
+                        {/* Chg */}
+                        <div style={{ flex: 1, textAlign: 'right', fontFamily: 'monospace', color }}>
+                          {change === 0 ? '0.00' : (isUp ? '+' : '') + change.toFixed(2)}
+                        </div>
+
+                        {/* Chg% */}
+                        <div style={{ flex: 0.9, textAlign: 'right', fontFamily: 'monospace', color, fontWeight: '500' }}>
+                          {change === 0 ? '0.0%' : (isUp ? '+' : '') + changePct.toFixed(1)}%
                         </div>
                       </Link>
                     );
                   })}
                 </div>
               ))}
+
+              {/* Sidebar AI Leaderboard */}
+              <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', paddingBottom: '1.5rem' }}>
+                <div style={{ padding: '0 0.8rem 0.6rem 0.8rem', fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🏆</span> Top AI Agents (ROI)
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {leaderboard && leaderboard.filter(u => u.isAI).slice(0, 5).map((agent, idx) => {
+                    const colors = ['#ef4444', '#3b82f6', '#06b6d4', '#8b5cf6', '#10b981'];
+                    const bgColor = colors[agent.name.length % colors.length];
+                    return (
+                      <Link 
+                        key={agent.id} 
+                        href={`/agent/${agent.id}`}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0.8rem', fontSize: '0.78rem', textDecoration: 'none', color: 'var(--text-primary)', borderBottom: '1px solid rgba(0,0,0,0.03)' }}
+                        onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'}
+                        onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                          <span style={{ fontWeight: 'bold', color: 'var(--text-secondary)', width: '12px', fontSize: '0.75rem' }}>{idx + 1}</span>
+                          <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: bgColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 'bold', flexShrink: 0 }}>
+                            {agent.name.charAt(0).toUpperCase()}
+                          </div>
+                          <span style={{ fontWeight: '500', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{agent.name.toLowerCase()}</span>
+                        </div>
+                        <span style={{ color: Number(agent.totalRoi) >= 0 ? '#10b981' : '#ef4444', fontWeight: 'bold', fontFamily: 'monospace' }}>
+                          {Number(agent.totalRoi) >= 0 ? '+' : ''}{agent.totalRoi}%
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

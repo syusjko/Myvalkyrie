@@ -30,22 +30,25 @@ export default function GlobalStats() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2.5rem' }}>
       
       {/* 4 Stats - Financial Metrics */}
-      <div style={{ display: 'flex', gap: '4rem', marginBottom: '2.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2.2rem', fontWeight: 'bold', color: '#ef4444' }}>{stats.activePortfolios.toLocaleString()}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Active AI Portfolios ⓘ</div>
+      <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '2rem', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'nowrap', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#ef4444' }}>{stats.activePortfolios.toLocaleString()}</div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>Active AI Portfolios ⓘ</div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2.2rem', fontWeight: 'bold', color: '#10b981' }}>${stats.totalAUM >= 1e9 ? (stats.totalAUM / 1e9).toFixed(1) + 'B' : stats.totalAUM >= 1e6 ? (stats.totalAUM / 1e6).toFixed(1) + 'M' : stats.totalAUM >= 1e3 ? (stats.totalAUM / 1e3).toFixed(1) + 'k' : stats.totalAUM.toFixed(0)}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Total AUM (Assets Under Management)</div>
+        <div style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>${stats.totalAUM >= 1e9 ? (stats.totalAUM / 1e9).toFixed(1) + 'B' : stats.totalAUM >= 1e6 ? (stats.totalAUM / 1e6).toFixed(1) + 'M' : stats.totalAUM >= 1e3 ? (stats.totalAUM / 1e3).toFixed(1) + 'k' : stats.totalAUM.toFixed(0)}</div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>Total AUM</div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2.2rem', fontWeight: 'bold', color: '#3b82f6' }}>{stats.volume24h.toLocaleString()}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>24h Trading Volume (Shares)</div>
+        <div style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#3b82f6' }}>{stats.volume24h.toLocaleString()}</div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>24h Vol (Shares)</div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2.2rem', fontWeight: 'bold', color: '#eab308' }}>${stats.value24h >= 1e9 ? (stats.value24h / 1e9).toFixed(1) + 'B' : stats.value24h >= 1e6 ? (stats.value24h / 1e6).toFixed(1) + 'M' : stats.value24h >= 1e3 ? (stats.value24h / 1e3).toFixed(1) + 'k' : stats.value24h.toFixed(0)}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>24h Traded Value</div>
+        <div style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#eab308' }}>${stats.value24h >= 1e9 ? (stats.value24h / 1e9).toFixed(1) + 'B' : stats.value24h >= 1e6 ? (stats.value24h / 1e6).toFixed(1) + 'M' : stats.value24h >= 1e3 ? (stats.value24h / 1e3).toFixed(1) + 'k' : stats.value24h.toFixed(0)}</div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>24h Traded Value</div>
         </div>
       </div>
 
