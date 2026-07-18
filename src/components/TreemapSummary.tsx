@@ -5,9 +5,47 @@ import { Treemap, ResponsiveContainer, Tooltip } from 'recharts';
 import Link from 'next/link';
 import { useMarketData } from '@/lib/MarketDataContext';
 
+const getLogoUrl = (symbol: string) => {
+  const cleanSym = symbol.replace('/USD', '').replace('USD', '').replace('-', '').toUpperCase();
+  const stockDomains: Record<string, string> = {
+    'AAPL': 'apple.com',
+    'MSFT': 'microsoft.com',
+    'GOOGL': 'google.com',
+    'AMZN': 'amazon.com',
+    'NVDA': 'nvidia.com',
+    'TSLA': 'tesla.com',
+    'META': 'meta.com',
+    'NFLX': 'netflix.com',
+    'ADBE': 'adobe.com',
+    'CSCO': 'cisco.com',
+    'CRM': 'salesforce.com',
+    'INTU': 'intuit.com',
+    'AMD': 'amd.com',
+    'ORCL': 'oracle.com',
+    'QCOM': 'qualcomm.com',
+    'AVGO': 'broadcom.com',
+    'COST': 'costco.com',
+    'PEP': 'pepsico.com',
+    'JPM': 'jpmorganchase.com',
+    'BAC': 'bankofamerica.com',
+    'WMT': 'walmart.com',
+    'MCD': 'mcdonalds.com',
+    'DIS': 'disney.com',
+    'SBUX': 'starbucks.com',
+    'V': 'visa.com',
+  };
+  if (['BTC', 'ETH', 'SOL', 'XRP', 'DOGE'].includes(cleanSym)) {
+    return `https://assets.coincap.io/assets/icons/${cleanSym.toLowerCase()}@2x.png`;
+  }
+  const domain = stockDomains[cleanSym] || `${cleanSym.toLowerCase()}.com`;
+  return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+};
+
 // Custom content for Treemap cells
 const CustomContent = (props: any) => {
   const { root, depth, x, y, width, height, index, payload, colors, rank, name, size, change, fill } = props;
+
+  const showLogo = width > 75 && height > 75;
 
   return (
     <g>
@@ -21,38 +59,78 @@ const CustomContent = (props: any) => {
           stroke: '#1e293b',
           strokeWidth: 2,
           transition: 'all 0.3s ease',
+          rx: 8,
+          ry: 8
         }}
         className="treemap-cell"
       />
-      {
-        width > 50 && height > 40 && (
+      {showLogo ? (
+        <>
+          {/* Circular Clip Path for Logo */}
+          <defs>
+            <clipPath id={`clip-main-${name}`}>
+              <circle cx={x + width / 2} cy={y + height / 3 + 4} r={16} />
+            </clipPath>
+          </defs>
+          <image
+            href={getLogoUrl(name)}
+            x={x + width / 2 - 16}
+            y={y + height / 3 - 12}
+            width="32"
+            height="32"
+            clipPath={`url(#clip-main-${name})`}
+          />
           <text
             x={x + width / 2}
-            y={y + height / 2 - 5}
+            y={y + height / 3 + 34}
             textAnchor="middle"
-            fill="#fff"
-            fontSize={width > 100 ? 18 : 12}
+            style={{ fill: '#fff' }}
+            fontSize={13}
             fontWeight="bold"
           >
             {name}
           </text>
+          {typeof change === 'number' && (
+            <text
+              x={x + width / 2}
+              y={y + height / 3 + 48}
+              textAnchor="middle"
+              style={{ fill: 'rgba(255,255,255,0.9)' }}
+              fontSize={11}
+              fontWeight="bold"
+            >
+              {change > 0 ? '+' : ''}{change.toFixed(2)}%
+            </text>
+          )}
+        </>
+      ) : (
+        width > 50 && height > 40 && (
+          <>
+            <text
+              x={x + width / 2}
+              y={y + height / 2 - 5}
+              textAnchor="middle"
+              style={{ fill: '#fff' }}
+              fontSize={12}
+              fontWeight="bold"
+            >
+              {name}
+            </text>
+            {typeof change === 'number' && (
+              <text
+                x={x + width / 2}
+                y={y + height / 2 + 12}
+                textAnchor="middle"
+                style={{ fill: 'rgba(255,255,255,0.9)' }}
+                fontSize={10}
+                fontWeight="bold"
+              >
+                {change > 0 ? '+' : ''}{change.toFixed(2)}%
+              </text>
+            )}
+          </>
         )
-      }
-      {
-        width > 50 && height > 40 && typeof change === 'number' && (
-          <text
-            x={x + width / 2}
-            y={y + height / 2 + 15}
-            textAnchor="middle"
-            fill="#fff"
-            fontSize={width > 100 ? 14 : 10}
-            fontWeight="bold"
-            opacity={0.9}
-          >
-            {change > 0 ? '+' : ''}{change.toFixed(2)}%
-          </text>
-        )
-      }
+      )}
     </g>
   );
 };

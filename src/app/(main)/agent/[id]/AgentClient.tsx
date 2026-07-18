@@ -164,21 +164,38 @@ export default function AgentClient({ user }: { user: any }) {
 
   const getLogoUrl = (symbol: string) => {
     const cleanSym = symbol.replace('/USD', '').replace('USD', '').replace('-', '').toUpperCase();
-    const stockLogoMap: Record<string, string> = {
-      'AAPL': 'https://logo.clearbit.com/apple.com',
-      'MSFT': 'https://logo.clearbit.com/microsoft.com',
-      'GOOGL': 'https://logo.clearbit.com/google.com',
-      'AMZN': 'https://logo.clearbit.com/amazon.com',
-      'NVDA': 'https://logo.clearbit.com/nvidia.com',
-      'TSLA': 'https://logo.clearbit.com/tesla.com',
-      'META': 'https://logo.clearbit.com/meta.com',
-      'BTC': 'https://assets.coincap.io/assets/icons/btc@2x.png',
-      'ETH': 'https://assets.coincap.io/assets/icons/eth@2x.png',
-      'SOL': 'https://assets.coincap.io/assets/icons/sol@2x.png',
-      'XRP': 'https://assets.coincap.io/assets/icons/xrp@2x.png',
-      'DOGE': 'https://assets.coincap.io/assets/icons/doge@2x.png',
+    const stockDomains: Record<string, string> = {
+      'AAPL': 'apple.com',
+      'MSFT': 'microsoft.com',
+      'GOOGL': 'google.com',
+      'AMZN': 'amazon.com',
+      'NVDA': 'nvidia.com',
+      'TSLA': 'tesla.com',
+      'META': 'meta.com',
+      'NFLX': 'netflix.com',
+      'ADBE': 'adobe.com',
+      'CSCO': 'cisco.com',
+      'CRM': 'salesforce.com',
+      'INTU': 'intuit.com',
+      'AMD': 'amd.com',
+      'ORCL': 'oracle.com',
+      'QCOM': 'qualcomm.com',
+      'AVGO': 'broadcom.com',
+      'COST': 'costco.com',
+      'PEP': 'pepsico.com',
+      'JPM': 'jpmorganchase.com',
+      'BAC': 'bankofamerica.com',
+      'WMT': 'walmart.com',
+      'MCD': 'mcdonalds.com',
+      'DIS': 'disney.com',
+      'SBUX': 'starbucks.com',
+      'V': 'visa.com',
     };
-    return stockLogoMap[cleanSym] || `https://images.evetech.net/characters/1/portrait`; // dummy fallback
+    if (['BTC', 'ETH', 'SOL', 'XRP', 'DOGE'].includes(cleanSym)) {
+      return `https://assets.coincap.io/assets/icons/${cleanSym.toLowerCase()}@2x.png`;
+    }
+    const domain = stockDomains[cleanSym] || `${cleanSym.toLowerCase()}.com`;
+    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
   };
 
   const CustomizedContent = (props: any) => {
@@ -191,7 +208,7 @@ export default function AgentClient({ user }: { user: any }) {
     else if (change <= -5) bgColor = '#dc2626'; 
     else if (change < 0) bgColor = '#ef4444'; 
 
-    const showLogo = width > 80 && height > 80;
+    const showLogo = width > 75 && height > 75;
 
     return (
       <g>
@@ -204,31 +221,31 @@ export default function AgentClient({ user }: { user: any }) {
             {/* Circular Clip Path for Logo */}
             <defs>
               <clipPath id={`clip-${name}`}>
-                <circle cx={x + width / 2} cy={y + height / 3} r={16} />
+                <circle cx={x + width / 2} cy={y + height / 3 + 4} r={16} />
               </clipPath>
             </defs>
             <image
               href={getLogoUrl(name)}
               x={x + width / 2 - 16}
-              y={y + height / 3 - 16}
+              y={y + height / 3 - 12}
               width="32"
               height="32"
               clipPath={`url(#clip-${name})`}
             />
-            <text x={x + width / 2} y={y + height / 3 + 30} textAnchor="middle" fill="#fff" fontSize={13} fontWeight="bold">
+            <text x={x + width / 2} y={y + height / 3 + 34} textAnchor="middle" style={{ fill: '#fff' }} fontSize={13} fontWeight="bold">
               {name}
             </text>
-            <text x={x + width / 2} y={y + height / 3 + 46} textAnchor="middle" fill="rgba(255,255,255,0.9)" fontSize={11} fontWeight="bold">
+            <text x={x + width / 2} y={y + height / 3 + 48} textAnchor="middle" style={{ fill: 'rgba(255,255,255,0.9)' }} fontSize={11} fontWeight="bold">
               {change > 0 ? '+' : ''}{change.toFixed(2)}%
             </text>
           </>
         ) : (
           width > 50 && height > 40 && (
             <>
-              <text x={x + width / 2} y={y + height / 2 - 5} textAnchor="middle" fill="#fff" fontSize={13} fontWeight="bold">
+              <text x={x + width / 2} y={y + height / 2 - 5} textAnchor="middle" style={{ fill: '#fff' }} fontSize={12} fontWeight="bold">
                 {name}
               </text>
-              <text x={x + width / 2} y={y + height / 2 + 12} textAnchor="middle" fill="rgba(255,255,255,0.9)" fontSize={11} fontWeight="bold">
+              <text x={x + width / 2} y={y + height / 2 + 12} textAnchor="middle" style={{ fill: 'rgba(255,255,255,0.9)' }} fontSize={10} fontWeight="bold">
                 {change > 0 ? '+' : ''}{change.toFixed(2)}%
               </text>
             </>
