@@ -162,8 +162,26 @@ export default function AgentClient({ user }: { user: any }) {
 
   const PIE_COLORS = ['#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899'];
 
+  const getLogoUrl = (symbol: string) => {
+    const cleanSym = symbol.replace('/USD', '').replace('USD', '').replace('-', '').toUpperCase();
+    const stockLogoMap: Record<string, string> = {
+      'AAPL': 'https://logo.clearbit.com/apple.com',
+      'MSFT': 'https://logo.clearbit.com/microsoft.com',
+      'GOOGL': 'https://logo.clearbit.com/google.com',
+      'AMZN': 'https://logo.clearbit.com/amazon.com',
+      'NVDA': 'https://logo.clearbit.com/nvidia.com',
+      'TSLA': 'https://logo.clearbit.com/tesla.com',
+      'META': 'https://logo.clearbit.com/meta.com',
+      'BTC': 'https://assets.coincap.io/assets/icons/btc@2x.png',
+      'ETH': 'https://assets.coincap.io/assets/icons/eth@2x.png',
+      'SOL': 'https://assets.coincap.io/assets/icons/sol@2x.png',
+      'XRP': 'https://assets.coincap.io/assets/icons/xrp@2x.png',
+      'DOGE': 'https://assets.coincap.io/assets/icons/doge@2x.png',
+    };
+    return stockLogoMap[cleanSym] || `https://images.evetech.net/characters/1/portrait`; // dummy fallback
+  };
+
   const CustomizedContent = (props: any) => {
-    // ... same as before
     const { x, y, width, height, name, value, changePercent } = props;
     const change = changePercent || 0;
     
@@ -173,21 +191,48 @@ export default function AgentClient({ user }: { user: any }) {
     else if (change <= -5) bgColor = '#dc2626'; 
     else if (change < 0) bgColor = '#ef4444'; 
 
+    const showLogo = width > 80 && height > 80;
+
     return (
       <g>
         <rect
           x={x} y={y} width={width} height={height}
-          style={{ fill: bgColor, stroke: 'var(--surface-color)', strokeWidth: 2, strokeOpacity: 1, rx: 4, ry: 4 }}
+          style={{ fill: bgColor, stroke: 'var(--surface-color)', strokeWidth: 2, strokeOpacity: 1, rx: 8, ry: 8 }}
         />
-        {width > 50 && height > 40 && (
+        {showLogo ? (
           <>
-            <text x={x + width / 2} y={y + height / 2 - 5} textAnchor="middle" fill="#fff" fontSize={13} fontWeight="bold">
+            {/* Circular Clip Path for Logo */}
+            <defs>
+              <clipPath id={`clip-${name}`}>
+                <circle cx={x + width / 2} cy={y + height / 3} r={16} />
+              </clipPath>
+            </defs>
+            <image
+              href={getLogoUrl(name)}
+              x={x + width / 2 - 16}
+              y={y + height / 3 - 16}
+              width="32"
+              height="32"
+              clipPath={`url(#clip-${name})`}
+            />
+            <text x={x + width / 2} y={y + height / 3 + 30} textAnchor="middle" fill="#fff" fontSize={13} fontWeight="bold">
               {name}
             </text>
-            <text x={x + width / 2} y={y + height / 2 + 12} textAnchor="middle" fill="rgba(255,255,255,0.9)" fontSize={11} fontWeight="bold">
+            <text x={x + width / 2} y={y + height / 3 + 46} textAnchor="middle" fill="rgba(255,255,255,0.9)" fontSize={11} fontWeight="bold">
               {change > 0 ? '+' : ''}{change.toFixed(2)}%
             </text>
           </>
+        ) : (
+          width > 50 && height > 40 && (
+            <>
+              <text x={x + width / 2} y={y + height / 2 - 5} textAnchor="middle" fill="#fff" fontSize={13} fontWeight="bold">
+                {name}
+              </text>
+              <text x={x + width / 2} y={y + height / 2 + 12} textAnchor="middle" fill="rgba(255,255,255,0.9)" fontSize={11} fontWeight="bold">
+                {change > 0 ? '+' : ''}{change.toFixed(2)}%
+              </text>
+            </>
+          )
         )}
       </g>
     );
