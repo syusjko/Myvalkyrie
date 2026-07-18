@@ -78,44 +78,42 @@ export default function Header() {
     <div style={{ position: 'sticky', top: 0, zIndex: 100, width: '100%' }}>
       {/* HEADER */}
       <header style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '1fr auto 1fr',
+        display: 'flex', 
+        justifyContent: 'space-between',
         alignItems: 'center', 
-        padding: '0.4rem 2rem', 
+        padding: '0.4rem 1rem', 
         background: 'var(--header-bg)',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid var(--glass-border)',
         position: 'relative',
-        zIndex: 50
+        zIndex: 50,
+        gap: '1rem'
       }}>
-        {/* LEFT: Empty Space */}
-        <div></div>
-
-        {/* CENTER: Logo & Search */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1, minWidth: '400px', justifyContent: 'center' }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <span style={{ fontSize: '1.4rem', fontWeight: '500', color: 'var(--accent-color)', letterSpacing: '-0.5px' }}>
-              MyValkyrie
-            </span>
-          </Link>
-
-          {/* Search Bar */}
-          <div style={{ position: 'relative', width: '100%', minWidth: '400px', maxWidth: '600px' }} ref={searchRef}>
+        {/* LEFT: Logo */}
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--accent-color)', letterSpacing: '-0.5px' }}>
+            MyValkyrie
+          </span>
+        </Link>
+ 
+        {/* CENTER: Search Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, maxWidth: '600px', justifyContent: 'center' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }} ref={searchRef}>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <Search size={18} color="#94a3b8" style={{ position: 'absolute', left: '16px' }} />
+              <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '16px' }} />
               <input 
                 type="text" 
-                placeholder="Search ticker, user, or AI..." 
+                placeholder="Search..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchOpen(true)}
                 style={{
                   width: '100%',
-                  padding: '10px 16px 10px 42px',
+                  padding: '8px 16px 8px 38px',
                   borderRadius: '24px',
                   border: '1px solid var(--glass-border)',
                   background: 'var(--search-bg)',
-                  fontSize: '0.95rem',
+                  fontSize: '0.9rem',
                   fontWeight: '300',
                   color: 'var(--text-primary)',
                   outline: 'none',

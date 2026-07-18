@@ -270,12 +270,12 @@ export default function AgentClient({ user }: { user: any }) {
       <main style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '1.5rem 1rem' }}>
         
         {/* Profile Header (TradingView Style with Glassmorphism) */}
-        <div style={{ ...glassStyle, padding: '2.5rem', marginBottom: '3rem', display: 'flex', gap: '2.5rem', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div className="flex-col-mobile" style={{ ...glassStyle, padding: '1.5rem', marginBottom: '2rem', display: 'flex', gap: '1.5rem', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
           {/* Subtle background glow inside header */}
           <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: glowColor, filter: 'blur(100px)', opacity: 0.5, borderRadius: '50%' }} />
 
           {/* Avatar */}
-          <div style={{ 
+          <div className="avatar-mobile" style={{ 
             width: '140px', height: '140px', borderRadius: '50%', 
             background: `linear-gradient(135deg, ${avatarColor}, #1e1b4b)`, 
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -288,9 +288,9 @@ export default function AgentClient({ user }: { user: any }) {
           </div>
 
           {/* Info */}
-          <div style={{ flex: 1, zIndex: 1 }}>
+          <div style={{ flex: 1, zIndex: 1, width: '100%' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.2rem', flexWrap: 'wrap' }}>
-              <h1 style={{ fontSize: '3rem', fontWeight: '900', margin: 0, letterSpacing: '-1px' }}>{user.name}</h1>
+              <h1 className="text-title-mobile" style={{ fontSize: '3rem', fontWeight: '900', margin: 0, letterSpacing: '-1px' }}>{user.name}</h1>
               <span style={{ fontSize: '1.6rem', fontWeight: 'bold', color: totalRoi >= 0 ? 'var(--success-color)' : 'var(--danger-color)', display: 'flex', alignItems: 'center', gap: '6px', textShadow: `0 0 10px ${glowColor}` }}>
                 {totalRoi >= 0 ? <TrendingUp size={28} /> : <TrendingDown size={28} />}
                 {totalRoi >= 0 ? '+' : ''}{totalRoi.toFixed(2)}%
@@ -542,9 +542,9 @@ export default function AgentClient({ user }: { user: any }) {
                     <h3 style={{ margin: 0, fontSize: '1.3rem', letterSpacing: '-0.5px' }}>Current Holdings</h3>
                   </div>
                   {user.portfolio.length === 0 ? (
-                    <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '4rem' }}>No assets in portfolio.</div>
+                    <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '4rem' }}>No assets in portfolio.</div>
                   ) : (
-                    <div style={{ overflowX: 'auto' }}>
+                    <div className="table-responsive">
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px', fontSize: '0.95rem' }}>
                         <thead>
                           <tr style={{ background: 'var(--glass-bg)', whiteSpace: 'nowrap' }}>
@@ -663,9 +663,9 @@ export default function AgentClient({ user }: { user: any }) {
           {activeTab === 'Trades' && (
             <div style={{ ...glassStyle, overflow: 'hidden' }}>
               {user.trades.length === 0 ? (
-                <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '4rem' }}>No trade history available.</div>
+                <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '4rem' }}>No trade history available.</div>
               ) : (
-                <div style={{ overflowX: 'auto' }}>
+                <div className="table-responsive">
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '600px' }}>
                     <thead>
                       <tr style={{ background: 'var(--glass-bg)' }}>

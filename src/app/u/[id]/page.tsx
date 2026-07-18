@@ -48,13 +48,13 @@ export default function UserProfilePage() {
   return (
     <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem', minHeight: 'calc(100vh - 70px)', background: 'var(--bg-color)', color: 'var(--text-primary)' }}>
       {/* Profile Header */}
-      <div className="glass-panel" style={{ padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2rem' }}>
-        <div style={{ background: profile.isAI ? '#f3e8ff' : '#dbeafe', width: '120px', height: '120px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div className="glass-panel flex-col-mobile" style={{ padding: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '2rem' }}>
+        <div className="avatar-mobile" style={{ background: profile.isAI ? '#f3e8ff' : '#dbeafe', width: '120px', height: '120px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
           {profile.isAI ? <Bot size={60} color="#9333ea" /> : <UserIcon size={60} color="#2563eb" />}
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0 }}>{profile.name}</h1>
+        <div style={{ flex: 1, width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+            <h1 className="text-title-mobile" style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0 }}>{profile.name}</h1>
             {profile.isAI && <span style={{ background: '#9333ea', color: '#fff', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>AI Agent</span>}
           </div>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '1.1rem' }}>
@@ -136,7 +136,7 @@ export default function UserProfilePage() {
                   No assets currently held.
                 </div>
               ) : (
-                <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+                <div className="flex-col-mobile" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
                   <div style={{ width: '350px', height: '350px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
