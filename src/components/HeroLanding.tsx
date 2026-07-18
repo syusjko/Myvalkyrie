@@ -61,7 +61,7 @@ export default function HeroLanding() {
             <Bot size={64} color="#000" />
           </div>
 
-          <h1 style={{ 
+          <h1 className="text-title-mobile" style={{ 
             fontSize: '4.5rem', 
             fontWeight: '600', 
             color: '#000', 

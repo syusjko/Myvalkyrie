@@ -28,42 +28,42 @@ export default function GlobalStats() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '0.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '0.5rem', width: '100%' }}>
       
       {/* 4 Stats - Financial Metrics */}
-      <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '0.5rem', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'nowrap', background: 'transparent', padding: '0.2rem 0', border: 'none' }}>
-        <div style={{ flex: 1, textAlign: 'center' }}>
+      <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '1rem', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap', background: 'transparent', padding: '0.5rem 0', border: 'none' }}>
+        <div style={{ flex: '1 1 40%', minWidth: '130px', textAlign: 'center' }}>
           <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#ef4444' }}>{stats.activePortfolios.toLocaleString()}</div>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>Active AI Portfolios ⓘ</div>
         </div>
-        <div style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
-        <div style={{ flex: 1, textAlign: 'center' }}>
+        <div className="hide-on-mobile" style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
+        <div style={{ flex: '1 1 40%', minWidth: '130px', textAlign: 'center' }}>
           <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>${stats.totalAUM >= 1e9 ? (stats.totalAUM / 1e9).toFixed(1) + 'B' : stats.totalAUM >= 1e6 ? (stats.totalAUM / 1e6).toFixed(1) + 'M' : stats.totalAUM >= 1e3 ? (stats.totalAUM / 1e3).toFixed(1) + 'k' : stats.totalAUM.toFixed(0)}</div>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>Total AUM</div>
         </div>
-        <div style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
-        <div style={{ flex: 1, textAlign: 'center' }}>
+        <div className="hide-on-mobile" style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
+        <div style={{ flex: '1 1 40%', minWidth: '130px', textAlign: 'center' }}>
           <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#3b82f6' }}>{stats.volume24h.toLocaleString()}</div>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>24h Vol (Shares)</div>
         </div>
-        <div style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
-        <div style={{ flex: 1, textAlign: 'center' }}>
+        <div className="hide-on-mobile" style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
+        <div style={{ flex: '1 1 40%', minWidth: '130px', textAlign: 'center' }}>
           <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#eab308' }}>${stats.value24h >= 1e9 ? (stats.value24h / 1e9).toFixed(1) + 'B' : stats.value24h >= 1e6 ? (stats.value24h / 1e6).toFixed(1) + 'M' : stats.value24h >= 1e3 ? (stats.value24h / 1e3).toFixed(1) + 'k' : stats.value24h.toFixed(0)}</div>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>24h Traded Value</div>
         </div>
       </div>
-
+ 
       {/* Top AI Agents Card */}
       <div style={{ width: '100%', background: 'var(--surface-color)', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '0.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
         
         {/* Header matching screenshot */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)', padding: '8px 12px' }}>
+        <div className="flex-col-mobile" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)', padding: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem' }}>
-            <span style={{ color: '#10b981' }}>📈</span> Top AI Agents (By ROI)
+            📈 Top AI Agents (By ROI)
           </div>
-          <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem', fontWeight: 'bold' }}>
+          <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem', fontWeight: 'bold', flexWrap: 'wrap' }}>
             <span style={{ color: '#eab308' }}>last 24h</span>
-            <span style={{ color: '#10b981' }}>{stats.activePortfolios} verified</span>
+            <span className="hide-on-mobile" style={{ color: '#10b981' }}>{stats.activePortfolios} verified</span>
             <Link href="/leaderboard" style={{ color: '#10b981', textDecoration: 'none' }}>View All →</Link>
           </div>
         </div>
