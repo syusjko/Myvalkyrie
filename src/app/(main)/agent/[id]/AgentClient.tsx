@@ -270,16 +270,16 @@ export default function AgentClient({ user }: { user: any }) {
       <main style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '1.5rem 1rem' }}>
         
         {/* Profile Header (TradingView Style with Glassmorphism) */}
-        <div className="flex-col-mobile" style={{ ...glassStyle, padding: '1.5rem', marginBottom: '2rem', display: 'flex', gap: '1.5rem', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div className="mobile-col" style={{ ...glassStyle, padding: '12px', marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
           {/* Subtle background glow inside header */}
           <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: glowColor, filter: 'blur(100px)', opacity: 0.5, borderRadius: '50%' }} />
 
           {/* Avatar */}
           <div className="avatar-mobile" style={{ 
-            width: '140px', height: '140px', borderRadius: '50%', 
+            width: '80px', height: '80px', borderRadius: '50%', 
             background: `linear-gradient(135deg, ${avatarColor}, #1e1b4b)`, 
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '4.5rem', fontWeight: 'bold', color: 'var(--text-primary)',
+            fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--text-primary)',
             boxShadow: `0 0 25px ${avatarColor}40`,
             border: '2px solid rgba(255,255,255,0.2)',
             zIndex: 1
@@ -289,9 +289,9 @@ export default function AgentClient({ user }: { user: any }) {
 
           {/* Info */}
           <div style={{ flex: 1, zIndex: 1, width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.2rem', flexWrap: 'wrap' }}>
-              <h1 className="text-title-mobile" style={{ fontSize: '3rem', fontWeight: '900', margin: 0, letterSpacing: '-1px' }}>{user.name}</h1>
-              <span style={{ fontSize: '1.6rem', fontWeight: 'bold', color: totalRoi >= 0 ? 'var(--success-color)' : 'var(--danger-color)', display: 'flex', alignItems: 'center', gap: '6px', textShadow: `0 0 10px ${glowColor}` }}>
+            <div className="mobile-col" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+              <h1 className="text-title-mobile" style={{ fontSize: 'var(--fs-xl)', fontWeight: 600, margin: 0, letterSpacing: '-1px' }}>{user.name}</h1>
+              <span style={{ fontSize: 'var(--fs-lg)', fontWeight: 'bold', color: totalRoi >= 0 ? 'var(--success-color)' : 'var(--danger-color)', display: 'flex', alignItems: 'center', gap: '6px', textShadow: `0 0 10px ${glowColor}` }}>
                 {totalRoi >= 0 ? <TrendingUp size={28} /> : <TrendingDown size={28} />}
                 {totalRoi >= 0 ? '+' : ''}{totalRoi.toFixed(2)}%
               </span>
@@ -302,18 +302,18 @@ export default function AgentClient({ user }: { user: any }) {
               )}
             </div>
 
-            <div style={{ display: 'flex', gap: '2.5rem', marginBottom: '1.5rem', fontSize: '1.1rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ fontWeight: '800', fontSize: '1.4rem' }}>{user.followersCount.toLocaleString()}</div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Followers</div>
+            <div className="mobile-col" style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: 'var(--fs-sm)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ fontWeight: 600, fontSize: 'var(--fs-base)' }}>{user.followersCount.toLocaleString()}</div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Followers</div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ fontWeight: '800', fontSize: '1.4rem' }}>{user.ideas?.length || 0}</div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Ideas</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ fontWeight: 600, fontSize: 'var(--fs-base)' }}>{user.ideas?.length || 0}</div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Ideas</div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ fontWeight: '800', fontSize: '1.4rem' }}>{user.trades.length}</div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Trades</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ fontWeight: 600, fontSize: 'var(--fs-base)' }}>{user.trades.length}</div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Trades</div>
               </div>
             </div>
 
@@ -389,15 +389,15 @@ export default function AgentClient({ user }: { user: any }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
               
               {/* Performance Chart */}
-              <div style={{ ...glassStyle, padding: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+              <div style={{ ...glassStyle, padding: '12px' }}>
+                <div className="mobile-col" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                   <div>
-                    <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Estimated Net Worth</h3>
-                    <div style={{ fontSize: '3rem', fontWeight: '900', color: 'var(--text-primary)', letterSpacing: '-1px' }}>
+                    <h3 style={{ margin: '0 0 4px 0', fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Estimated Net Worth</h3>
+                    <div style={{ fontSize: 'var(--fs-xl)', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-1px' }}>
                       ${(performanceData[performanceData.length - 1].value).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                     {(() => {
                       const netChange = performanceData[performanceData.length - 1].value - performanceData[0].value;
                       const isPositive = netChange >= 0;
@@ -405,22 +405,21 @@ export default function AgentClient({ user }: { user: any }) {
                         <div style={{ 
                           background: isPositive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)', 
                           color: isPositive ? '#10b981' : '#ef4444', 
-                          padding: '10px 16px', 
-                          borderRadius: '12px', 
-                          fontWeight: '900', 
-                          fontSize: '1.2rem',
+                          padding: '6px 12px', 
+                          borderRadius: 'var(--radius-sm)', 
+                          fontWeight: 600, 
+                          fontSize: 'var(--fs-base)',
                           display: 'flex', alignItems: 'center', gap: '6px',
                           border: `1px solid ${isPositive ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-                          boxShadow: `0 4px 20px ${isPositive ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`
                         }}>
-                          {isPositive ? <TrendingUp size={20} /> : <TrendingDown size={20} />} {isPositive ? '+' : ''}{netChange.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                          {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />} {isPositive ? '+' : ''}{netChange.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                         </div>
                       );
                     })()}
                   </div>
                 </div>
                 
-                <div style={{ height: '350px', width: '100%', marginBottom: '1.5rem' }}>
+                <div style={{ height: '240px', width: '100%', marginBottom: '12px' }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={performanceData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
                       <defs>
@@ -471,9 +470,9 @@ export default function AgentClient({ user }: { user: any }) {
 
               {/* Portfolio Heatmap (Treemap) */}
               {heatmapData.length > 0 && (
-                <div style={{ ...glassStyle, padding: '2rem' }}>
-                  <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', letterSpacing: '-0.5px' }}>Portfolio Heatmap (P&L)</h3>
-                  <div style={{ height: '300px', width: '100%', borderRadius: '12px', overflow: 'hidden' }}>
+                <div style={{ ...glassStyle, padding: '12px' }}>
+                  <h3 style={{ margin: '0 0 12px 0', fontSize: 'var(--fs-lg)' }}>Portfolio Heatmap (P&L)</h3>
+                  <div style={{ height: '240px', width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <Treemap
                         data={heatmapData}

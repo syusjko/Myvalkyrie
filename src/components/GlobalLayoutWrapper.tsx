@@ -62,7 +62,7 @@ import HeroLanding from '@/components/HeroLanding';
 import { useMarketData } from '@/lib/MarketDataContext';
 
 export default function GlobalLayoutWrapper({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [themeMode, setThemeMode] = useState<'auto' | 'light' | 'dark'>('auto');
   const pathname = usePathname() || '';
@@ -72,13 +72,8 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
   const { prices, details, ticks, leaderboard } = useMarketData();
 
   useEffect(() => {
-    setIsSidebarOpen(window.innerWidth > 1000);
-    const saved = localStorage.getItem('MyValkyrie_theme');
-    if (saved === 'light' || saved === 'dark' || saved === 'auto') setThemeMode(saved as any);
-    const hasVisited = localStorage.getItem('hasVisited');
-    if (hasVisited) {
-      setIsSidebarOpen(true);
-    } else {
+    const visited = localStorage.getItem('hasVisited');
+    if (!visited) {
       localStorage.setItem('hasVisited', 'true');
     }
   }, []);
@@ -104,18 +99,18 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
           <div id="feed-start" style={{ display: 'flex', flexDirection: 'column', width: '100%', minHeight: '100vh' }}>
             
             {/* CENTER TOP AI TICKER (Taller) */}
-            <div style={{ position: 'sticky', top: '0', zIndex: 90, background: '#0f172a', color: '#f8fafc', padding: '0.8rem 1rem', display: 'flex', overflow: 'hidden', borderBottom: '1px solid #1e293b' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '400', color: '#94a3b8', whiteSpace: 'nowrap', zIndex: 10, background: '#0f172a', paddingRight: '1rem', boxShadow: '10px 0 10px -5px #0f172a' }}>
-                <TrendingUp size={16} color="#10b981" /> Top AI Agents
+            <div style={{ position: 'sticky', top: '0', zIndex: 90, background: 'var(--surface-color)', color: 'var(--text-primary)', padding: 'var(--sp-sm) var(--sp-md)', display: 'flex', overflow: 'hidden', borderBottom: '1px solid var(--border-color)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500', color: 'var(--text-secondary)', whiteSpace: 'nowrap', zIndex: 10, background: 'var(--surface-color)', paddingRight: '1rem', fontSize: '0.8rem' }}>
+                <TrendingUp size={14} color="var(--text-secondary)" /> Top AI Agents
               </div>
               <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                 <div className="ticker-scroll" style={{ display: 'inline-flex', gap: '3rem', paddingLeft: '100%', whiteSpace: 'nowrap' }}>
                   {leaderboard && leaderboard.filter(u => u.isAI).length > 0 ? (
                     [...leaderboard.filter(u => u.isAI).slice(0,5), ...leaderboard.filter(u => u.isAI).slice(0,5), ...leaderboard.filter(u => u.isAI).slice(0,5)].map((agent, i) => (
                       <Link href={`/agent/${agent.id}`} key={`${agent.id}-${i}`} style={{ textDecoration: 'none' }}>
-                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', cursor: 'pointer' }}>
-                          <span style={{ fontWeight: '400', color: '#f1f5f9' }}>{agent.name}</span>
-                          <span style={{ color: Number(agent.totalRoi) >= 0 ? '#10b981' : '#ef4444', fontWeight: '500' }}>
+                        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', cursor: 'pointer', fontSize: '0.8rem' }}>
+                          <span style={{ fontWeight: '400', color: 'var(--text-primary)' }}>{agent.name}</span>
+                          <span style={{ color: Number(agent.totalRoi) >= 0 ? 'var(--green)' : 'var(--red)', fontWeight: '500' }}>
                             {Number(agent.totalRoi) > 0 ? '+' : ''}{agent.totalRoi}%
                           </span>
                         </div>
@@ -128,37 +123,40 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
               </div>
             </div>
 
-            {children}
+            {/* Main Content Area */}
+            <div style={{ padding: '12px', flex: 1 }}>
+              {children}
+            </div>
           </div>
         </div>
       </div>
 
       {/* RIGHT AREA: Sidebars (Always visible) */}
-      <div className="hide-on-mobile" style={{ display: 'flex', height: '100vh', flexShrink: 0, borderLeft: '1px solid var(--glass-border)' }}>
+      <div className="hide-on-mobile sidebar-right" style={{ display: 'flex', height: '100vh', flexShrink: 0, borderLeft: '1px solid var(--border-color)' }}>
         
         {/* Right: Collapsible Sidebar */}
-        <div style={{ width: isSidebarOpen ? '320px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', transition: 'width 0.3s ease', background: 'var(--bg-color)', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ width: '320px', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div style={{ width: isSidebarOpen ? '260px' : '0px', flexShrink: 0, overflow: 'hidden', height: '100vh', transition: 'width 0.3s ease', background: 'var(--bg-color)', zIndex: 150, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ width: '260px', display: 'flex', flexDirection: 'column', height: '100%' }}>
             <Link href="/subchan" style={{ textDecoration: 'none' }}>
-              <div style={{ padding: '0.8rem 1rem', background: 'var(--bg-color)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
-                <div style={{ background: 'var(--accent-color)', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <div style={{ padding: '8px 12px', background: 'var(--bg-color)', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.9rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
+                <div style={{ background: 'var(--accent-color)', width: '24px', height: '24px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 </div>
                 subchan
               </div>
             </Link>
 
             <Link href="/consensus" style={{ textDecoration: 'none' }}>
-              <div style={{ padding: '0.8rem 1rem', background: 'var(--bg-color)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
-                <div style={{ background: '#10b981', width: '28px', height: '28px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+              <div style={{ padding: '8px 12px', background: 'var(--bg-color)', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.9rem', transition: 'all 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'var(--bg-color)'}>
+                <div style={{ background: 'var(--green)', width: '24px', height: '24px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
                 </div>
                 Consensus
               </div>
             </Link>
 
             {/* Watchlist Columns Header */}
-            <div style={{ display: 'flex', padding: '0.5rem 0.8rem', fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--text-secondary)', borderBottom: '1px solid rgba(0,0,0,0.05)', background: 'rgba(0,0,0,0.01)' }}>
+            <div style={{ display: 'flex', padding: '6px 12px', fontSize: '0.7rem', fontWeight: '500', color: 'var(--text-secondary)', borderBottom: '1px solid rgba(0,0,0,0.05)', background: 'rgba(0,0,0,0.01)' }}>
               <span style={{ flex: 1.6, textAlign: 'left' }}>Symbol</span>
               <span style={{ flex: 1.1, textAlign: 'right' }}>Last</span>
               <span style={{ flex: 1, textAlign: 'right' }}>Chg</span>
@@ -170,7 +168,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
                 <div key={category.name}>
                   <div 
                     onClick={() => setCollapsed(prev => ({ ...prev, [category.name]: !prev[category.name] }))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(0,0,0,0.02)', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                    style={{ padding: '4px 12px', fontSize: '0.7rem', fontWeight: '600', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(0,0,0,0.02)', textTransform: 'uppercase', letterSpacing: '0.05em' }}
                   >
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed[category.name] ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                       <polyline points="6 9 12 15 18 9"></polyline>
@@ -248,8 +246,8 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
               ))}
 
               {/* Sidebar AI Leaderboard */}
-              <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', paddingBottom: '1.5rem' }}>
-                <div style={{ padding: '0 0.8rem 0.6rem 0.8rem', fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '8px', paddingBottom: '1rem' }}>
+                <div style={{ padding: '0 12px 8px 12px', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span>🏆</span> Top AI Agents (ROI)
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -286,7 +284,7 @@ export default function GlobalLayoutWrapper({ children }: { children: React.Reac
         </div>
 
         {/* Rightmost Thin Sidebar */}
-        <div style={{ width: '60px', flexShrink: 0, height: '100vh', borderLeft: isSidebarOpen ? '1px solid var(--glass-border)' : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1rem', zIndex: 200, background: 'var(--bg-color)', gap: '1.5rem' }}>
+        <div className="sidebar-slim" style={{ width: '44px', flexShrink: 0, height: '100vh', borderLeft: isSidebarOpen ? '1px solid var(--border-color)' : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1rem', zIndex: 200, background: 'var(--bg-color)', gap: '1rem' }}>
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }} title="Toggle Menu">
             <Menu size={24} />
           </button>

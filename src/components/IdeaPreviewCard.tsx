@@ -17,13 +17,10 @@ export default function IdeaPreviewCard({ idea }: { idea: any }) {
   return (
     <div style={{
       display: 'flex',
-      gap: '14px',
-      padding: '18px 16px',
-      borderBottom: '1px solid rgba(255,255,255,0.04)',
-      transition: 'background 0.15s',
+      gap: '8px',
+      padding: '8px 12px',
+      borderBottom: '1px solid var(--border-color)',
     }}
-      onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.015)'}
-      onMouseOut={e => e.currentTarget.style.background = 'transparent'}
     >
       {/* Avatar */}
       <div style={{ flexShrink: 0, width: '40px' }}>
@@ -54,12 +51,12 @@ export default function IdeaPreviewCard({ idea }: { idea: any }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
             <Link href={`/agent/${idea.agentId}`} style={{
-              fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none',
-              fontSize: '0.9rem', whiteSpace: 'nowrap',
+              fontWeight: 500, color: 'var(--text-primary)', textDecoration: 'none',
+              fontSize: 'var(--fs-sm)', whiteSpace: 'nowrap',
             }}>
               {idea.agent?.name || 'Unknown Agent'}
             </Link>
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.78rem', opacity: 0.6 }}>
+            <span style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-xs)' }}>
               · {new Date(idea.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
@@ -70,31 +67,30 @@ export default function IdeaPreviewCard({ idea }: { idea: any }) {
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '8px',
-            padding: '6px 12px',
-            borderRadius: '8px',
-            background: actionBg,
-            border: `1px solid ${actionColor}20`,
+            gap: '4px',
+            padding: '2px 8px',
+            borderRadius: 'var(--radius-sm)',
+            border: `1px solid var(--border-color)`,
             alignSelf: 'flex-start',
           }}>
-            {isBuy ? <TrendingUp size={15} color={actionColor} /> :
-             isSell ? <TrendingDown size={15} color={actionColor} /> :
-             <ArrowRightLeft size={15} color={actionColor} />}
-            <span style={{ fontWeight: 700, fontSize: '0.82rem', color: actionColor, letterSpacing: '-0.01em' }}>
+            {isBuy ? <TrendingUp size={12} color="var(--green)" /> :
+             isSell ? <TrendingDown size={12} color="var(--red)" /> :
+             <ArrowRightLeft size={12} color="var(--text-secondary)" />}
+            <span style={{ fontWeight: 500, fontSize: 'var(--fs-xs)', color: isBuy ? 'var(--green)' : isSell ? 'var(--red)' : 'var(--text-primary)' }}>
               {action}
             </span>
             <Link href={`/asset/${idea.symbol}`} style={{
-              fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-primary)', textDecoration: 'none',
+              fontWeight: 500, fontSize: 'var(--fs-xs)', color: 'var(--text-primary)', textDecoration: 'none',
             }}>
               {idea.symbol}
             </Link>
             {idea.quantity != null && (
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+              <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)' }}>
                 ×{idea.quantity.toLocaleString(undefined, { maximumFractionDigits: 4 })}
               </span>
             )}
             {idea.price != null && (
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+              <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)' }}>
                 @ ${idea.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             )}
@@ -104,13 +100,13 @@ export default function IdeaPreviewCard({ idea }: { idea: any }) {
         {/* If no action (standalone idea post), show symbol tag */}
         {!action && idea.symbol && (
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            padding: '4px 10px', borderRadius: '6px', alignSelf: 'flex-start',
-            background: 'rgba(99,102,241,0.08)', color: '#6366f1',
-            fontSize: '0.78rem', fontWeight: 600,
-            border: '1px solid rgba(99,102,241,0.15)',
+            display: 'inline-flex', alignItems: 'center', gap: '4px',
+            padding: '2px 8px', borderRadius: 'var(--radius-sm)', alignSelf: 'flex-start',
+            color: 'var(--text-primary)',
+            fontSize: 'var(--fs-xs)', fontWeight: 500,
+            border: '1px solid var(--border-color)',
           }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             {idea.symbol} Analysis
           </div>
         )}

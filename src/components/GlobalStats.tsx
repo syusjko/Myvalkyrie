@@ -28,75 +28,72 @@ export default function GlobalStats() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '0.5rem', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       
       {/* 4 Stats - Financial Metrics */}
-      <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '1rem', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap', background: 'transparent', padding: '0.5rem 0', border: 'none' }}>
-        <div style={{ flex: '1 1 40%', minWidth: '130px', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#ef4444' }}>{stats.activePortfolios.toLocaleString()}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>Active AI Portfolios ⓘ</div>
+      <div style={{ display: 'flex', width: '100%', background: 'var(--surface-color)', padding: '4px 8px', borderBottom: '1px solid var(--border-color)', alignItems: 'center', overflowX: 'auto' }} className="hidden-scrollbar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '0 8px' }}>
+          <span style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Active Portfolios:</span>
+          <span style={{ color: 'var(--text-primary)', fontSize: 'var(--fs-sm)', fontWeight: '600' }}>{stats.activePortfolios.toLocaleString()}</span>
         </div>
-        <div className="hide-on-mobile" style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
-        <div style={{ flex: '1 1 40%', minWidth: '130px', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>${stats.totalAUM >= 1e9 ? (stats.totalAUM / 1e9).toFixed(1) + 'B' : stats.totalAUM >= 1e6 ? (stats.totalAUM / 1e6).toFixed(1) + 'M' : stats.totalAUM >= 1e3 ? (stats.totalAUM / 1e3).toFixed(1) + 'k' : stats.totalAUM.toFixed(0)}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>Total AUM</div>
+        <div className="hide-on-mobile" style={{ width: '1px', height: '12px', background: 'var(--border-color)', margin: '0 4px' }}></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '0 8px' }}>
+          <span style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Total AUM:</span>
+          <span style={{ color: 'var(--text-primary)', fontSize: 'var(--fs-sm)', fontWeight: '600' }}>${stats.totalAUM >= 1e9 ? (stats.totalAUM / 1e9).toFixed(1) + 'B' : stats.totalAUM >= 1e6 ? (stats.totalAUM / 1e6).toFixed(1) + 'M' : stats.totalAUM >= 1e3 ? (stats.totalAUM / 1e3).toFixed(1) + 'k' : stats.totalAUM.toFixed(0)}</span>
         </div>
-        <div className="hide-on-mobile" style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
-        <div style={{ flex: '1 1 40%', minWidth: '130px', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#3b82f6' }}>{stats.volume24h.toLocaleString()}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>24h Vol (Shares)</div>
+        <div className="hide-on-mobile" style={{ width: '1px', height: '12px', background: 'var(--border-color)', margin: '0 4px' }}></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '0 8px' }}>
+          <span style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>24h Vol:</span>
+          <span style={{ color: 'var(--text-primary)', fontSize: 'var(--fs-sm)', fontWeight: '600' }}>{stats.volume24h.toLocaleString()}</span>
         </div>
-        <div className="hide-on-mobile" style={{ width: '1px', height: '40px', background: 'var(--glass-border)' }}></div>
-        <div style={{ flex: '1 1 40%', minWidth: '130px', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#eab308' }}>${stats.value24h >= 1e9 ? (stats.value24h / 1e9).toFixed(1) + 'B' : stats.value24h >= 1e6 ? (stats.value24h / 1e6).toFixed(1) + 'M' : stats.value24h >= 1e3 ? (stats.value24h / 1e3).toFixed(1) + 'k' : stats.value24h.toFixed(0)}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: '500' }}>24h Traded Value</div>
+        <div className="hide-on-mobile" style={{ width: '1px', height: '12px', background: 'var(--border-color)', margin: '0 4px' }}></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '0 8px' }}>
+          <span style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>24h Val:</span>
+          <span style={{ color: 'var(--text-primary)', fontSize: 'var(--fs-sm)', fontWeight: '600' }}>${stats.value24h >= 1e9 ? (stats.value24h / 1e9).toFixed(1) + 'B' : stats.value24h >= 1e6 ? (stats.value24h / 1e6).toFixed(1) + 'M' : stats.value24h >= 1e3 ? (stats.value24h / 1e3).toFixed(1) + 'k' : stats.value24h.toFixed(0)}</span>
         </div>
       </div>
  
       {/* Top AI Agents Card */}
-      <div style={{ width: '100%', background: 'var(--surface-color)', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', marginBottom: '0.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
+      <div style={{ width: '100%', background: 'var(--surface-color)', borderBottom: '1px solid var(--border-color)' }}>
         
-        {/* Header matching screenshot */}
-        <div className="flex-col-mobile" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)', padding: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1.1rem' }}>
-            📈 Top AI Agents (By ROI)
+        {/* Header */}
+        <div className="mobile-col" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-primary)', fontWeight: '600', fontSize: 'var(--fs-sm)' }}>
+            Top AI Agents (By ROI)
           </div>
-          <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem', fontWeight: 'bold', flexWrap: 'wrap' }}>
-            <span style={{ color: '#eab308' }}>last 24h</span>
-            <span className="hide-on-mobile" style={{ color: '#10b981' }}>{stats.activePortfolios} verified</span>
-            <Link href="/leaderboard" style={{ color: '#10b981', textDecoration: 'none' }}>View All →</Link>
+          <div style={{ display: 'flex', gap: '8px', fontSize: 'var(--fs-xs)', fontWeight: '500', flexWrap: 'wrap' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>last 24h</span>
+            <span className="hide-on-mobile" style={{ color: 'var(--green)' }}>{stats.activePortfolios} verified</span>
+            <Link href="/leaderboard" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>View All →</Link>
           </div>
         </div>
         
         {/* Horizontal Card List */}
-        <div style={{ display: 'flex', overflowX: 'auto', padding: '15px', gap: '12px', background: 'var(--surface-color)' }} className="hidden-scrollbar">
+        <div style={{ display: 'flex', overflowX: 'auto', padding: '4px 8px', gap: '8px' }} className="hidden-scrollbar">
           {topAgents.map((agent, idx) => {
-            const colors = ['#ef4444', '#f97316', '#f59e0b', '#3b82f6', '#10b981'];
-            const bgColor = colors[agent.name.length % colors.length];
-            
             return (
-              <Link href={`/agent/${agent.id}`} key={`${agent.id}-${idx}`} style={{ textDecoration: 'none', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', flexShrink: 0, minWidth: '220px', transition: 'transform 0.2s, box-shadow 0.2s' }} onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'var(--accent-color)'; }} onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--glass-border)'; }}>
+              <Link href={`/agent/${agent.id}`} key={`${agent.id}-${idx}`} style={{ textDecoration: 'none', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 8px', background: 'var(--bg-color)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', flexShrink: 0, minWidth: '140px' }}>
                 
                 <div style={{ position: 'relative', flexShrink: 0 }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: bgColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', fontWeight: 'bold' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'var(--fs-sm)', fontWeight: '600' }}>
                     {agent.name.charAt(0).toUpperCase()}
                   </div>
-                  <div style={{ position: 'absolute', bottom: '-4px', right: '-4px', background: 'var(--surface-color)', borderRadius: '50%', padding: '2px' }}>
-                    <ShieldCheck size={16} fill="#10b981" color="var(--surface-color)" />
+                  <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', background: 'var(--surface-color)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ShieldCheck size={10} color="var(--green)" />
                   </div>
                 </div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontWeight: 'bold', fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontWeight: '500', fontSize: 'var(--fs-sm)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '80px' }}>
                       {agent.name.toLowerCase()}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }}>
-                    <span style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: 'var(--fs-xs)' }}>
+                    <span style={{ color: 'var(--text-primary)', fontWeight: '500' }}>
                       ${agent.netWorth >= 1000 ? (agent.netWorth / 1000).toFixed(1) + 'k' : agent.netWorth?.toFixed(0) || '0'}
                     </span>
-                    <span style={{ color: parseFloat(agent.totalRoi) >= 0 ? '#10b981' : '#ef4444', fontWeight: 'bold' }}>
+                    <span style={{ color: parseFloat(agent.totalRoi) >= 0 ? 'var(--green)' : 'var(--red)', fontWeight: '500' }}>
                       {parseFloat(agent.totalRoi) > 0 ? '+' : ''}{agent.totalRoi}%
                     </span>
                   </div>

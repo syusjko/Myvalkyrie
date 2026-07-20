@@ -81,26 +81,27 @@ export default function Header() {
         display: 'flex', 
         justifyContent: 'space-between',
         alignItems: 'center', 
-        padding: '0.4rem 1rem', 
+        padding: '0 12px', 
+        height: '40px',
         background: 'var(--header-bg)',
         backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid var(--glass-border)',
+        borderBottom: '1px solid var(--border-color)',
         position: 'relative',
         zIndex: 50,
         gap: '1rem'
       }}>
         {/* LEFT: Logo */}
         <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-          <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--accent-color)', letterSpacing: '-0.5px' }}>
+          <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--accent-color)', letterSpacing: '-0.5px' }}>
             MyValkyrie
           </span>
         </Link>
  
         {/* CENTER: Search Bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, maxWidth: '600px', justifyContent: 'center' }}>
-          <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }} ref={searchRef}>
+        <div className="header-search" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, justifyContent: 'center' }}>
+          <div style={{ position: 'relative', width: '100%' }} ref={searchRef}>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '16px' }} />
+              <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: '12px' }} />
               <input 
                 type="text" 
                 placeholder="Search..." 
@@ -109,31 +110,31 @@ export default function Header() {
                 onFocus={() => setSearchOpen(true)}
                 style={{
                   width: '100%',
-                  padding: '8px 16px 8px 38px',
-                  borderRadius: '24px',
-                  border: '1px solid var(--glass-border)',
+                  padding: '6px 12px 6px 32px',
+                  borderRadius: '6px',
+                  border: '1px solid var(--border-color)',
                   background: 'var(--search-bg)',
-                  fontSize: '0.9rem',
-                  fontWeight: '300',
+                  fontSize: '0.8rem',
+                  fontWeight: '400',
                   color: 'var(--text-primary)',
                   outline: 'none',
                   transition: 'all 0.2s',
-                  boxShadow: searchOpen ? '0 0 0 3px var(--accent-glow)' : 'none'
+                  boxShadow: 'none'
                 }}
               />
-              {isSearching && <Loader size={16} color="var(--accent-color)" className="animate-spin" style={{ position: 'absolute', right: '16px' }} />}
+              {isSearching && <Loader size={14} color="var(--accent-color)" className="animate-spin" style={{ position: 'absolute', right: '12px' }} />}
             </div>
 
             {/* Dropdown Results */}
             {searchOpen && (searchQuery.trim().length > 0) && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px', background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', overflow: 'hidden', zIndex: 50 }}>
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px', background: 'var(--surface-color)', border: '1px solid var(--border-color)', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', overflow: 'hidden', zIndex: 50 }}>
                 {/* Search Tabs */}
-                <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)' }}>
+                <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)' }}>
                   {['Assets', 'Agents'].map(tab => (
                     <div 
                       key={tab} 
                       onClick={() => setActiveTab(tab as any)}
-                      style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '0.9rem', fontWeight: '500', cursor: 'pointer', color: activeTab === tab ? 'var(--accent-color)' : 'var(--text-secondary)', borderBottom: activeTab === tab ? '2px solid var(--accent-color)' : '2px solid transparent' }}
+                      style={{ flex: 1, padding: '8px', textAlign: 'center', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', color: activeTab === tab ? 'var(--accent-color)' : 'var(--text-secondary)', borderBottom: activeTab === tab ? '2px solid var(--accent-color)' : '2px solid transparent' }}
                     >
                       {tab}
                     </div>
@@ -145,19 +146,19 @@ export default function Header() {
                   {searchResults.length > 0 ? (
                     searchResults.map((result: any, i) => (
                       <Link href={result.type === 'asset' ? `/asset/${result.symbol}` : `/agent/${result.id}`} key={i} style={{ textDecoration: 'none' }} onClick={() => setSearchOpen(false)}>
-                        <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s', color: 'var(--text-primary)' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                        <div style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s', color: 'var(--text-primary)' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                           {result.type === 'asset' ? (
-                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e0f2fe', color: '#0369a1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '500', fontSize: '0.8rem' }}>
+                            <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#e0f2fe', color: '#0369a1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '500', fontSize: '0.7rem' }}>
                               {result.symbol.substring(0, 2)}
                             </div>
                           ) : (
-                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: result.isAI ? '#f3e8ff' : '#dcfce7', color: result.isAI ? '#7e22ce' : '#15803d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '500', fontSize: '0.8rem' }}>
+                            <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: result.isAI ? '#f3e8ff' : '#dcfce7', color: result.isAI ? '#7e22ce' : '#15803d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '500', fontSize: '0.7rem' }}>
                               {result.name.substring(0, 2).toUpperCase()}
                             </div>
                           )}
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: '500', fontSize: '0.95rem' }}>{result.name}</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                            <div style={{ fontWeight: '500', fontSize: '0.9rem' }}>{result.name}</div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                               {result.type === 'asset' ? result.symbol : result.isAI ? 'AI Agent' : 'Human Trader'}
                             </div>
                           </div>
@@ -175,13 +176,13 @@ export default function Header() {
             
             {/* Initial Helper Text (before typing) */}
             {searchOpen && searchQuery.trim().length === 0 && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px', background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', overflow: 'hidden', zIndex: 50 }}>
-                <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)' }}>
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px', background: 'var(--surface-color)', border: '1px solid var(--border-color)', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', overflow: 'hidden', zIndex: 50 }}>
+                <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)' }}>
                   {['Assets', 'Agents'].map(tab => (
                     <div 
                       key={tab} 
                       onClick={() => setActiveTab(tab as any)}
-                      style={{ flex: 1, padding: '10px', textAlign: 'center', fontSize: '0.9rem', fontWeight: '500', cursor: 'pointer', color: activeTab === tab ? 'var(--accent-color)' : 'var(--text-secondary)', borderBottom: activeTab === tab ? '2px solid var(--accent-color)' : '2px solid transparent' }}
+                      style={{ flex: 1, padding: '8px', textAlign: 'center', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', color: activeTab === tab ? 'var(--accent-color)' : 'var(--text-secondary)', borderBottom: activeTab === tab ? '2px solid var(--accent-color)' : '2px solid transparent' }}
                     >
                       {tab}
                     </div>
@@ -199,6 +200,9 @@ export default function Header() {
 
         {/* RIGHT: Empty for balance */}
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button className="header-search-icon" style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)' }}>
+            <Search size={16} />
+          </button>
         </div>
       </header>
     </div>

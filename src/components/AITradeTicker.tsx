@@ -30,47 +30,40 @@ export default function AITradeTicker() {
       width: '100%',
       maxWidth: '100%',
       boxSizing: 'border-box',
-      background: '#ccff00',
-      border: '1px solid #ccff00',
-      borderRadius: '8px',
-      padding: '8px 12px',
+      background: 'var(--bg-color)',
+      borderBottom: '1px solid var(--border-color)',
+      padding: '4px 0',
       display: 'flex',
       alignItems: 'center',
       overflow: 'hidden',
-      marginBottom: '1rem',
       position: 'relative'
     }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
-        color: '#ccff00',
-        fontWeight: 'bold',
-        fontSize: '0.9rem',
-        paddingRight: '16px',
+        gap: '4px',
+        color: 'var(--text-secondary)',
+        fontWeight: '500',
+        fontSize: 'var(--fs-xs)',
+        paddingRight: '12px',
         zIndex: 2,
-        background: '#0a0a0a', 
-        paddingLeft: '12px',
-        marginLeft: '-12px', // pull it flush left
-        paddingTop: '8px',
-        marginTop: '-8px',
-        paddingBottom: '8px',
-        marginBottom: '-8px',
+        background: 'var(--bg-color)', 
+        paddingLeft: '8px',
       }}>
-        <Activity size={16} /> LIVE TRADES
+        <Activity size={12} /> LIVE TRADES
       </div>
       
-      <div style={{ flex: 1, overflow: 'hidden', position: 'relative', height: '24px', marginLeft: '16px' }}>
-        <div className="ticker-scroll" style={{ position: 'absolute', whiteSpace: 'nowrap', left: '100%', top: 0, height: '100%', display: 'flex', alignItems: 'center', gap: '2rem' }}>
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative', height: '16px', marginLeft: '8px' }}>
+        <div className="ticker-scroll" style={{ position: 'absolute', whiteSpace: 'nowrap', left: '100%', top: 0, height: '100%', display: 'flex', alignItems: 'center', gap: '16px' }}>
           {trades.map((t, idx) => (
-            <span key={`${t.id}-${idx}`} style={{ fontSize: '0.9rem', color: '#1a1a1a' }}>
-              <span style={{ fontWeight: 'bold', color: '#000' }}>{t.user.name}</span>
-              {' just '}
-              <span style={{ color: t.type === 'BUY' ? '#dc2626' : '#2563eb', fontWeight: 'bold' }}>
+            <span key={`${t.id}-${idx}`} style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-primary)' }}>
+              <span style={{ fontWeight: '500' }}>{t.user.name}</span>
+              {' '}
+              <span style={{ color: t.type === 'BUY' ? 'var(--green)' : 'var(--red)', fontWeight: '500' }}>
                 {t.type}
               </span>
               {' '}
-              <span style={{ fontWeight: 'bold', color: '#000' }}>{t.quantity}</span> shares of <span style={{ fontWeight: 'bold', color: '#000' }}>{t.symbol}</span> @ <span style={{ fontWeight: '900', color: '#7e22ce' }}>${t.price.toFixed(2)}</span>
+              <span style={{ fontWeight: '500' }}>{t.quantity}</span> {t.symbol} @ <span style={{ fontWeight: '500', color: 'var(--text-secondary)' }}>${t.price.toFixed(2)}</span>
             </span>
           ))}
         </div>

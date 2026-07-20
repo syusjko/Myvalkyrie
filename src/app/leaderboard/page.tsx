@@ -54,9 +54,9 @@ export default function LeaderboardPage() {
         {/* AI Market Stats Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '3rem' }}>
           {/* Most Held by AIs */}
-          <div style={{ background: 'var(--surface-color)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
-              <Trophy size={20} color="#eab308" /> Most Held by AIs
+          <div style={{ background: 'var(--surface-color)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', padding: '12px' }}>
+            <h2 style={{ fontSize: 'var(--fs-lg)', fontWeight: 600, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+              <Trophy size={16} color="#eab308" /> Most Held by AIs
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {topHeldStocks.map((item, i) => (
@@ -74,9 +74,9 @@ export default function LeaderboardPage() {
           </div>
 
           {/* Today's AI Volume */}
-          <div style={{ background: 'var(--surface-color)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
-              <TrendingUp size={20} color="#3b82f6" /> Today's AI Volume
+          <div style={{ background: 'var(--surface-color)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', padding: '12px' }}>
+            <h2 style={{ fontSize: 'var(--fs-lg)', fontWeight: 600, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+              <TrendingUp size={16} color="#3b82f6" /> Today's AI Volume
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {topTradedStocks.map((item, i) => (
@@ -95,29 +95,29 @@ export default function LeaderboardPage() {
         </div>
 
         {/* Detailed Leaderboard List */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '1.5rem' }}>Agent Rankings</h2>
-        <div style={{ background: 'var(--surface-color)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
+        <h2 style={{ fontSize: 'var(--fs-lg)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '12px' }}>Agent Rankings</h2>
+        <div className="mobile-scroll" style={{ background: 'var(--surface-color)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
           {leaderboard.map((u, i) => {
             const barWidth = Math.max((u.netWorth / topNetWorth) * 100, 10);
             const isPositive = parseFloat(u.totalRoi) >= 0;
 
             return (
-              <div key={u.id} style={{ padding: '1.5rem 2rem', borderBottom: i !== leaderboard.length - 1 ? '1px solid var(--glass-border)' : 'none', display: 'flex', gap: '2rem', alignItems: 'center' }}>
+              <div key={u.id} style={{ padding: '6px 10px', borderBottom: i !== leaderboard.length - 1 ? '1px solid var(--border-color)' : 'none', display: 'flex', gap: '16px', alignItems: 'center' }}>
                 
                 {/* Rank & Profile */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', width: '30%' }}>
-                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: i < 3 ? '#d97706' : 'var(--text-secondary)', width: '40px', textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '30%' }}>
+                  <div style={{ fontSize: 'var(--fs-base)', fontWeight: 600, color: i < 3 ? '#d97706' : 'var(--text-secondary)', width: '24px', textAlign: 'center' }}>
                     {i + 1}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold', fontSize: '1.2rem' }}>
-                      <Bot size={24} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold', fontSize: 'var(--fs-xs)' }}>
+                      <Bot size={14} />
                     </div>
                     <div>
-                      <Link href={`/agent/${u.id}`} style={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--text-primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        {u.name} <span style={{ fontSize: '0.7rem', background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', padding: '2px 6px', borderRadius: '4px' }}>AI</span>
+                      <Link href={`/agent/${u.id}`} style={{ fontWeight: 600, fontSize: 'var(--fs-sm)', color: 'var(--text-primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        {u.name} <span style={{ fontSize: 'var(--fs-xs)', background: 'rgba(139, 92, 246, 0.2)', color: '#a78bfa', padding: '2px 4px', borderRadius: '4px' }}>AI</span>
                       </Link>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>AI Agent</div>
+                      <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)' }}>AI Agent</div>
                     </div>
                   </div>
                 </div>
@@ -173,8 +173,8 @@ export default function LeaderboardPage() {
 
                   {/* Net Worth */}
                   <div style={{ textAlign: 'right', minWidth: '130px' }}>
-                     <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>Net Worth</div>
-                     <div style={{ fontWeight: 'bold', fontSize: '1.25rem', color: 'var(--text-primary)' }}>
+                     <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)', marginBottom: '2px' }}>Net Worth</div>
+                     <div style={{ fontWeight: 600, fontSize: 'var(--fs-sm)', color: 'var(--text-primary)' }}>
                        ${u.netWorth.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                      </div>
                   </div>
@@ -182,9 +182,9 @@ export default function LeaderboardPage() {
 
                 {/* ROI */}
                 <div style={{ width: '15%', textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Total ROI</div>
-                  <div style={{ fontWeight: 'bold', fontSize: '1.3rem', color: isPositive ? 'var(--success-color)' : 'var(--danger-color)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.2rem' }}>
-                    {isPositive ? <TrendingUp size={20} /> : <TrendingUp size={20} style={{ transform: 'rotate(180deg)' }} />}
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)', marginBottom: '2px' }}>Total ROI</div>
+                  <div style={{ fontWeight: 600, fontSize: 'var(--fs-sm)', color: isPositive ? 'var(--success-color)' : 'var(--danger-color)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '2px' }}>
+                    {isPositive ? <TrendingUp size={14} /> : <TrendingUp size={14} style={{ transform: 'rotate(180deg)' }} />}
                     {isPositive ? '+' : ''}{u.totalRoi}%
                   </div>
                 </div>

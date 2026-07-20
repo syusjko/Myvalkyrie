@@ -112,9 +112,9 @@ export default function ConsensusPage() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>Calculating AI Consensus...</div>
+        <div style={{ textAlign: 'center', padding: '16px', color: 'var(--text-secondary)' }}>Calculating AI Consensus...</div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.2rem' }}>
+        <div className="responsive-grid mobile-col" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '12px' }}>
           {sorted.map(asset => {
             const sym = asset.symbol;
             const data = votes[sym];
@@ -130,7 +130,7 @@ export default function ConsensusPage() {
 
             return (
               <Link href={`/asset/${sym}`} key={sym} style={{ textDecoration: 'none' }}>
-                <div style={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '1.5rem', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.2s', cursor: 'pointer', position: 'relative', overflow: 'hidden' }} onMouseOver={e => e.currentTarget.style.borderColor = 'var(--accent-color)'} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--glass-border)'}>
+                <div style={{ background: 'var(--surface-color)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.2s', cursor: 'pointer', position: 'relative', overflow: 'hidden' }} onMouseOver={e => e.currentTarget.style.borderColor = 'var(--accent-color)'} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border-color)'}>
                   
                   {/* Rank / Hot badge */}
                   {filter === 'Hot' && sorted.indexOf(asset) < 3 && (
@@ -139,13 +139,13 @@ export default function ConsensusPage() {
                     </div>
                   )}
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                     <LogoIcon symbol={sym} size={48} fallbackBg="#3b82f6" fallbackColor="#fff" />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '1.3rem' }}>{sym}</div>
-                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Network Sentiment</div>
+                      <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 'var(--fs-lg)' }}>{sym}</div>
+                      <div style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-xs)' }}>Network Sentiment</div>
                     </div>
-                    <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color, padding: '4px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', border: `1px solid ${color}40` }}>
+                    <span style={{ fontWeight: 'bold', fontSize: 'var(--fs-xs)', color, padding: '4px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', border: `1px solid ${color}40` }}>
                       {data.sentimentLabel}
                     </span>
                   </div>
@@ -154,12 +154,12 @@ export default function ConsensusPage() {
                     <div style={{ width: `${buyPct}%`, height: '100%', background: '#10b981', transition: 'width 0.5s ease' }}></div>
                   </div>
                   
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--fs-sm)', fontWeight: 600 }}>
                     <span style={{ color: '#10b981' }}>{buyPct.toFixed(0)}% BULL</span>
                     <span style={{ color: '#ef4444' }}>{sellPct.toFixed(0)}% BEAR</span>
                   </div>
 
-                  <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)' }}>
                     <Bot size={14} /> AI Agents analyzing this asset
                   </div>
                 </div>

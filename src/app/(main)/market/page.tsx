@@ -103,7 +103,7 @@ export default function MarketSummaryPage() {
         fixLeftEdge: true,
         fixRightEdge: true,
       },
-      height: 300,
+      height: 240,
     });
 
     const areaSeries = chart.addSeries(AreaSeries, {
@@ -154,21 +154,21 @@ export default function MarketSummaryPage() {
   const isUp = pctChange >= 0;
 
   return (
-    <div style={{ background: '#ffffff', minHeight: '100vh', padding: '1.5rem' }}>
+    <div style={{ background: 'var(--bg-color)', minHeight: '100vh', padding: '12px' }}>
       
       {/* Title Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+        <h2 style={{ fontSize: 'var(--fs-lg)', fontWeight: 600, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
           Market summary
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#0f172a' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-primary)' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
         </h2>
       </div>
 
       {/* Main Two Column Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '1.5rem', marginBottom: '1.5rem' }}>
+      <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '12px', marginBottom: '12px' }}>
         
         {/* Left Column: S&P 500 / Active Chart Card */}
-        <div style={{ border: '1px solid #f1f5f9', borderRadius: '16px', padding: '1.5rem', background: '#ffffff', position: 'relative' }}>
+        <div style={{ border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px', background: 'var(--surface-color)', position: 'relative' }}>
           
           {/* Active Index Header Info */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
@@ -207,7 +207,7 @@ export default function MarketSummaryPage() {
           </div>
 
           {/* Chart Wrapper */}
-          <div style={{ position: 'relative', width: '100%', height: '300px' }}>
+          <div style={{ position: 'relative', width: '100%', height: '240px' }}>
             {loadingChart && (
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'rgba(255,255,255,0.7)', zIndex: 10 }}>
                 Loading...
@@ -219,8 +219,8 @@ export default function MarketSummaryPage() {
         </div>
 
         {/* Right Column: Major Indices List */}
-        <div style={{ border: '1px solid #f1f5f9', borderRadius: '16px', padding: '1.5rem', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#0f172a', margin: '0 0 1rem 0' }}>Major indices</h3>
+        <div style={{ border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '12px', background: 'var(--surface-color)', display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ fontSize: 'var(--fs-base)', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 12px 0' }}>Major indices</h3>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
             {MAJOR_INDICES_CONFIG.map(idx => {
@@ -293,10 +293,10 @@ export default function MarketSummaryPage() {
       </div>
 
       {/* Bottom Row: Smaller Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+      <div className="mobile-col" style={{ display: 'flex', gap: '8px' }}>
         
         {/* Crypto Card */}
-        <div style={{ border: '1px solid #f1f5f9', borderRadius: '12px', padding: '1rem', background: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ flex: 1, border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '8px', background: 'var(--surface-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
           </div>
@@ -310,7 +310,7 @@ export default function MarketSummaryPage() {
         </div>
 
         {/* US Dollar Index Card */}
-        <div style={{ border: '1px solid #f1f5f9', borderRadius: '12px', padding: '1rem', background: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ flex: 1, border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '8px', background: 'var(--surface-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>$</span>
           </div>
@@ -328,7 +328,7 @@ export default function MarketSummaryPage() {
         </div>
 
         {/* US 10Y Yield Card */}
-        <div style={{ border: '1px solid #f1f5f9', borderRadius: '12px', padding: '1rem', background: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ flex: 1, border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '8px', background: 'var(--surface-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
           </div>

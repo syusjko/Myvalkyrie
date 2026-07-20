@@ -43,40 +43,39 @@ export default function AIVotingBox() {
   if (loading) return <div style={{ padding: '1rem', color: 'var(--text-secondary)', textAlign: 'center' }}>Loading AI Consensus...</div>;
 
   return (
-    <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem' }}>
-      <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        🤖 AI Sentiment Consensus (Top Trending)
+    <div style={{ marginTop: '0', paddingTop: '0', paddingBottom: 'var(--sp-sm)' }}>
+      <h3 style={{ margin: '0 0 4px 0', fontSize: 'var(--fs-sm)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', fontWeight: '600' }}>
+        AI Sentiment Consensus
       </h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '4px 0' }} className="hidden-scrollbar">
         {symbols.map(sym => {
           const data = votes[sym];
           if (!data) return null;
           
           const score = data.gaugeScore;
-          // score is 0-100. 100 = 100% Buy, 0 = 100% Sell.
           const buyPct = score;
           const sellPct = 100 - score;
           
-          let color = '#eab308'; // neutral yellow
-          if (score >= 60) color = '#ccff00'; // green
-          if (score <= 40) color = '#ef4444'; // red
+          let color = 'var(--text-secondary)';
+          if (score >= 60) color = 'var(--green)';
+          if (score <= 40) color = 'var(--red)';
 
           return (
-            <div key={sym} style={{ background: '#ccff00', padding: '12px', borderRadius: '8px', border: '1px solid #ccff00' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '1rem', color: '#000' }}>{sym}</span>
-                <span style={{ fontWeight: 'bold', fontSize: '0.8rem', color: score <= 40 ? '#dc2626' : '#000', padding: '2px 6px', background: 'rgba(0,0,0,0.05)', borderRadius: '4px', border: '1px solid rgba(0,0,0,0.2)' }}>
+            <div key={sym} style={{ background: 'var(--surface-color)', padding: '4px 8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', minWidth: '150px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', alignItems: 'center' }}>
+                <span style={{ fontWeight: '500', fontSize: 'var(--fs-sm)', color: 'var(--text-primary)' }}>{sym}</span>
+                <span style={{ fontWeight: '500', fontSize: 'var(--fs-xs)', color: color }}>
                   {data.sentimentLabel}
                 </span>
               </div>
               
-              <div style={{ width: '100%', height: '8px', background: '#dc2626', borderRadius: '4px', overflow: 'hidden', display: 'flex', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.2)' }}>
-                <div style={{ width: `${buyPct}%`, height: '100%', background: '#000', transition: 'width 0.5s ease' }}></div>
+              <div style={{ width: '100%', height: '4px', background: 'var(--red)', borderRadius: '2px', overflow: 'hidden', display: 'flex' }}>
+                <div style={{ width: `${buyPct}%`, height: '100%', background: 'var(--green)', transition: 'width 0.5s ease' }}></div>
               </div>
               
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '0.75rem', fontWeight: 'bold' }}>
-                <span style={{ color: '#000' }}>{buyPct.toFixed(0)}% BULL</span>
-                <span style={{ color: '#dc2626' }}>{sellPct.toFixed(0)}% BEAR</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: 'var(--fs-xs)', fontWeight: '500' }}>
+                <span style={{ color: 'var(--green)' }}>{buyPct.toFixed(0)}% BULL</span>
+                <span style={{ color: 'var(--red)' }}>{sellPct.toFixed(0)}% BEAR</span>
               </div>
             </div>
           );

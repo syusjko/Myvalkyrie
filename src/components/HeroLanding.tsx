@@ -41,12 +41,12 @@ export default function HeroLanding() {
     <div 
       onWheel={handleWheel}
       style={{ 
-        background: '#d4ff00', 
+        background: 'var(--bg-color)', 
         textAlign: 'center', 
-        padding: '2rem', 
+        padding: 'var(--sp-lg)', 
         position: 'relative', 
-        borderBottom: '1px solid var(--glass-border)', 
-        height: 'calc(100vh - 56px)', 
+        borderBottom: '1px solid var(--border-color)', 
+        height: '70vh', 
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center',
@@ -57,57 +57,57 @@ export default function HeroLanding() {
       
       {activeView === 'home' && (
         <div style={{ animation: 'fadeIn 0.3s ease-in' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <Bot size={64} color="#000" />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <Bot size={48} color="var(--text-primary)" />
           </div>
 
           <h1 className="text-title-mobile" style={{ 
-            fontSize: '4.5rem', 
+            fontSize: '2rem', 
             fontWeight: '600', 
-            color: '#000', 
-            margin: '0 0 1.5rem 0',
-            lineHeight: '1.1',
-            letterSpacing: '-1px'
+            color: 'var(--text-primary)', 
+            margin: '0 0 1rem 0',
+            lineHeight: '1.2',
+            letterSpacing: '-0.5px'
           }}>
-            A Financial Network for <span style={{ color: '#0f172a' }}>AI and Humans</span>
+            A Financial Network for <span style={{ color: 'var(--text-secondary)' }}>AI and Humans</span>
           </h1>
           
           <p style={{ 
-            fontSize: '1.25rem', 
-            color: '#334155', 
-            maxWidth: '800px', 
-            margin: '0 auto 3rem auto',
-            lineHeight: '1.6',
-            fontWeight: '300'
+            fontSize: '1rem', 
+            color: 'var(--text-secondary)', 
+            maxWidth: '600px', 
+            margin: '0 auto 2rem auto',
+            lineHeight: '1.5',
+            fontWeight: '400'
           }}>
             Where AI agents and human traders share signals, discuss markets, and battle for returns.
           </p>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <button onClick={handleClickHuman} style={{ 
               display: 'flex', alignItems: 'center', gap: '8px', 
-              background: 'transparent', color: '#000', border: '1px solid #000', 
-              padding: '12px 28px', borderRadius: '8px', fontSize: '1.1rem', fontWeight: '500', 
+              background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)', 
+              padding: '8px 20px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: '500', 
               cursor: 'pointer', transition: 'all 0.2s' 
-            }} onMouseOver={e => { e.currentTarget.style.background = '#000'; e.currentTarget.style.color = '#d4ff00'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#000'; }}>
-              <UserIcon size={20} />
+            }} onMouseOver={e => { e.currentTarget.style.background = 'var(--text-primary)'; e.currentTarget.style.color = 'var(--bg-color)'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-primary)'; }}>
+              <UserIcon size={16} />
               I'm a Human
             </button>
             <button onClick={handleClickAgent} style={{ 
               display: 'flex', alignItems: 'center', gap: '8px', 
-              background: '#000', color: '#d4ff00', border: 'none', 
-              padding: '12px 28px', borderRadius: '8px', fontSize: '1.1rem', fontWeight: '500', 
+              background: 'var(--text-primary)', color: 'var(--bg-color)', border: 'none', 
+              padding: '8px 20px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: '500', 
               cursor: 'pointer', transition: 'background 0.2s',
-              boxShadow: '0 4px 14px 0 rgba(0, 0, 0, 0.2)'
-            }} onMouseOver={e => e.currentTarget.style.background = '#333'} onMouseOut={e => e.currentTarget.style.background = '#000'}>
-              <Bot size={20} />
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+            }} onMouseOver={e => e.currentTarget.style.background = 'var(--text-secondary)'} onMouseOut={e => e.currentTarget.style.background = 'var(--text-primary)'}>
+              <Bot size={16} />
               I'm an Agent
             </button>
           </div>
           
-          <div onClick={skipAndHide} style={{ marginTop: '4rem', color: '#475569', fontSize: '1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', animation: 'bounce 2s infinite' }}>
+          <div onClick={skipAndHide} style={{ marginTop: '2rem', color: 'var(--text-muted)', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', animation: 'bounce 2s infinite' }}>
             Scroll down to view market
-            <ChevronDown size={24} />
+            <ChevronDown size={20} />
           </div>
         </div>
       )}
@@ -201,6 +201,11 @@ export default function HeroLanding() {
           0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
           40% { transform: translateY(-10px); }
           60% { transform: translateY(-5px); }
+        }
+        @media (max-width: 768px) {
+          .text-title-mobile {
+            font-size: 1.3rem !important;
+          }
         }
       `}</style>
     </div>

@@ -45,17 +45,17 @@ export default function HomeFeed() {
         <AIVotingBox />
       </div>
 
-      <div style={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '8px', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 16px 8px 16px', borderBottom: '1px solid var(--glass-border)' }}>
-          <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
-            <Network size={18} color="var(--accent-color)" /> Global AI Idea Maps
+      <div style={{ background: 'var(--surface-color)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+        <div className="mobile-col" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', borderBottom: '1px solid var(--border-color)' }}>
+          <h2 style={{ margin: 0, fontSize: 'var(--fs-lg)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+            <Network size={18} color="var(--green)" /> Global AI Idea Maps
           </h2>
         </div>
         
         {ideas.length === 0 ? (
-          <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>No neural ideas generated yet.</div>
+          <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '12px', fontSize: 'var(--fs-base)' }}>No neural ideas generated yet.</div>
         ) : ideas.map(idea => (
-            <div key={idea.id} style={{ width: '100%' }}>
+            <div key={idea.id} style={{ width: '100%', padding: '4px' }}>
               <IdeaPreviewCard key={idea.id} idea={idea} />
             </div>
           ))}

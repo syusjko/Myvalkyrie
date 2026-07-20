@@ -192,7 +192,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
         fixLeftEdge: true,
         fixRightEdge: true,
       },
-      height: 360,
+      height: 250,
     });
 
     const areaSeries = chart.addSeries(AreaSeries, {
@@ -383,8 +383,8 @@ export default function AssetClient({ symbol }: { symbol: string }) {
         </div>
 
         {/* Seamless Chart Area */}
-        <div style={{ position: 'relative', width: '100%', marginBottom: '2rem' }}>
-          <div ref={chartContainerRef} style={{ width: '100%', height: '360px' }} />
+        <div style={{ position: 'relative', width: '100%', marginBottom: '16px' }}>
+          <div ref={chartContainerRef} style={{ width: '100%', height: '250px' }} />
           
           {/* Chart Controls Footer */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
@@ -427,15 +427,15 @@ export default function AssetClient({ symbol }: { symbol: string }) {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+        <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '16px' }}>
           
           {/* Left Column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div className="mobile-col" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
             {/* Key Data Points */}
-            <div style={{ background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>
-              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Key data points</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+            <div style={{ background: 'var(--surface-color)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', padding: '12px' }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: 'var(--fs-lg)' }}>Key data points</h3>
+              <div className="mobile-col" style={{ display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Market Cap</div>
                   <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>$ {((symbol.charCodeAt(0) * 13) % 900 + 100).toFixed(1)}B</div>
@@ -452,8 +452,8 @@ export default function AssetClient({ symbol }: { symbol: string }) {
             </div>
 
             {/* Profile */}
-            <div style={{ background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>
-              <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Info size={20} /> Profile</h3>
+            <div style={{ background: 'var(--surface-color)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', padding: '12px' }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: 'var(--fs-lg)', display: 'flex', alignItems: 'center', gap: '8px' }}><Info size={16} /> Profile</h3>
               <p style={{ lineHeight: '1.6', color: 'var(--text-secondary)', fontSize: '1rem' }}>
                 {symbol} is a prominent asset within the global financial markets. Monitored closely by millions of traders and autonomous AI agents worldwide, it represents significant economic value and market sentiment. The data above is actively tracked and analyzed by our AI network.
               </p>
@@ -461,8 +461,8 @@ export default function AssetClient({ symbol }: { symbol: string }) {
 
             {/* AI Investors (Holders) */}
             <div>
-              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>AI Investors</h3>
-              <div style={{ background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: 'var(--fs-lg)' }}>AI Investors</h3>
+              <div style={{ background: 'var(--surface-color)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
                 {holders.length === 0 ? (
                   <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>No AI is currently holding this asset.</div>
                 ) : (
@@ -561,12 +561,12 @@ export default function AssetClient({ symbol }: { symbol: string }) {
             {!symbol.startsWith('^') && (
               <div 
                 onClick={() => setIsModalOpen(true)}
-                style={{ background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--glass-border)', padding: '1.5rem', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
+                style={{ background: 'var(--surface-color)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', padding: '12px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
                 onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                 onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                  <Activity size={20} /> AI Collective Sentiment
+                <h3 style={{ margin: '0 0 12px 0', fontSize: 'var(--fs-lg)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <Activity size={16} /> AI Collective Sentiment
                 </h3>
                 
                 {/* Dynamic Speedometer */}
@@ -594,9 +594,9 @@ export default function AssetClient({ symbol }: { symbol: string }) {
             {/* Removed Order Book per user request */}
 
             {/* News */}
-            <div style={{ background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>
-              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Latest News</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ background: 'var(--surface-color)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', padding: '12px' }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: 'var(--fs-lg)' }}>Latest News</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {news.length === 0 ? (
                   <div style={{ color: 'var(--text-secondary)' }}>No recent news found for {symbol}.</div>
                 ) : (

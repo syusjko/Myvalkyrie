@@ -139,12 +139,12 @@ const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div style={{ background: 'var(--surface-color)', border: '1px solid var(--glass-border)', padding: '10px', borderRadius: '8px', color: '#fff', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', zIndex: 100 }}>
-        <p style={{ fontWeight: 'bold', margin: '0 0 5px 0', fontSize: '1.1rem' }}>{data.name || 'Unknown'}</p>
-        <p style={{ margin: '0 0 2px 0', fontSize: '0.9rem' }}>Traded Volume: <span style={{ fontWeight: 'bold' }}>${(data.size || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></p>
+      <div style={{ background: 'var(--surface-color)', border: '1px solid var(--border-color)', padding: '4px 8px', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', zIndex: 100 }}>
+        <p style={{ fontWeight: '600', margin: '0 0 2px 0', fontSize: 'var(--fs-sm)' }}>{data.name || 'Unknown'}</p>
+        <p style={{ margin: '0 0 2px 0', fontSize: 'var(--fs-xs)' }}>Vol: <span style={{ fontWeight: '500' }}>${(data.size || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></p>
         {typeof data.change === 'number' && (
-          <p style={{ margin: 0, fontSize: '0.9rem', color: data.change >= 0 ? '#10b981' : '#ef4444' }}>
-            Change: <span style={{ fontWeight: 'bold' }}>{data.change > 0 ? '+' : ''}{data.change.toFixed(2)}%</span>
+          <p style={{ margin: 0, fontSize: 'var(--fs-xs)', color: data.change >= 0 ? 'var(--green)' : 'var(--red)' }}>
+            Chg: <span style={{ fontWeight: '500' }}>{data.change > 0 ? '+' : ''}{data.change.toFixed(2)}%</span>
           </p>
         )}
       </div>
@@ -203,26 +203,26 @@ export default function TreemapSummary({ type = 'volume', hideDetailsButton = fa
   }, [data, details]);
 
   return (
-    <div style={{ width: '100%', height: '420px', background: 'var(--bg-color)', borderRadius: '0', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', overflow: 'hidden', display: 'flex', flexDirection: 'column', marginBottom: '0.5rem', transition: 'box-shadow 0.2s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'} onMouseOut={e => e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'}>
-      <div style={{ padding: '8px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-color)', borderBottom: '1px solid var(--glass-border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <h2 style={{ fontSize: '1.2rem', margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div style={{ width: '100%', height: '260px', background: 'var(--bg-color)', border: '1px solid var(--border-color)', overflow: 'hidden', display: 'flex', flexDirection: 'column', marginBottom: 'var(--sp-sm)' }}>
+      <div style={{ padding: '4px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)', borderBottom: '1px solid var(--border-color)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h2 style={{ fontSize: 'var(--fs-sm)', margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', fontWeight: '600' }}>
              {title}
           </h2>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{subtitle}</span>
+          <span className="hide-on-mobile" style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)' }}>{subtitle}</span>
         </div>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', gap: '15px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-secondary)', display: 'flex', gap: '8px', alignItems: 'center' }}>
             <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-              <div style={{ width: '12px', height: '12px', background: '#10b981', borderRadius: '2px' }}></div> Positive
+              <div style={{ width: '8px', height: '8px', background: 'var(--green)', borderRadius: '2px' }}></div> Positive
             </span>
             <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-               <div style={{ width: '12px', height: '12px', background: '#ef4444', borderRadius: '2px' }}></div> Negative
+               <div style={{ width: '8px', height: '8px', background: 'var(--red)', borderRadius: '2px' }}></div> Negative
             </span>
           </div>
           {!hideDetailsButton && (
-            <Link href={`/market/heatmap-details?type=${type}`} style={{ fontSize: '0.85rem', padding: '6px 14px', background: 'var(--surface-color)', color: 'var(--text-primary)', border: '1px solid var(--glass-border)', borderRadius: '8px', textDecoration: 'none', fontWeight: '500', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }} onMouseOver={e => {e.currentTarget.style.background = 'rgba(0,0,0,0.02)'; e.currentTarget.style.borderColor = 'var(--accent-color)';}} onMouseOut={e => {e.currentTarget.style.background = 'var(--surface-color)'; e.currentTarget.style.borderColor = 'var(--glass-border)';}}>
-              View Details <span style={{fontSize: '1rem'}}>→</span>
+            <Link href={`/market/heatmap-details?type=${type}`} style={{ fontSize: 'var(--fs-xs)', padding: '2px 8px', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', textDecoration: 'none', fontWeight: '500', display: 'flex', alignItems: 'center' }}>
+              Details →
             </Link>
           )}
         </div>
