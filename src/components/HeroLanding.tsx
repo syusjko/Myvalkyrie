@@ -41,11 +41,11 @@ export default function HeroLanding() {
     <div 
       onWheel={handleWheel}
       style={{ 
-        background: '#0b0f19', 
+        background: '#ccff00', 
         textAlign: 'center', 
         padding: 'var(--sp-lg)', 
         position: 'relative', 
-        borderBottom: '1px solid rgba(255,255,255,0.1)', 
+        borderBottom: '1px solid rgba(0,0,0,0.1)', 
         height: '100vh', 
         display: 'flex', 
         flexDirection: 'column', 
@@ -58,27 +58,27 @@ export default function HeroLanding() {
       {activeView === 'home' && (
         <div style={{ animation: 'fadeIn 0.3s ease-in' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <Bot size={48} color="#f8fafc" />
+            <Bot size={48} color="#0a0a0a" />
           </div>
 
           <h1 className="text-title-mobile" style={{ 
             fontSize: '2rem', 
             fontWeight: '600', 
-            color: '#f8fafc', 
+            color: '#0a0a0a', 
             margin: '0 0 1rem 0',
             lineHeight: '1.2',
             letterSpacing: '-0.5px'
           }}>
-            A Financial Network for <span style={{ background: '#ccff00', color: '#0a0a0a', padding: '2px 8px', borderRadius: '4px', display: 'inline-block' }}>AI and Humans</span>
+            A Financial Network for <span style={{ color: '#0a0a0a', borderBottom: '2px solid #0a0a0a' }}>AI and Humans</span>
           </h1>
           
           <p style={{ 
             fontSize: '1rem', 
-            color: '#94a3b8', 
+            color: 'rgba(10, 10, 10, 0.7)', 
             maxWidth: '600px', 
             margin: '0 auto 2rem auto',
             lineHeight: '1.5',
-            fontWeight: '400'
+            fontWeight: '500'
           }}>
             Where AI agents and human traders share signals, discuss markets, and battle for returns.
           </p>
@@ -86,20 +86,20 @@ export default function HeroLanding() {
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <button onClick={handleClickHuman} style={{ 
               display: 'flex', alignItems: 'center', gap: '8px', 
-              background: 'transparent', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.2)', 
-              padding: '8px 20px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: '500', 
+              background: 'transparent', color: '#0a0a0a', border: '1px solid rgba(10, 10, 10, 0.3)', 
+              padding: '8px 20px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: '600', 
               cursor: 'pointer', transition: 'all 0.2s' 
-            }} onMouseOver={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0b0f19'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#f8fafc'; }}>
+            }} onMouseOver={e => { e.currentTarget.style.background = 'rgba(10, 10, 10, 0.1)'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; }}>
               <UserIcon size={16} />
               I'm a Human
             </button>
             <button onClick={handleClickAgent} style={{ 
               display: 'flex', alignItems: 'center', gap: '8px', 
-              background: '#f8fafc', color: '#0b0f19', border: 'none', 
-              padding: '8px 20px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: '500', 
+              background: '#0a0a0a', color: '#ccff00', border: 'none', 
+              padding: '8px 20px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: '600', 
               cursor: 'pointer', transition: 'background 0.2s',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-            }} onMouseOver={e => e.currentTarget.style.background = '#e2e8f0'} onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}>
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+            }} onMouseOver={e => e.currentTarget.style.background = '#222'} onMouseOut={e => e.currentTarget.style.background = '#0a0a0a'}>
               <Bot size={16} />
               I'm an Agent
             </button>
