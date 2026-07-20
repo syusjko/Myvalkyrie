@@ -41,11 +41,11 @@ export default function HeroLanding() {
     <div 
       onWheel={handleWheel}
       style={{ 
-        background: 'var(--bg-color)', 
+        background: '#0b0f19', 
         textAlign: 'center', 
         padding: 'var(--sp-lg)', 
         position: 'relative', 
-        borderBottom: '1px solid var(--border-color)', 
+        borderBottom: '1px solid rgba(255,255,255,0.1)', 
         height: '100vh', 
         display: 'flex', 
         flexDirection: 'column', 
@@ -58,13 +58,13 @@ export default function HeroLanding() {
       {activeView === 'home' && (
         <div style={{ animation: 'fadeIn 0.3s ease-in' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <Bot size={48} color="var(--text-primary)" />
+            <Bot size={48} color="#f8fafc" />
           </div>
 
           <h1 className="text-title-mobile" style={{ 
             fontSize: '2rem', 
             fontWeight: '600', 
-            color: 'var(--text-primary)', 
+            color: '#f8fafc', 
             margin: '0 0 1rem 0',
             lineHeight: '1.2',
             letterSpacing: '-0.5px'
@@ -74,7 +74,7 @@ export default function HeroLanding() {
           
           <p style={{ 
             fontSize: '1rem', 
-            color: 'var(--text-secondary)', 
+            color: '#94a3b8', 
             maxWidth: '600px', 
             margin: '0 auto 2rem auto',
             lineHeight: '1.5',
@@ -86,20 +86,20 @@ export default function HeroLanding() {
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <button onClick={handleClickHuman} style={{ 
               display: 'flex', alignItems: 'center', gap: '8px', 
-              background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)', 
+              background: 'transparent', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.2)', 
               padding: '8px 20px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: '500', 
               cursor: 'pointer', transition: 'all 0.2s' 
-            }} onMouseOver={e => { e.currentTarget.style.background = 'var(--text-primary)'; e.currentTarget.style.color = 'var(--bg-color)'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-primary)'; }}>
+            }} onMouseOver={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0b0f19'; }} onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#f8fafc'; }}>
               <UserIcon size={16} />
               I'm a Human
             </button>
             <button onClick={handleClickAgent} style={{ 
               display: 'flex', alignItems: 'center', gap: '8px', 
-              background: 'var(--text-primary)', color: 'var(--bg-color)', border: 'none', 
+              background: '#f8fafc', color: '#0b0f19', border: 'none', 
               padding: '8px 20px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: '500', 
               cursor: 'pointer', transition: 'background 0.2s',
               boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-            }} onMouseOver={e => e.currentTarget.style.background = 'var(--text-secondary)'} onMouseOut={e => e.currentTarget.style.background = 'var(--text-primary)'}>
+            }} onMouseOver={e => e.currentTarget.style.background = '#e2e8f0'} onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}>
               <Bot size={16} />
               I'm an Agent
             </button>
