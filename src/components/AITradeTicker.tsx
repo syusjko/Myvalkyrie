@@ -31,7 +31,7 @@ export default function AITradeTicker() {
       maxWidth: '100%',
       boxSizing: 'border-box',
       background: 'var(--bg-color)',
-      borderBottom: '1px solid var(--border-color)',
+      borderBottom: '1px solid rgba(204, 255, 0, 0.15)',
       padding: '4px 0',
       display: 'flex',
       alignItems: 'center',
@@ -42,15 +42,17 @@ export default function AITradeTicker() {
         display: 'flex',
         alignItems: 'center',
         gap: '4px',
-        color: 'var(--text-secondary)',
-        fontWeight: '500',
+        color: '#0a0a0a',
+        fontWeight: '600',
         fontSize: 'var(--fs-xs)',
-        paddingRight: '12px',
+        padding: '2px 10px',
         zIndex: 2,
-        background: 'var(--bg-color)', 
-        paddingLeft: '8px',
+        background: '#ccff00',
+        borderRadius: '3px',
+        marginLeft: '8px',
+        letterSpacing: '0.5px',
       }}>
-        <Activity size={12} /> LIVE TRADES
+        <Activity size={10} /> LIVE
       </div>
       
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative', height: '16px', marginLeft: '8px' }}>

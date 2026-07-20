@@ -317,11 +317,11 @@ export default function AgentClient({ user }: { user: any }) {
               </div>
             </div>
 
-            <div style={{ fontSize: '1.05rem', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
+            <div style={{ fontSize: 'var(--fs-base)', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
               {user.bio || "No bio provided. This agent is mysterious."}
             </div>
             
-            <div style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+            <div style={{ marginTop: '8px', fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
               Joined {new Date(user.createdAt).toLocaleDateString()}
             </div>
           </div>
@@ -329,19 +329,18 @@ export default function AgentClient({ user }: { user: any }) {
           {/* Action Button */}
           <div style={{ zIndex: 1 }}>
             <button style={{ 
-              background: 'linear-gradient(135deg, #3b82f6, #2563eb)', 
-              color: 'var(--text-primary)', 
-              padding: '12px 32px', 
-              borderRadius: '24px', 
-              fontWeight: 'bold', 
-              fontSize: '1.1rem',
+              background: 'var(--accent-color)', 
+              color: '#fff', 
+              padding: '6px 20px', 
+              borderRadius: 'var(--radius-md)', 
+              fontWeight: 500, 
+              fontSize: 'var(--fs-sm)',
               cursor: 'pointer',
               border: 'none',
-              boxShadow: '0 8px 20px rgba(59, 130, 246, 0.4)',
-              transition: 'transform 0.2s'
+              transition: 'opacity 0.2s'
             }}
-            onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-            onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+            onMouseOver={e => e.currentTarget.style.opacity = '0.8'}
+            onMouseOut={e => e.currentTarget.style.opacity = '1'}
             >
               Follow
             </button>
@@ -349,19 +348,19 @@ export default function AgentClient({ user }: { user: any }) {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '2rem', borderBottom: '1px solid var(--glass-border)', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', gap: '0', borderBottom: '1px solid var(--border-color)', marginBottom: '16px' }}>
           {['Ideas', 'Portfolio', 'Trades'].map(tab => (
             <div 
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{ 
-                padding: '1rem 0', 
-                fontWeight: 'bold', 
-                fontSize: '1.1rem',
+                padding: '8px 16px', 
+                fontWeight: 500, 
+                fontSize: 'var(--fs-sm)',
                 cursor: 'pointer',
-                color: activeTab === tab ? 'var(--text-primary)' : 'var(--text-secondary)',
-                borderBottom: activeTab === tab ? '3px solid var(--text-primary)' : '3px solid transparent',
-                transition: 'all 0.2s'
+                color: activeTab === tab ? 'var(--text-primary)' : 'var(--text-muted)',
+                borderBottom: activeTab === tab ? '2px solid var(--accent-color)' : '2px solid transparent',
+                transition: 'all 0.15s'
               }}
             >
               {tab}
@@ -386,7 +385,7 @@ export default function AgentClient({ user }: { user: any }) {
 
           {/* PORTFOLIO TAB */}
           {activeTab === 'Portfolio' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               
               {/* Performance Chart */}
               <div style={{ ...glassStyle, padding: '12px' }}>
@@ -498,11 +497,11 @@ export default function AgentClient({ user }: { user: any }) {
               )}
 
               {/* Stack: Pie Chart & Table */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 
                 {/* Pie Chart */}
-                <div style={{ ...glassStyle, padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <h3 style={{ margin: '0 0 1.5rem 0', alignSelf: 'flex-start', fontSize: '1.3rem', letterSpacing: '-0.5px' }}>Asset Allocation</h3>
+                <div style={{ ...glassStyle, padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <h3 style={{ margin: '0 0 12px 0', alignSelf: 'flex-start', fontSize: 'var(--fs-lg)' }}>Asset Allocation</h3>
                   <div style={{ width: '100%', height: '240px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -525,10 +524,10 @@ export default function AgentClient({ user }: { user: any }) {
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', marginTop: '1.5rem' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', marginTop: '12px' }}>
                     {pieData.map((entry, index) => (
-                      <div key={entry.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', background: 'var(--glass-bg)', padding: '6px 12px', borderRadius: '16px' }}>
-                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: PIE_COLORS[index % PIE_COLORS.length], boxShadow: `0 0 8px ${PIE_COLORS[index % PIE_COLORS.length]}` }}></div>
+                      <div key={entry.name} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--fs-xs)', padding: '4px 8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: PIE_COLORS[index % PIE_COLORS.length] }}></div>
                         {entry.name}
                       </div>
                     ))}
@@ -536,23 +535,23 @@ export default function AgentClient({ user }: { user: any }) {
                 </div>
 
                 {/* Holdings Table */}
-                <div style={{ ...glassStyle, overflow: 'hidden' }}>
-                  <div style={{ padding: '2rem 2rem 1rem' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.3rem', letterSpacing: '-0.5px' }}>Current Holdings</h3>
+                <div style={{ ...glassStyle, overflow: 'hidden', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
+                  <div style={{ padding: '10px 12px' }}>
+                    <h3 style={{ margin: 0, fontSize: 'var(--fs-lg)' }}>Current Holdings</h3>
                   </div>
                   {user.portfolio.length === 0 ? (
                     <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '4rem' }}>No assets in portfolio.</div>
                   ) : (
-                    <div className="table-responsive">
-                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px', fontSize: '0.95rem' }}>
+                    <div className="mobile-scroll">
+                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '700px', fontSize: 'var(--fs-sm)' }}>
                         <thead>
-                          <tr style={{ background: 'var(--glass-bg)', whiteSpace: 'nowrap' }}>
+                          <tr style={{ whiteSpace: 'nowrap' }}>
                             <th style={{ padding: '1.2rem 2rem', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-secondary)', fontWeight: '600' }}>Ticker (Qty)</th>
-                            <th style={{ padding: '1.2rem 2rem', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-secondary)', fontWeight: '600' }}>Current / Avg Price</th>
-                            <th style={{ padding: '1.2rem 2rem', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-secondary)', fontWeight: '600' }}>P&L (%)</th>
-                            <th style={{ padding: '1.2rem 2rem', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-secondary)', fontWeight: '600' }}>Value</th>
-                            <th style={{ padding: '1.2rem 2rem', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-secondary)', fontWeight: '600' }}>Day Change (%)</th>
-                            <th style={{ padding: '1.2rem 2rem', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-secondary)', fontWeight: '600' }}>Weight</th>
+                            <th style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontWeight: 500, fontSize: 'var(--fs-xs)' }}>Current / Avg Price</th>
+                            <th style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontWeight: 500, fontSize: 'var(--fs-xs)' }}>P&L (%)</th>
+                            <th style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontWeight: 500, fontSize: 'var(--fs-xs)' }}>Value</th>
+                            <th style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontWeight: 500, fontSize: 'var(--fs-xs)' }}>Day Change (%)</th>
+                            <th style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontWeight: 500, fontSize: 'var(--fs-xs)' }}>Weight</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -562,21 +561,21 @@ export default function AgentClient({ user }: { user: any }) {
                               <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>Cash</div>
                               <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Available Funds</div>
                             </td>
-                            <td style={{ padding: '1.2rem 2rem' }}>
+                            <td style={{ padding: '8px 12px' }}>
                               <div style={{ fontWeight: '500' }}>$1.00</div>
                             </td>
                             <td style={{ padding: '1.2rem 2rem', color: 'var(--text-secondary)' }}>
                               <div>$0.00</div>
                               <div style={{ fontSize: '0.85rem' }}>0.00%</div>
                             </td>
-                            <td style={{ padding: '1.2rem 2rem' }}>
+                            <td style={{ padding: '8px 12px' }}>
                               <div style={{ fontWeight: '800' }}>${user.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                             </td>
                             <td style={{ padding: '1.2rem 2rem', color: 'var(--text-secondary)' }}>
                               <div>$0.00</div>
                               <div style={{ fontSize: '0.85rem' }}>0.00%</div>
                             </td>
-                            <td style={{ padding: '1.2rem 2rem' }}>
+                            <td style={{ padding: '8px 12px' }}>
                               {(() => {
                                 const totalPortfolioValue = user.balance + user.portfolio.reduce((sum: number, p: any) => {
                                   const pPrice = marketDetails[p.symbol]?.price || p.avgPrice;
