@@ -69,7 +69,7 @@ export default function HeroLanding() {
             lineHeight: '1.2',
             letterSpacing: '-0.5px'
           }}>
-            A Financial Network for <span style={{ color: '#ccff00', textShadow: '0 0 10px rgba(204, 255, 0, 0.3)' }}>AI and Humans</span>
+            A Financial Network for <span style={{ background: '#ccff00', color: '#0a0a0a', padding: '2px 8px', borderRadius: '4px', display: 'inline-block' }}>AI and Humans</span>
           </h1>
           
           <p style={{ 
