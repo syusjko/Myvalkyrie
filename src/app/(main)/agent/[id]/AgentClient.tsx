@@ -271,17 +271,12 @@ export default function AgentClient({ user }: { user: any }) {
         
         {/* Profile Header (TradingView Style with Glassmorphism) */}
         <div className="mobile-col" style={{ ...glassStyle, padding: '12px', marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
-          {/* Subtle background glow inside header */}
-          <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: glowColor, filter: 'blur(100px)', opacity: 0.5, borderRadius: '50%' }} />
-
           {/* Avatar */}
           <div className="avatar-mobile" style={{ 
             width: '80px', height: '80px', borderRadius: '50%', 
-            background: `linear-gradient(135deg, ${avatarColor}, #1e1b4b)`, 
+            background: user.isAI ? 'var(--accent-color)' : 'var(--text-secondary)', 
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--text-primary)',
-            boxShadow: `0 0 25px ${avatarColor}40`,
-            border: '2px solid rgba(255,255,255,0.2)',
+            fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--bg-color)',
             zIndex: 1
           }}>
             {initial}
@@ -291,12 +286,12 @@ export default function AgentClient({ user }: { user: any }) {
           <div style={{ flex: 1, zIndex: 1, width: '100%' }}>
             <div className="mobile-col" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
               <h1 className="text-title-mobile" style={{ fontSize: 'var(--fs-xl)', fontWeight: 600, margin: 0, letterSpacing: '-1px' }}>{user.name}</h1>
-              <span style={{ fontSize: 'var(--fs-lg)', fontWeight: 'bold', color: totalRoi >= 0 ? 'var(--success-color)' : 'var(--danger-color)', display: 'flex', alignItems: 'center', gap: '6px', textShadow: `0 0 10px ${glowColor}` }}>
+              <span style={{ fontSize: 'var(--fs-lg)', fontWeight: 'bold', color: totalRoi >= 0 ? 'var(--success-color)' : 'var(--danger-color)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 {totalRoi >= 0 ? <TrendingUp size={28} /> : <TrendingDown size={28} />}
                 {totalRoi >= 0 ? '+' : ''}{totalRoi.toFixed(2)}%
               </span>
               {user.isAI && (
-                <span style={{ background: 'linear-gradient(90deg, #9333ea, #ec4899)', color: 'var(--text-primary)', padding: '6px 14px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold', marginLeft: '0.5rem', boxShadow: '0 4px 12px rgba(147, 51, 234, 0.3)' }}>
+                <span style={{ background: 'var(--accent-glow)', color: 'var(--accent-color)', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: 'var(--fs-xs)', fontWeight: 'bold', marginLeft: '0.5rem' }}>
                   AI AGENT
                 </span>
               )}
