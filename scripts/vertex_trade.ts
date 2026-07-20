@@ -47,7 +47,7 @@ async function main() {
   const location = process.env.VERTEX_LOCATION || 'us-central1';
   const url = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.5-flash:generateContent`;
 
-  const prompt = `You are an AI trading agent. Based on the following live market data, decide ONE trade to execute.
+  const prompt = `You are a professional AI trading analyst. Based on the following LIVE market data, decide ONE trade to execute and provide DETAILED reasoning.
 
 LIVE PRICES:
 ${JSON.stringify(pricesData.prices || pricesData, null, 2)}
@@ -58,45 +58,58 @@ ${headlines || "No major news"}
 CURRENT PORTFOLIO:
 ${JSON.stringify(portfolioData, null, 2)}
 
-You must respond with ONLY a valid JSON object (no markdown, no explanation) in this exact format:
+You must respond with ONLY a valid JSON object (no markdown, no explanation) in this EXACT format:
 {
   "symbol": "NVDA",
   "action": "BUY",
   "quantity": 5,
   "reasoning": {
+    "summary": "<150-300 word analytical paragraph explaining your full reasoning like a research analyst. Reference specific data points, numbers, percentages. Structure: thesis statement -> macro analysis -> technical analysis -> convergence explanation -> risk assessment -> conclusion with target.>",
     "nodes": [
-      { "id": "signal1", "name": "<specific data point with numbers>", "group": 1, "val": 2 },
-      { "id": "signal2", "name": "<specific data point>", "group": 1, "val": 2 },
-      { "id": "tech1", "name": "<technical indicator with number>", "group": 2, "val": 3 },
-      { "id": "tech2", "name": "<fundamental data point>", "group": 2, "val": 3 },
-      { "id": "tech3", "name": "<another indicator>", "group": 2, "val": 2 },
-      { "id": "conv1", "name": "<convergence analysis>", "group": 4, "val": 3 },
-      { "id": "conv2", "name": "<risk assessment>", "group": 4, "val": 3 },
+      { "id": "macro1", "name": "<specific macro signal with number>", "group": 1, "val": 2 },
+      { "id": "macro2", "name": "<another macro data point>", "group": 1, "val": 2 },
+      { "id": "macro3", "name": "<third macro factor>", "group": 1, "val": 1 },
+      { "id": "tech1", "name": "<technical indicator with exact number>", "group": 2, "val": 3 },
+      { "id": "tech2", "name": "<fundamental data point with %>", "group": 2, "val": 3 },
+      { "id": "tech3", "name": "<volume or momentum indicator>", "group": 2, "val": 2 },
+      { "id": "tech4", "name": "<another technical signal>", "group": 2, "val": 2 },
+      { "id": "tech5", "name": "<sector or relative strength>", "group": 2, "val": 2 },
+      { "id": "conv1", "name": "<macro convergence label>", "group": 4, "val": 3 },
+      { "id": "conv2", "name": "<technical convergence label>", "group": 4, "val": 3 },
+      { "id": "conv3", "name": "<risk/reward assessment>", "group": 4, "val": 2 },
       { "id": "decision", "name": "BUY NVDA", "group": 3, "val": 5 }
     ],
     "links": [
-      { "source": "signal1", "target": "conv1", "value": 2 },
-      { "source": "signal2", "target": "conv1", "value": 1 },
+      { "source": "macro1", "target": "conv1", "value": 2 },
+      { "source": "macro2", "target": "conv1", "value": 2 },
+      { "source": "macro3", "target": "conv1", "value": 1 },
       { "source": "tech1", "target": "conv2", "value": 3 },
       { "source": "tech2", "target": "conv2", "value": 2 },
-      { "source": "tech3", "target": "conv1", "value": 1 },
-      { "source": "signal1", "target": "conv2", "value": 1 },
+      { "source": "tech3", "target": "conv2", "value": 2 },
+      { "source": "tech4", "target": "conv2", "value": 1 },
+      { "source": "tech5", "target": "conv1", "value": 1 },
+      { "source": "macro1", "target": "conv2", "value": 1 },
+      { "source": "tech3", "target": "conv3", "value": 2 },
+      { "source": "tech1", "target": "conv3", "value": 1 },
       { "source": "conv1", "target": "decision", "value": 3 },
       { "source": "conv2", "target": "decision", "value": 3 },
-      { "source": "tech1", "target": "decision", "value": 2 },
-      { "source": "tech2", "target": "decision", "value": 1 }
+      { "source": "conv3", "target": "decision", "value": 2 },
+      { "source": "tech2", "target": "decision", "value": 2 },
+      { "source": "tech1", "target": "decision", "value": 1 }
     ]
   }
 }
 
-RULES:
-- Use REAL data from the prices/news above in node names (actual numbers, percentages)
-- Include 8-10 nodes across groups 1, 2, 4, 3
-- Include 10-13 cross-connected links
-- Group 1: macro signals, Group 2: technical/fundamental, Group 4: convergence, Group 3: decision
+STRICT RULES:
+- Use REAL data from the prices and news above — reference actual current prices, dollar amounts, percentages
+- MINIMUM 12 nodes: 3 macro (group 1), 5 technical (group 2), 3 convergence (group 4), 1 decision (group 3)
+- MINIMUM 15 links with cross-connections across layers (not just sequential)
+- The "summary" field MUST be 150-300 words of detailed analytical prose — write like a Goldman Sachs research note
+- In the summary, explain the causal chain: what signals you observed, how they interact, why they support the trade
+- Include risk/reward assessment in the summary
 - The decision node name must be "BUY <SYMBOL>" or "SELL <SYMBOL>"
 - Keep quantity reasonable (1-10 shares)
-- Output ONLY JSON, no other text`;
+- Output ONLY JSON, no other text whatsoever`;
 
   let tradeDecision: any;
   try {
@@ -123,27 +136,38 @@ RULES:
       action: "BUY",
       quantity: 3,
       reasoning: {
+        summary: "Initiating a BUY position on AAPL based on a multi-factor confluence of macro and technical signals. The S&P 500 is trading near all-time highs, confirming broad market strength and risk-on appetite among institutional investors. The Federal Reserve has confirmed a rate pause, removing a key overhang for growth equities. On the technical side, AAPL's RSI at 45 sits in neutral territory with room to run, while the 50-day moving average has crossed above the 200-day, forming a golden cross — a classically bullish pattern. Fundamentally, Apple's Services segment continues to deliver outsized growth at +14% year-over-year, diversifying revenue away from hardware cyclicality. The upcoming iPhone cycle is expected to drive a major upgrade wave, with analyst estimates pointing to 15-20% unit growth. These macro and technical signals converge into a bullish outlook: the macro environment is supportive of risk assets, while Apple-specific fundamentals and technicals confirm accumulation. Risk is managed with a stop-loss at $310 (5% below current levels) and a target of $360, providing a favorable risk-reward ratio of approximately 2.5:1. Position sizing at 3 shares keeps exposure conservative relative to the $85K portfolio.",
         nodes: [
-          { id: "macro1", name: "S&P 500 Near ATH", group: 1, val: 2 },
-          { id: "macro2", name: "Fed Pause Confirmed", group: 1, val: 2 },
-          { id: "tech1", name: "AAPL RSI 45 Neutral", group: 2, val: 3 },
-          { id: "tech2", name: "Services Revenue +14%", group: 2, val: 3 },
-          { id: "tech3", name: "iPhone Cycle Upswing", group: 2, val: 2 },
-          { id: "conv1", name: "Macro Supportive", group: 4, val: 3 },
-          { id: "conv2", name: "Fundamentals Strong", group: 4, val: 3 },
+          { id: "macro1", name: "S&P 500 Near All-Time High", group: 1, val: 2 },
+          { id: "macro2", name: "Fed Rate Pause Confirmed", group: 1, val: 2 },
+          { id: "macro3", name: "VIX Below 15 — Low Volatility", group: 1, val: 1 },
+          { id: "tech1", name: "AAPL RSI 45 — Neutral Zone", group: 2, val: 3 },
+          { id: "tech2", name: "Services Revenue +14% YoY", group: 2, val: 3 },
+          { id: "tech3", name: "Golden Cross 50/200 DMA", group: 2, val: 2 },
+          { id: "tech4", name: "iPhone Upgrade Cycle +15-20%", group: 2, val: 2 },
+          { id: "tech5", name: "Institutional Accumulation", group: 2, val: 2 },
+          { id: "conv1", name: "Macro Environment Supportive", group: 4, val: 3 },
+          { id: "conv2", name: "Fundamentals + Technicals Align", group: 4, val: 3 },
+          { id: "conv3", name: "Risk/Reward Ratio 2.5:1", group: 4, val: 2 },
           { id: "decision", name: "BUY AAPL", group: 3, val: 5 }
         ],
         links: [
           { source: "macro1", target: "conv1", value: 2 },
           { source: "macro2", target: "conv1", value: 2 },
+          { source: "macro3", target: "conv1", value: 1 },
           { source: "tech1", target: "conv2", value: 2 },
           { source: "tech2", target: "conv2", value: 3 },
-          { source: "tech3", target: "conv1", value: 1 },
+          { source: "tech3", target: "conv2", value: 2 },
+          { source: "tech4", target: "conv2", value: 1 },
+          { source: "tech5", target: "conv1", value: 1 },
           { source: "macro1", target: "conv2", value: 1 },
+          { source: "tech1", target: "conv3", value: 2 },
+          { source: "tech3", target: "conv3", value: 1 },
           { source: "conv1", target: "decision", value: 3 },
           { source: "conv2", target: "decision", value: 3 },
+          { source: "conv3", target: "decision", value: 2 },
           { source: "tech2", target: "decision", value: 2 },
-          { source: "tech3", target: "decision", value: 1 }
+          { source: "tech4", target: "decision", value: 1 }
         ]
       }
     };

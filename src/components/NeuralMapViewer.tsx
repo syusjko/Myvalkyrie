@@ -9,11 +9,11 @@ const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
 });
 
 const GROUP_COLORS: Record<number, string> = {
-  1: '#7c83db', // input / macro - soft indigo
-  2: '#5ba4cf', // processing / technical - muted sky
-  3: '#5bb98c', // decision - muted green
-  4: '#c9a94e', // convergence / risk - muted gold
-  5: '#c75f5f', // bearish - muted red
+  1: '#7c83db',
+  2: '#5ba4cf',
+  3: '#5bb98c',
+  4: '#c9a94e',
+  5: '#c75f5f',
 };
 
 function getColor(group: number) {
@@ -35,16 +35,15 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     try {
       const parsed = typeof networkData === 'string' ? JSON.parse(networkData) : networkData;
       if (parsed.nodes && parsed.links) return parsed;
-      return { nodes: [{ id: '1', name: 'Analysis', group: 1, val: 2 }], links: [] };
+      return { nodes: [{ id: '1', name: 'Analysis', group: 1, val: 2 }], links: [], summary: '' };
     } catch {
-      return { nodes: [{ id: '1', name: 'Parse Error', group: 1, val: 2 }], links: [] };
+      return { nodes: [{ id: '1', name: 'Parse Error', group: 1, val: 2 }], links: [], summary: '' };
     }
   }, [networkData]);
 
-  // Node positions (computed once, used for hover detection)
+  const summary = graphData.summary || '';
   const positionsRef = useRef(new Map<string, { x: number; y: number; r: number }>());
 
-  // ── Static Canvas Neural Network (compact view) ──
   useEffect(() => {
     if (expanded) return;
     const canvas = canvasRef.current;
@@ -53,8 +52,8 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const W = canvas.parentElement?.clientWidth || 600;
-    const H = 300;
+    const W = canvas.parentElement?.clientWidth || 700;
+    const H = 420;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
     canvas.style.width = W + 'px';
@@ -73,8 +72,8 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     const sortedGroups = Array.from(groups.keys()).sort((a, b) => a - b);
     const colCount = sortedGroups.length || 1;
     const positions = new Map<string, { x: number; y: number; r: number }>();
-    const PAD_X = 70;
-    const PAD_Y = 40;
+    const PAD_X = 80;
+    const PAD_Y = 50;
     const usableW = W - PAD_X * 2;
     const usableH = H - PAD_Y * 2;
 
@@ -83,32 +82,30 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
       const x = PAD_X + (colCount === 1 ? usableW / 2 : (colIdx / (colCount - 1)) * usableW);
       col.forEach((node, rowIdx) => {
         const y = PAD_Y + (col.length === 1 ? usableH / 2 : (rowIdx / (col.length - 1)) * usableH);
-        const r = node.group === 3 ? 18 : (9 + (node.val || 2) * 2);
+        const r = node.group === 3 ? 20 : (10 + (node.val || 2) * 2.5);
         positions.set(node.id, { x, y, r });
       });
     });
     positionsRef.current = positions;
 
-    // Particle state
     const particles: { link: any; progress: number; speed: number }[] = [];
     links.forEach((link: any) => {
       const count = Math.max(1, Math.min(2, link.value || 1));
       for (let i = 0; i < count; i++) {
-        particles.push({ link, progress: Math.random(), speed: 0.002 + Math.random() * 0.002 });
+        particles.push({ link, progress: Math.random(), speed: 0.0015 + Math.random() * 0.002 });
       }
     });
 
     function getCurveCP(src: { x: number; y: number }, tgt: { x: number; y: number }) {
       const dx = tgt.x - src.x;
       const dy = tgt.y - src.y;
-      return { x: (src.x + tgt.x) / 2 + dy * 0.18, y: (src.y + tgt.y) / 2 - dx * 0.18 };
+      return { x: (src.x + tgt.x) / 2 + dy * 0.2, y: (src.y + tgt.y) / 2 - dx * 0.2 };
     }
 
     function draw() {
       if (!ctx) return;
       ctx.clearRect(0, 0, W, H);
 
-      // Draw connections - flat, no glow
       links.forEach((link: any) => {
         const srcId = typeof link.source === 'object' ? link.source.id : link.source;
         const tgtId = typeof link.target === 'object' ? link.target.id : link.target;
@@ -122,19 +119,17 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
         const tgtColor = getColor(tgtNode?.group || 1);
         const cp = getCurveCP(src, tgt);
 
-        // Main line - flat, semi-transparent
         const grad = ctx.createLinearGradient(src.x, src.y, tgt.x, tgt.y);
-        grad.addColorStop(0, srcColor + '50');
-        grad.addColorStop(1, tgtColor + '50');
+        grad.addColorStop(0, srcColor + '45');
+        grad.addColorStop(1, tgtColor + '45');
         ctx.beginPath();
         ctx.moveTo(src.x, src.y);
         ctx.quadraticCurveTo(cp.x, cp.y, tgt.x, tgt.y);
         ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.2;
+        ctx.lineWidth = 1.3;
         ctx.stroke();
       });
 
-      // Draw particles - small, flat dots
       particles.forEach(p => {
         p.progress += p.speed;
         if (p.progress > 1) p.progress = 0;
@@ -143,44 +138,38 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
         const src = positions.get(srcId);
         const tgt = positions.get(tgtId);
         if (!src || !tgt) return;
-
         const cp = getCurveCP(src, tgt);
         const t = p.progress;
         const px = (1 - t) * (1 - t) * src.x + 2 * (1 - t) * t * cp.x + t * t * tgt.x;
         const py = (1 - t) * (1 - t) * src.y + 2 * (1 - t) * t * cp.y + t * t * tgt.y;
-
         const srcNode = nodes.find(n => n.id === srcId);
         ctx.beginPath();
         ctx.arc(px, py, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = getColor(srcNode?.group || 1) + '90';
+        ctx.fillStyle = getColor(srcNode?.group || 1) + '80';
         ctx.fill();
       });
 
-      // Draw nodes - flat, solid circles
       nodes.forEach(node => {
         const pos = positions.get(node.id);
         if (!pos) return;
         const color = getColor(node.group || 1);
 
-        // Solid circle - no glow, no gradient
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, pos.r, 0, Math.PI * 2);
         ctx.fillStyle = color;
         ctx.fill();
 
-        // Thin border for decision nodes
         if (node.group === 3) {
-          ctx.strokeStyle = '#ffffff40';
+          ctx.strokeStyle = '#ffffff30';
           ctx.lineWidth = 1.5;
           ctx.stroke();
         }
 
-        // Label - clean, no shadow
-        const fontSize = node.group === 3 ? 9.5 : 8;
+        const fontSize = node.group === 3 ? 10.5 : 9;
         ctx.font = `${node.group === 3 ? '600' : '400'} ${fontSize}px Inter, -apple-system, system-ui, sans-serif`;
         ctx.textAlign = 'center';
         ctx.fillStyle = '#94a3b8';
-        ctx.fillText(node.name, pos.x, pos.y + pos.r + fontSize + 5);
+        ctx.fillText(node.name, pos.x, pos.y + pos.r + fontSize + 6);
       });
 
       animRef.current = requestAnimationFrame(draw);
@@ -190,12 +179,10 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     return () => cancelAnimationFrame(animRef.current);
   }, [graphData, expanded]);
 
-  // ── Mouse hover handler for tooltip ──
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
-
     const nodes = graphData.nodes as any[];
     let found: any = null;
     for (const node of nodes) {
@@ -203,12 +190,11 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
       if (!pos) continue;
       const dx = mx - pos.x;
       const dy = my - pos.y;
-      if (dx * dx + dy * dy < (pos.r + 8) * (pos.r + 8)) {
+      if (dx * dx + dy * dy < (pos.r + 10) * (pos.r + 10)) {
         found = node;
         break;
       }
     }
-
     if (found) {
       setTooltip({ x: e.clientX - rect.left, y: e.clientY - rect.top, node: found });
     } else {
@@ -216,25 +202,21 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     }
   }, [graphData]);
 
-  // ── Expanded ForceGraph node renderer ──
   const nodeCanvasObject = useCallback((node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
     const label = node.name || '';
-    const r = node.group === 3 ? 10 : (5 + (node.val || 2) * 1.5);
+    const r = node.group === 3 ? 12 : (6 + (node.val || 2) * 1.8);
     const color = getColor(node.group || 1);
-    const fontSize = Math.max(11 / globalScale, 3);
+    const fontSize = Math.max(12 / globalScale, 3.5);
 
-    // Flat circle
     ctx.beginPath();
     ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
-
     if (node.group === 3) {
-      ctx.strokeStyle = '#ffffff50';
+      ctx.strokeStyle = '#ffffff40';
       ctx.lineWidth = 1.5 / globalScale;
       ctx.stroke();
     }
-
     ctx.font = `${node.group === 3 ? '600' : '400'} ${fontSize}px Inter, -apple-system, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -250,6 +232,21 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     5: 'Bearish Indicator',
   };
 
+  // Summary section below graph
+  const summarySection = summary ? (
+    <div style={{
+      padding: '14px 18px',
+      borderTop: '1px solid #1e293b',
+      background: '#0a0f1a',
+      fontSize: '0.82rem',
+      lineHeight: 1.7,
+      color: '#94a3b8',
+      whiteSpace: 'pre-wrap',
+    }}>
+      {summary}
+    </div>
+  ) : null;
+
   if (!expanded) {
     return (
       <div
@@ -261,11 +258,12 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
           onClick={() => setExpanded(true)}
           style={{
             width: '100%',
-            height: '300px',
-            borderRadius: '10px',
+            height: '420px',
+            borderRadius: '10px 10px 0 0',
             overflow: 'hidden',
             background: '#0c1222',
             border: '1px solid #1e293b',
+            borderBottom: summary ? 'none' : '1px solid #1e293b',
             cursor: 'pointer',
             position: 'relative',
           }}
@@ -276,18 +274,34 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
             background: 'linear-gradient(transparent, #0c1222)',
             padding: '16px 12px 8px',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
-            fontSize: '0.68rem', color: '#475569', letterSpacing: '0.02em',
+            fontSize: '0.68rem', color: '#475569',
           }}>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
             Click to expand interactive view
           </div>
         </div>
 
-        {/* Tooltip on hover */}
+        {/* Summary below graph */}
+        {summary && (
+          <div style={{
+            padding: '14px 18px',
+            border: '1px solid #1e293b',
+            borderTop: 'none',
+            borderRadius: '0 0 10px 10px',
+            background: '#0a0f1a',
+            fontSize: '0.82rem',
+            lineHeight: 1.75,
+            color: '#94a3b8',
+            whiteSpace: 'pre-wrap',
+          }}>
+            {summary}
+          </div>
+        )}
+
         {tooltip && (
           <div style={{
             position: 'absolute',
-            left: tooltip.x + 12,
+            left: Math.min(tooltip.x + 14, (canvasRef.current?.parentElement?.clientWidth || 500) - 260),
             top: tooltip.y - 10,
             background: '#1e293b',
             border: '1px solid #334155',
@@ -295,7 +309,7 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
             padding: '10px 14px',
             pointerEvents: 'none',
             zIndex: 50,
-            maxWidth: '240px',
+            maxWidth: '260px',
             fontSize: '0.8rem',
             lineHeight: 1.5,
           }}>
@@ -311,7 +325,6 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     );
   }
 
-  // ── Expanded interactive view ──
   return (
     <div style={{
       borderRadius: '10px',
@@ -319,14 +332,14 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
       border: '1px solid #1e293b',
       background: '#0c1222',
     }}>
-      <div style={{ width: '100%', height: '400px' }}>
+      <div style={{ width: '100%', height: '500px' }}>
         <ForceGraph2D
           graphData={graphData}
-          width={600}
-          height={400}
+          width={700}
+          height={500}
           nodeCanvasObject={nodeCanvasObject}
           nodePointerAreaPaint={(node: any, color, ctx) => {
-            const r = node.group === 3 ? 12 : (6 + (node.val || 2) * 2);
+            const r = node.group === 3 ? 14 : (7 + (node.val || 2) * 2);
             ctx.fillStyle = color;
             ctx.beginPath();
             ctx.arc(node.x, node.y, r + 5, 0, Math.PI * 2);
@@ -343,15 +356,14 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
             const dy = tgt.y - src.y;
             const cpX = (src.x + tgt.x) / 2 + dy * 0.15;
             const cpY = (src.y + tgt.y) / 2 - dx * 0.15;
-
             const g = ctx.createLinearGradient(src.x, src.y, tgt.x, tgt.y);
-            g.addColorStop(0, srcColor + '45');
-            g.addColorStop(1, tgtColor + '45');
+            g.addColorStop(0, srcColor + '40');
+            g.addColorStop(1, tgtColor + '40');
             ctx.beginPath();
             ctx.moveTo(src.x, src.y);
             ctx.quadraticCurveTo(cpX, cpY, tgt.x, tgt.y);
             ctx.strokeStyle = g;
-            ctx.lineWidth = 1.2;
+            ctx.lineWidth = 1.3;
             ctx.stroke();
           }}
           linkDirectionalParticles={2}
@@ -359,7 +371,7 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
           linkDirectionalParticleSpeed={() => 0.003}
           linkDirectionalParticleColor={(link: any) => {
             const src = typeof link.source === 'object' ? link.source : null;
-            return getColor(src?.group || 1) + '80';
+            return getColor(src?.group || 1) + '70';
           }}
           backgroundColor="transparent"
           cooldownTicks={80}
@@ -368,17 +380,13 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
           enablePanInteraction={true}
         />
       </div>
+      {summarySection}
       <button
         onClick={() => setExpanded(false)}
         style={{
-          width: '100%',
-          background: 'transparent',
-          border: 'none',
-          borderTop: '1px solid #1e293b',
-          color: '#475569',
-          padding: '8px',
-          fontSize: '0.7rem',
-          cursor: 'pointer',
+          width: '100%', background: 'transparent', border: 'none',
+          borderTop: '1px solid #1e293b', color: '#475569',
+          padding: '8px', fontSize: '0.7rem', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
         }}
         onMouseOver={e => e.currentTarget.style.color = '#94a3b8'}
