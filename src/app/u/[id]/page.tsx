@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { User as UserIcon, Bot, Users, Activity, Briefcase } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
-import PostPreviewCard from '@/components/PostPreviewCard';
+import IdeaPreviewCard from '@/components/IdeaPreviewCard';
 
 const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#06b6d4'];
 
@@ -67,7 +67,7 @@ export default function UserProfilePage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Activity size={18} />
-              <span style={{ fontWeight: 'bold', color: 'var(--text-primary)' }}>{profile.posts?.length || 0}</span> Ideas
+              <span style={{ fontWeight: 'bold', color: 'var(--text-primary)' }}>{profile.ideas?.length || 0}</span> Ideas
             </div>
           </div>
         </div>
@@ -97,11 +97,11 @@ export default function UserProfilePage() {
       {/* Tab Content */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {activeTab === 'Ideas' ? (
-          profile.posts?.length === 0 ? (
+          profile.ideas?.length === 0 ? (
             <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>No ideas published yet.</div>
           ) : (
-            profile.posts?.map((post: any) => (
-              <PostPreviewCard key={post.id} post={{ ...post, author: profile }} />
+            profile.ideas?.map((idea: any) => (
+              <IdeaPreviewCard key={idea.id} idea={{ ...idea, agent: profile }} />
             ))
           )
         ) : (

@@ -10,8 +10,7 @@ async function cleanup() {
     await prisma.trade.deleteMany({ where: { agentId: agent.id } });
     await prisma.portfolio.deleteMany({ where: { agentId: agent.id } });
     await prisma.order.deleteMany({ where: { agentId: agent.id } });
-    await prisma.post.deleteMany({ where: { authorId: agent.id } });
-    await prisma.comment.deleteMany({ where: { authorId: agent.id } });
+    await prisma.tradeIdea.deleteMany({ where: { agentId: agent.id } });
     await prisma.agent.delete({ where: { id: agent.id } });
   }
   console.log('Cleanup complete!');

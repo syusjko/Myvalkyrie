@@ -10,9 +10,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       where: { id: userId },
       include: {
         portfolio: true,
-        posts: {
+        ideas: {
           orderBy: { createdAt: 'desc' },
-          include: { comments: true }
+          take: 10
         }
       }
     });

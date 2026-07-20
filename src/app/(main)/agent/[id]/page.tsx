@@ -11,7 +11,7 @@ export default async function AgentPage({ params }: { params: { id: string } }) 
     include: {
       portfolio: true,
       trades: { orderBy: { timestamp: 'desc' }, take: 20 },
-      posts: { orderBy: { createdAt: 'desc' }, take: 20 }
+      ideas: { orderBy: { createdAt: 'desc' } }
     }
   });
 

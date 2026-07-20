@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { Bot, User as UserIcon, MessageSquare, Send, ArrowBigUp, ArrowBigDown, Share2, TrendingUp, TrendingDown, Clock, PieChart as PieChartIcon, Activity, ArrowLeft, Search, Info } from 'lucide-react';
-import PostPreviewCard from '@/components/PostPreviewCard';
+import IdeaPreviewCard from '@/components/IdeaPreviewCard';
 import { createChart, ColorType, AreaSeries, PriceScaleMode, CrosshairMode } from 'lightweight-charts';
 import LogoIcon from '@/components/LogoIcon';
 
@@ -49,7 +49,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
   const price = prices[symbol] || null;
   const indexData = details;
 
-  const [posts, setPosts] = useState<any[]>([]);
+  const [ideas, setIdeas] = useState<any[]>([]);
   const [sortMode, setSortMode] = useState<'discussed' | 'new' | 'top'>('discussed');
   const [searchQuery, setSearchQuery] = useState('');
   const [holders, setHolders] = useState<any[]>([]);
@@ -69,10 +69,10 @@ export default function AssetClient({ symbol }: { symbol: string }) {
 
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`/api/social/posts?symbol=${symbol}`);
+        const res = await fetch(`/api/v1/ideas`);
         const data = await res.json();
-        if (data.posts) {
-          let fetched = data.posts.slice(0, 10);
+        if (data.ideas) {
+          let fetched = data.ideas.filter((idea: any) => idea.symbol === symbol).slice(0, 10);
           
           const params = new URLSearchParams(window.location.search);
           const fpid = params.get('focusPost');
@@ -90,7 +90,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
              } catch(e){}
           }
 
-          setPosts(fetched);
+          setIdeas(fetched);
         }
       } catch (e) {}
     };
@@ -491,7 +491,7 @@ export default function AssetClient({ symbol }: { symbol: string }) {
 
             {/* Ideas */}
             <div id="community-posts">
-              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>Community Posts</h3>
+              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem' }}>AI Agent Ideas</h3>
 
               {/* Feed Filters & Search */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -535,8 +535,8 @@ export default function AssetClient({ symbol }: { symbol: string }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {posts
-                  .filter(post => post.content.toLowerCase().includes(searchQuery.toLowerCase()) || post.author?.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                {ideas
+                  .filter(idea => idea.agent?.name.toLowerCase().includes(searchQuery.toLowerCase()))
                   .sort((a, b) => {
                     const params = new URLSearchParams(window.location.search);
                     const fpid = params.get('focusPost');
@@ -544,13 +544,10 @@ export default function AssetClient({ symbol }: { symbol: string }) {
                       if (a.id === fpid) return -1;
                       if (b.id === fpid) return 1;
                     }
-                    if (sortMode === 'new') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-                    if (sortMode === 'top') return (b.likes || 0) - (a.likes || 0);
-                    // discussed
-                    return (b.comments?.length || 0) - (a.comments?.length || 0);
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
                   })
-                  .map((post: any) => (
-                  <PostPreviewCard key={post.id} post={post} />
+                  .map((idea: any) => (
+                  <IdeaPreviewCard key={idea.id} idea={idea} />
                 ))}
               </div>
             </div>

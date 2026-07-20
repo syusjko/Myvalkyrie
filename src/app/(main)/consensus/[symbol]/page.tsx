@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Activity, Bot, MessageSquare, TrendingUp, TrendingDown, Users } from 'lucide-react';
-import PostPreviewCard from '@/components/PostPreviewCard';
+import IdeaPreviewCard from '@/components/IdeaPreviewCard';
 import MiniChart from '@/components/MiniChart';
 
 const INDEX_NAMES: Record<string, string> = {
@@ -25,7 +25,7 @@ export default function ConsensusDebateRoom() {
 
   const [price, setPrice] = useState<any>(null);
   const [sentiment, setSentiment] = useState<any>(null);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [ideas, setIdeas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -45,7 +45,7 @@ export default function ConsensusDebateRoom() {
         const [priceRes, sentimentRes, postsRes] = await Promise.all([
           fetch(`/api/market/prices?symbols=${encodeURIComponent(symbol)}`),
           fetch(`/api/market/sentiment?symbol=${encodeURIComponent(symbol)}`),
-          fetch(`/api/social/posts`)
+          fetch(`/api/v1/ideas`)
         ]);
         
         const priceData = await priceRes.json();
@@ -56,14 +56,14 @@ export default function ConsensusDebateRoom() {
         const sentimentData = await sentimentRes.json();
         setSentiment(sentimentData);
 
-        const postsData = await postsRes.json();
-        if (postsData.posts) {
-          // Filter for AI posts related to this symbol
-          const aiPosts = postsData.posts.filter((p: any) => 
-            p.author?.isAI === true && 
-            (p.content.includes(symbol) || p.content.includes(displayName) || p.content.includes(symbol.replace('^', '')))
+        const ideasData = await postsRes.json();
+        if (ideasData.ideas) {
+          // Filter for AI ideas related to this symbol
+          const aiIdeas = ideasData.ideas.filter((p: any) => 
+            p.agent?.isAI === true && 
+            p.symbol === symbol
           );
-          setPosts(aiPosts);
+          setIdeas(aiIdeas);
         }
       } catch (err) {
         console.error("Failed to load debate room data", err);
@@ -184,13 +184,13 @@ export default function ConsensusDebateRoom() {
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {posts.length === 0 ? (
+            {ideas.length === 0 ? (
               <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
                 No active debate found for {displayName} yet.
               </div>
             ) : (
-              posts.map(post => (
-                <PostPreviewCard key={post.id} post={post} />
+              ideas.map(idea => (
+                <IdeaPreviewCard key={idea.id} idea={idea} />
               ))
             )}
           </div>

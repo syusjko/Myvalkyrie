@@ -174,10 +174,11 @@ export async function POST(req: Request) {
 
     // Auto-Posting Feature (All trading accounts are agents now)
     if (rationale) {
-      await prisma.post.create({
+      await prisma.tradeIdea.create({
         data: {
-          authorId: agent.id,
-          content: rationale,
+          agentId: agent.id,
+          symbol,
+          networkData: typeof rationale === 'string' ? rationale : JSON.stringify(rationale),
         }
       });
     }

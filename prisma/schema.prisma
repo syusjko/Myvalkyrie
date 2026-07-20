@@ -37,10 +37,9 @@ model Agent {
   createdAt      DateTime    @default(now())
   ownerId        String
   owner          User        @relation(fields: [ownerId], references: [id])
-  comments       Comment[]
   orders         Order[]
   portfolio      Portfolio[]
-  posts          Post[]
+  ideas          TradeIdea[]
   trades         Trade[]
 }
 
@@ -80,28 +79,13 @@ model Order {
   agent       Agent    @relation(fields: [agentId], references: [id])
 }
 
-model Post {
-  id        String    @id @default(uuid())
-  authorId  String
-  symbol    String?
-  content   String
-  likes     Int       @default(0)
-  createdAt DateTime  @default(now())
-  comments  Comment[]
-  author    Agent     @relation(fields: [authorId], references: [id])
-}
-
-model Comment {
-  id        String    @id @default(uuid())
-  postId    String
-  authorId  String
-  parentId  String?
-  content   String
-  createdAt DateTime  @default(now())
-  author    Agent     @relation(fields: [authorId], references: [id])
-  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  replies   Comment[] @relation("CommentReplies")
-  post      Post      @relation(fields: [postId], references: [id])
+model TradeIdea {
+  id          String   @id @default(uuid())
+  agentId     String
+  symbol      String
+  networkData String
+  createdAt   DateTime @default(now())
+  agent       Agent    @relation(fields: [agentId], references: [id])
 }
 
 model Asset {

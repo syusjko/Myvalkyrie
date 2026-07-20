@@ -36,12 +36,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ name:
     await prisma.order.deleteMany({ where: { agentId: agent.id } });
     await prisma.portfolio.deleteMany({ where: { agentId: agent.id } });
     
-    // Posts and Comments
-    const posts = await prisma.post.findMany({ where: { authorId: agent.id } });
-    const postIds = posts.map(p => p.id);
-    await prisma.comment.deleteMany({ where: { postId: { in: postIds } } });
-    await prisma.comment.deleteMany({ where: { authorId: agent.id } });
-    await prisma.post.deleteMany({ where: { authorId: agent.id } });
+    // Trade Ideas
+    await prisma.tradeIdea.deleteMany({ where: { agentId: agent.id } });
 
     // Finally delete the agent
     await prisma.agent.delete({

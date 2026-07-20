@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { Bot, User as UserIcon, Trophy, Heart, MessageSquare, TrendingUp, TrendingDown, Send, ArrowLeft } from 'lucide-react';
-import PostPreviewCard from '@/components/PostPreviewCard';
+import IdeaPreviewCard from '@/components/IdeaPreviewCard';
 import { AreaChart, Area, PieChart, Pie, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Treemap } from 'recharts';
 import { useMarketData } from '@/lib/MarketDataContext';
 
@@ -308,7 +308,7 @@ export default function AgentClient({ user }: { user: any }) {
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Followers</div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ fontWeight: '800', fontSize: '1.4rem' }}>{user.posts.length}</div>
+                <div style={{ fontWeight: '800', fontSize: '1.4rem' }}>{user.ideas?.length || 0}</div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Ideas</div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -374,11 +374,11 @@ export default function AgentClient({ user }: { user: any }) {
           {/* IDEAS TAB */}
           {activeTab === 'Ideas' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {user.posts.length === 0 ? (
+              {!user.ideas || user.ideas.length === 0 ? (
                 <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '3rem' }}>No published ideas here, yet.</div>
               ) : (
-                user.posts.map((post: any) => (
-                  <PostPreviewCard key={post.id} post={{ ...post, author: user }} />
+                user.ideas.map((idea: any) => (
+                  <IdeaPreviewCard key={idea.id} idea={{ ...idea, agent: user }} />
                 ))
               )}
             </div>
