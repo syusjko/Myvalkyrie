@@ -88,13 +88,7 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     });
     positionsRef.current = positions;
 
-    const particles: { link: any; progress: number; speed: number }[] = [];
-    links.forEach((link: any) => {
-      const count = Math.max(1, Math.min(2, link.value || 1));
-      for (let i = 0; i < count; i++) {
-        particles.push({ link, progress: Math.random(), speed: 0.0015 + Math.random() * 0.002 });
-      }
-    });
+    const particles: any[] = [];
 
     function getCurveCP(src: { x: number; y: number }, tgt: { x: number; y: number }) {
       const dx = tgt.x - src.x;
@@ -119,35 +113,15 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
         const tgtColor = getColor(tgtNode?.group || 1);
         const cp = getCurveCP(src, tgt);
 
-        const grad = ctx.createLinearGradient(src.x, src.y, tgt.x, tgt.y);
-        grad.addColorStop(0, srcColor + '45');
-        grad.addColorStop(1, tgtColor + '45');
         ctx.beginPath();
         ctx.moveTo(src.x, src.y);
-        ctx.quadraticCurveTo(cp.x, cp.y, tgt.x, tgt.y);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.3;
+        ctx.lineTo(tgt.x, tgt.y);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1;
         ctx.stroke();
       });
 
-      particles.forEach(p => {
-        p.progress += p.speed;
-        if (p.progress > 1) p.progress = 0;
-        const srcId = typeof p.link.source === 'object' ? p.link.source.id : p.link.source;
-        const tgtId = typeof p.link.target === 'object' ? p.link.target.id : p.link.target;
-        const src = positions.get(srcId);
-        const tgt = positions.get(tgtId);
-        if (!src || !tgt) return;
-        const cp = getCurveCP(src, tgt);
-        const t = p.progress;
-        const px = (1 - t) * (1 - t) * src.x + 2 * (1 - t) * t * cp.x + t * t * tgt.x;
-        const py = (1 - t) * (1 - t) * src.y + 2 * (1 - t) * t * cp.y + t * t * tgt.y;
-        const srcNode = nodes.find(n => n.id === srcId);
-        ctx.beginPath();
-        ctx.arc(px, py, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = getColor(srcNode?.group || 1) + '80';
-        ctx.fill();
-      });
+      // Particles removed for cynical design
 
       nodes.forEach(node => {
         const pos = positions.get(node.id);
@@ -155,15 +129,12 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
         const color = getColor(node.group || 1);
 
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, pos.r, 0, Math.PI * 2);
-        ctx.fillStyle = color;
+        ctx.arc(pos.x, pos.y, pos.r * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#0b0f19';
         ctx.fill();
-
-        if (node.group === 3) {
-          ctx.strokeStyle = '#ffffff30';
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-        }
+        ctx.lineWidth = node.group === 3 ? 2.5 : 1.5;
+        ctx.strokeStyle = color;
+        ctx.stroke();
 
         const fontSize = node.group === 3 ? 10.5 : 9;
         ctx.font = `${node.group === 3 ? '600' : '400'} ${fontSize}px Inter, -apple-system, system-ui, sans-serif`;
@@ -209,14 +180,12 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
     const fontSize = Math.max(12 / globalScale, 3.5);
 
     ctx.beginPath();
-    ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
-    ctx.fillStyle = color;
+    ctx.arc(node.x, node.y, r * 0.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#0b0f19';
     ctx.fill();
-    if (node.group === 3) {
-      ctx.strokeStyle = '#ffffff40';
-      ctx.lineWidth = 1.5 / globalScale;
-      ctx.stroke();
-    }
+    ctx.lineWidth = (node.group === 3 ? 2.5 : 1.5) / globalScale;
+    ctx.strokeStyle = color;
+    ctx.stroke();
     ctx.font = `${node.group === 3 ? '600' : '400'} ${fontSize}px Inter, -apple-system, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -303,21 +272,21 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
             position: 'absolute',
             left: Math.min(tooltip.x + 14, (canvasRef.current?.parentElement?.clientWidth || 500) - 260),
             top: tooltip.y - 10,
-            background: '#1e293b',
-            border: '1px solid #334155',
-            borderRadius: '8px',
-            padding: '10px 14px',
+            background: '#0b0f19',
+            border: `1px solid ${getColor(tooltip.node.group || 1)}`,
+            borderRadius: '2px',
+            padding: '6px 10px',
             pointerEvents: 'none',
             zIndex: 50,
             maxWidth: '260px',
-            fontSize: '0.8rem',
-            lineHeight: 1.5,
+            fontSize: '0.75rem',
+            lineHeight: 1.4,
           }}>
-            <div style={{ fontWeight: 600, color: getColor(tooltip.node.group || 1), marginBottom: '4px', fontSize: '0.85rem' }}>
+            <div style={{ fontWeight: 500, color: getColor(tooltip.node.group || 1), marginBottom: '2px' }}>
               {tooltip.node.name}
             </div>
-            <div style={{ color: '#64748b', fontSize: '0.72rem' }}>
-              {groupLabels[tooltip.node.group] || 'Signal'} · weight {tooltip.node.val || 1}
+            <div style={{ color: '#475569', fontSize: '0.7rem' }}>
+              {groupLabels[tooltip.node.group] || 'Signal'} · w:{tooltip.node.val || 1}
             </div>
           </div>
         )}
@@ -345,33 +314,17 @@ export default function NeuralMapViewer({ networkData }: NeuralMapViewerProps) {
             ctx.arc(node.x, node.y, r + 5, 0, Math.PI * 2);
             ctx.fill();
           }}
-          nodeLabel={(node: any) => `<div style="background:#1e293b;padding:8px 12px;border-radius:6px;border:1px solid #334155;font-size:12px;color:#e2e8f0"><b style="color:${getColor(node.group)}">${node.name}</b><br/><span style="color:#64748b;font-size:11px">${groupLabels[node.group] || 'Signal'} · weight ${node.val || 1}</span></div>`}
+          nodeLabel={(node: any) => `<div style="background:#0b0f19;padding:6px 10px;border-radius:2px;border:1px solid #334155;font-size:12px;color:#e2e8f0;">${node.name}</div>`}
           linkCanvasObject={(link: any, ctx: CanvasRenderingContext2D) => {
             const src = link.source;
             const tgt = link.target;
             if (!src || !tgt || src.x == null || tgt.x == null) return;
-            const srcColor = getColor(src.group || 1);
-            const tgtColor = getColor(tgt.group || 1);
-            const dx = tgt.x - src.x;
-            const dy = tgt.y - src.y;
-            const cpX = (src.x + tgt.x) / 2 + dy * 0.15;
-            const cpY = (src.y + tgt.y) / 2 - dx * 0.15;
-            const g = ctx.createLinearGradient(src.x, src.y, tgt.x, tgt.y);
-            g.addColorStop(0, srcColor + '40');
-            g.addColorStop(1, tgtColor + '40');
             ctx.beginPath();
             ctx.moveTo(src.x, src.y);
-            ctx.quadraticCurveTo(cpX, cpY, tgt.x, tgt.y);
-            ctx.strokeStyle = g;
-            ctx.lineWidth = 1.3;
+            ctx.lineTo(tgt.x, tgt.y);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1;
             ctx.stroke();
-          }}
-          linkDirectionalParticles={2}
-          linkDirectionalParticleWidth={2}
-          linkDirectionalParticleSpeed={() => 0.003}
-          linkDirectionalParticleColor={(link: any) => {
-            const src = typeof link.source === 'object' ? link.source : null;
-            return getColor(src?.group || 1) + '70';
           }}
           backgroundColor="transparent"
           cooldownTicks={80}
