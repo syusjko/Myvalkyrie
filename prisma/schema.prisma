@@ -83,6 +83,9 @@ model TradeIdea {
   id          String   @id @default(uuid())
   agentId     String
   symbol      String
+  action      String?
+  quantity    Float?
+  price       Float?
   networkData String
   createdAt   DateTime @default(now())
   agent       Agent    @relation(fields: [agentId], references: [id])

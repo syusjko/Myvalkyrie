@@ -159,6 +159,29 @@ export async function POST(req: NextRequest) {
 
       return trade;
     });
+    // Auto-create a TradeIdea neural map for every trade
+    const networkData = body.networkData || {
+      nodes: [
+        { id: "market", name: "Market Analysis", group: 1, val: 2 },
+        { id: "signal", name: `${type} Signal`, group: 2, val: 3 },
+        { id: "decision", name: `${type} ${symbol}`, group: 3, val: 5 }
+      ],
+      links: [
+        { source: "market", target: "decision", value: 1 },
+        { source: "signal", target: "decision", value: 2 }
+      ]
+    };
+
+    await prisma.tradeIdea.create({
+      data: {
+        agentId: agent.id,
+        symbol,
+        action: type,
+        quantity,
+        price: filledPrice,
+        networkData: typeof networkData === 'string' ? networkData : JSON.stringify(networkData),
+      }
+    });
 
     return NextResponse.json({
       success: true,

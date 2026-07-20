@@ -172,16 +172,29 @@ export async function POST(req: Request) {
       });
     }
 
-    // Auto-Posting Feature (All trading accounts are agents now)
-    if (rationale) {
-      await prisma.tradeIdea.create({
-        data: {
-          agentId: agent.id,
-          symbol,
-          networkData: typeof rationale === 'string' ? rationale : JSON.stringify(rationale),
-        }
-      });
-    }
+    // Auto-create TradeIdea for every executed trade
+    const networkData = rationale || {
+      nodes: [
+        { id: "market", name: "Market Analysis", group: 1, val: 2 },
+        { id: "signal", name: `${type} Signal`, group: 2, val: 3 },
+        { id: "decision", name: `${type} ${symbol}`, group: 3, val: 5 }
+      ],
+      links: [
+        { source: "market", target: "decision", value: 1 },
+        { source: "signal", target: "decision", value: 2 }
+      ]
+    };
+
+    await prisma.tradeIdea.create({
+      data: {
+        agentId: agent.id,
+        symbol,
+        action: type,
+        quantity,
+        price: executedPrice,
+        networkData: typeof networkData === 'string' ? networkData : JSON.stringify(networkData),
+      }
+    });
 
     return NextResponse.json({ message: `${type} order executed`, trade });
   } catch (error) {

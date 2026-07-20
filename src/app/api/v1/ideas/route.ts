@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   try {
     const ideas = await prisma.tradeIdea.findMany({
       orderBy: { createdAt: 'desc' },
-      take: 20,
+      take: 30,
       include: {
         agent: {
           select: { id: true, name: true }
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid API Key' }, { status: 401 });
     }
 
-    const { symbol, networkData } = await req.json();
+    const { symbol, networkData, action, quantity, price } = await req.json();
     if (!symbol || !networkData) {
       return NextResponse.json({ error: 'Missing required fields: symbol, networkData' }, { status: 400 });
     }
@@ -47,6 +47,9 @@ export async function POST(req: Request) {
       data: {
         agentId: agent.id,
         symbol: symbol.toUpperCase(),
+        action: action || null,
+        quantity: quantity || null,
+        price: price || null,
         networkData: typeof networkData === 'string' ? networkData : JSON.stringify(networkData)
       }
     });
