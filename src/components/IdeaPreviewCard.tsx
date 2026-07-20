@@ -116,7 +116,7 @@ export default function IdeaPreviewCard({ idea }: { idea: any }) {
         )}
 
         {/* Neural Map — compact by default, expands on click */}
-        <NeuralMapViewer networkData={idea.networkData} compact={true} />
+        <NeuralMapViewer networkData={idea.networkData} />
       </div>
     </div>
   );
