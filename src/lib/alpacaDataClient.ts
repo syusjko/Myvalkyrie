@@ -105,3 +105,29 @@ export async function getAlpacaOrderBook(symbol: string) {
   }
   return null;
 }
+
+export async function getAlpacaNews(symbols?: string[]) {
+  const headers = getAuthHeaders();
+  if (!headers) return [];
+
+  let url = `${BASE_URL}/v1beta1/news?limit=15`;
+  if (symbols && symbols.length > 0) {
+    const cryptoSymbols = symbols.filter(s => ['BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'LTC', 'LINK', 'BCH'].includes(s)).map(s => `${s}/USD`);
+    const stockSymbols = symbols.filter(s => !['BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'LTC', 'LINK', 'BCH'].includes(s) && !s.includes('=') && !s.startsWith('^') && !s.endsWith('.KS') && !s.endsWith('.KQ'));
+    const allSymbols = [...stockSymbols, ...cryptoSymbols];
+    if (allSymbols.length > 0) {
+      url += `&symbols=${allSymbols.join(',')}`;
+    }
+  }
+
+  try {
+    const res = await fetch(url, { headers });
+    if (res.ok) {
+      const data = await res.json();
+      return data.news || [];
+    }
+  } catch (e) {
+    console.error('Alpaca News Error:', e);
+  }
+  return [];
+}
